@@ -59,11 +59,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JinNing6/CyberHuaTuo/stargazers"><img src="https://img.shields.io/github/stars/JinNing6/CyberHuaTuo?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00D09C" alt="Stars"/></a>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/network/members"><img src="https://img.shields.io/github/forks/JinNing6/CyberHuaTuo?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00BFFF" alt="Forks"/></a>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/issues"><img src="https://img.shields.io/github/issues/JinNing6/CyberHuaTuo?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=FFD700" alt="Issues"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/stargazers"><img src="https://img.shields.io/github/stars/JinNing6/CyberHuaTuo-Plugin?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00D09C" alt="Stars"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/network/members"><img src="https://img.shields.io/github/forks/JinNing6/CyberHuaTuo-Plugin?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00BFFF" alt="Forks"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues"><img src="https://img.shields.io/github/issues/JinNing6/CyberHuaTuo-Plugin?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=FFD700" alt="Issues"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/许可证-Apache%202.0-FFD700?style=for-the-badge&labelColor=0A0E1A" alt="许可证"/></a>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/pulls"><img src="https://img.shields.io/badge/PRs-欢迎贡献-00FFFF?style=for-the-badge&labelColor=0A0E1A" alt="欢迎 PR"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls"><img src="https://img.shields.io/badge/PRs-欢迎贡献-00FFFF?style=for-the-badge&labelColor=0A0E1A" alt="欢迎 PR"/></a>
 </p>
 
 <p align="center">
@@ -141,7 +141,7 @@
 
 ```bash
 # 克隆 → 安装 → 启动。三步获得你的第一张药方。
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo && pip install -r requirements.txt
 python -m cyberhuatuo serve
 # → 浏览器自动打开 http://127.0.0.1:8000
@@ -283,37 +283,37 @@ python -m cyberhuatuo serve
 
 | 框架 | 病例数 | 状态 | 参与 👇 |
 |-----------|:-----:|--------|---------|
-| LangChain | 10+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| MCP (Anthropic) | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| CrewAI | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| LlamaIndex | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| OpenAI Agents SDK | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| AutoGen | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| DSPy | — | 🔵 已规划 | [投票 →](https://github.com/JinNing6/CyberHuaTuo/discussions) |
+| LangChain | 10+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| MCP (Anthropic) | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| CrewAI | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| LlamaIndex | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| OpenAI Agents SDK | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| AutoGen | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| DSPy | — | 🔵 已规划 | [投票 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions) |
 
 ### 🧠 AI / 机器学习 / 深度学习
 
 | 技术 | 病例数 | 状态 | 参与 👇 |
 |-----------|:-----:|--------|---------|
-| PyTorch | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| Transformers (HuggingFace) | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| TensorFlow | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
+| PyTorch | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| Transformers (HuggingFace) | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| TensorFlow | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 ### 🏗️ 平台型 & 自建 Agent
 
 | 平台 | 病例数 | 状态 | 参与 👇 |
 |-----------|:-----:|--------|---------|
-| GPTs / Coze / Dify | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| 自研 Agent | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
+| GPTs / Coze / Dify | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| 自研 Agent | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 ### 🌿 养生滋补药方
 
 | 分类 | 病例数 | 状态 | 参与 👇 |
 |-----------|:-----:|--------|---------|
-| 🛡️ 安全沙箱 | 2+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| 🔒 安全加固 | 3+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| 🔗 供应链审计 | 1 | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| ⚡ 性能调理 | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
+| 🛡️ 安全沙箱 | 2+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| 🔒 安全加固 | 3+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| 🔗 供应链审计 | 1 | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| ⚡ 性能调理 | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 > **每个框架的第一个病例，每个养生方的第一个药方——都可能出自你手。**
 
@@ -329,7 +329,7 @@ python -m cyberhuatuo serve
 ### 方式一：一键启动
 
 ```bash
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo
 
 # Windows
@@ -344,7 +344,7 @@ chmod +x start.sh && ./start.sh
 ### 方式二：手动安装
 
 ```bash
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo
 
 pip install -r requirements.txt
@@ -483,14 +483,14 @@ pip install cyberhuatuo
   "mcpServers": {
     "cyberhuatuo": {
       "command": "uvx",
-      "args": ["cyberhuatuo"]
+      "args": ["--from", "cyberhuatuo", "cyberhuatuo-mcp"]
     }
   }
 }
 ```
 
 > `uvx` 会自动从 PyPI 安装并启动 MCP Server——零手动操作。
-> 使用 GitHub 最新开发版：`"args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo", "cyberhuatuo-mcp"]`
+> 使用 GitHub 最新开发版：`"args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]`
 
 ### 🩺 MCP 工具一览
 
@@ -538,13 +538,13 @@ pip install cyberhuatuo
 
 1. **🛡️ 命名空间保护** —— 防止 AI 医疗工具领域的仿冒和抢注
 2. **🌍 文化桥梁** —— 无论你想到的是「华佗」、「阿斯克勒庇俄斯」还是「希波克拉底」，都能找到我们
-3. **🔗 一个引擎，多扇大门** —— `uvx cyber-asclepius` 和 `uvx cyberhuatuo` 效果完全相同
+3. **🔗 一个引擎，多扇大门** —— MCP Server 使用 `uvx --from cyberhuatuo cyberhuatuo-mcp` 启动
 
 ### 我们的开放立场
 
 我们信仰开源精神。这些名字的注册是为了**保护生态，而非囤积**。
 
-如果你认为我们矩阵中的某个名字对你的项目更有价值，**我们愿意真诚地沟通**。[发起讨论 →](https://github.com/JinNing6/CyberHuaTuo/discussions)
+如果你认为我们矩阵中的某个名字对你的项目更有价值，**我们愿意真诚地沟通**。[发起讨论 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions)
 
 > *大医精诚，悬壶济世。最伟大的医者从不将医术据为己有。*
 
@@ -604,24 +604,24 @@ pip install cyberhuatuo
 
 ### 所有贡献者
 
-<a href="https://github.com/JinNing6/CyberHuaTuo/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=JinNing6/CyberHuaTuo&columns=12&anon=1" />
+<a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=JinNing6/CyberHuaTuo-Plugin&columns=12&anon=1" />
 </a>
 
 <sub>由 [contrib.rocks](https://contrib.rocks) 生成 · 基于 GitHub commits 自动更新</sub>
 
 > **🩺 想在这里看到你的头像？**
-> [提交药方](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml)、[提 PR](https://github.com/JinNing6/CyberHuaTuo/pulls) 或 [贡献病例](https://github.com/JinNing6/CyberHuaTuo/issues/new)——每一份贡献都算数！
+> [提交药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)、[提 PR](https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls) 或 [贡献病例](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new)——每一份贡献都算数！
 
 ---
 
 ## ⭐ Star History
 
-<a href="https://star-history.com/#JinNing6/CyberHuaTuo&Date">
+<a href="https://star-history.com/#JinNing6/CyberHuaTuo-Plugin&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo-Plugin&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo-Plugin&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo-Plugin&type=Date" />
  </picture>
 </a>
 
@@ -643,9 +643,9 @@ pip install cyberhuatuo
   <em>古为今用，薪火相传。</em><br>
   <em>这是技术对文化的致敬，也是文化对技术的赋能。</em>
   <br><br>
-  <a href="https://github.com/JinNing6/CyberHuaTuo">⭐ 点个 Star</a> · 
-  <a href="https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml">💊 提交药方</a> · 
-  <a href="https://github.com/JinNing6/CyberHuaTuo/discussions">💬 讨论</a> · 
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin">⭐ 点个 Star</a> ·
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml">💊 提交药方</a> ·
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions">💬 讨论</a> ·
   <a href="https://discord.gg/cyberhuatuo">🎮 Discord</a>
   <br><br>
   <sub>以华佗之名，致敬中华五千年医道传承——治病、养生、强体。</sub><br>

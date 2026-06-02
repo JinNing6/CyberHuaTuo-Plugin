@@ -721,7 +721,7 @@ def generate_share_card(github_username: str) -> str:
         f"║  {ecg}\n"
         f"║                                              ║\n"
         f"║  🌍 全球排名: #{profile['global_rank']} / {profile['global_total']}\n"
-        f"║  ⭐ github.com/JinNing6/CyberHuaTuo          ║\n"
+        f"║  ⭐ CyberHuaTuo Plugin                       ║\n"
         f"╚══════════════════════════════════════════════╝"
     )
 

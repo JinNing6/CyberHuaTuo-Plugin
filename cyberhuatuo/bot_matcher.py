@@ -505,10 +505,10 @@ def format_bot_reply(
                 "### 💡 建议\n\n"
                 "- 请提供更多错误信息（完整的 Traceback、错误日志等）\n"
                 "- 尝试描述您使用的框架名称和版本\n"
-                "- 您也可以访问 [CyberHuaTuo 在线门诊](https://github.com/JinNing6/CyberHuaTuo) "
+                "- 您也可以访问 [CyberHuaTuo 在线门诊](https://github.com/JinNing6/CyberHuaTuo-Plugin) "
                 "获取 AI 望闻问切诊断\n\n"
                 "---\n"
-                "*🤖 此回复由 [CyberHuaTuo 赛博华佗](https://github.com/JinNing6/CyberHuaTuo) 自动生成*"
+                "*🤖 此回复由 [CyberHuaTuo 赛博华佗](https://github.com/JinNing6/CyberHuaTuo-Plugin) 自动生成*"
             )
         return ""  # 自动匹配没结果时不回复
 
@@ -565,16 +565,16 @@ def format_bot_reply(
     parts.append(
         "> 💡 **以上药方来自 CyberHuaTuo 知识库的自动匹配**\n"
         "> \n"
-        "> 🏥 药方有效？请给 [CyberHuaTuo](https://github.com/JinNing6/CyberHuaTuo) "
+        "> 🏥 药方有效？请给 [CyberHuaTuo](https://github.com/JinNing6/CyberHuaTuo-Plugin) "
         "一个 ⭐ 支持开源中医\n"
         "> \n"
         "> 📝 药方不对？欢迎 [贡献更好的药方]"
-        "(https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml)\n"
+        "(https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)\n"
         "> \n"
         "> 🔮 需要更精准的 AI 望闻问切诊断？访问 "
-        "[CyberHuaTuo 在线门诊](https://github.com/JinNing6/CyberHuaTuo)\n\n"
-        "*🤖 此回复由 [CyberHuaTuo 赛博华佗](https://github.com/JinNing6/CyberHuaTuo) 自动生成 · "
-        "在你的仓库也安装 Bot？[查看指引](https://github.com/JinNing6/CyberHuaTuo/blob/main/docs/GITHUB_BOT.md)*"
+        "[CyberHuaTuo 在线门诊](https://github.com/JinNing6/CyberHuaTuo-Plugin)\n\n"
+        "*🤖 此回复由 [CyberHuaTuo 赛博华佗](https://github.com/JinNing6/CyberHuaTuo-Plugin) 自动生成 · "
+        "在你的仓库也安装 Bot？[查看指引](https://github.com/JinNing6/CyberHuaTuo-Plugin/blob/main/docs/GITHUB_BOT.md)*"
     )
 
     return "\n".join(parts)

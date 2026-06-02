@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/JinNing6/CyberHuaTuo/schema/case.schema.json",
+  "$id": "https://github.com/JinNing6/CyberHuaTuo-Plugin/schema/case.schema.json",
   "title": "CyberHuaTuo Case Schema",
   "description": "Schema for validating CyberHuaTuo case file YAML front matter",
   "type": "object",

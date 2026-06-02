@@ -850,7 +850,7 @@ async def save_prescription(
                 f"- **炼丹师 / Alchemist**: @{contributor_github}\n"
                 f"- **累计印痕 / Engrams**: {profile['contribution_count']} 段药方\n"
                 f"\n{coronation_text}\n"
-                f"\n👉 查看实时封神榜 / Live Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
+                f"\n👉 查看实时封神榜 / Live Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo-Plugin#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
             )
 
         output_parts.append(
@@ -1027,7 +1027,7 @@ async def upload_prescription(
                 f"- **炼丹师 / Alchemist**: @{contributor_github}\n"
                 f"- **累计印痕 / Engrams**: {profile['contribution_count']} 段药方\n"
                 f"\n{coronation_text}\n"
-                f"\n👉 查看实时封神榜 / Live Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
+                f"\n👉 查看实时封神榜 / Live Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo-Plugin#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
             )
 
         return "\n".join(output_parts)
@@ -1187,7 +1187,7 @@ async def check_my_ranking(
         f"{alchemy_section}\n"
         f"{streak_display}\n"
         f"{milestone_text}\n"
-        f"🔗 官方封神榜 / Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
+        f"🔗 官方封神榜 / Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo-Plugin#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
     )
 
 
@@ -1258,7 +1258,7 @@ def global_leaderboard(
 
     output_parts.append(
         "\n> 💊 通过 `save_prescription` 或 `upload_prescription` 贡献药方来提升你的全球排名！\n"
-        "> 🔗 [查看官方完整封神榜](https://github.com/JinNing6/CyberHuaTuo#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C)"
+        "> 🔗 [查看官方完整封神榜](https://github.com/JinNing6/CyberHuaTuo-Plugin#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C)"
     )
 
     return _append_brand_footer("\n".join(output_parts))

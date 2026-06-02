@@ -1,0 +1,38 @@
+{
+  "name": "cyberhuatuo-plugin",
+  "version": "0.1.0",
+  "description": "CyberHuaTuo diagnostic workflows for AI agent and coding framework failures.",
+  "author": {
+    "name": "CyberHuaTuo"
+  },
+  "homepage": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+  "repository": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "mcp",
+    "codex",
+    "skills",
+    "debugging",
+    "ai-agents"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "CyberHuaTuo Plugin",
+    "shortDescription": "Diagnose AI agent and coding framework failures.",
+    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for diagnosing AI agent, MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures using a curated public prescription knowledge base.",
+    "developerName": "CyberHuaTuo",
+    "category": "Developer Tools",
+    "capabilities": [
+      "MCP",
+      "Skills",
+      "Diagnostics"
+    ],
+    "brandColor": "#00D09C",
+    "defaultPrompt": [
+      "Diagnose this traceback with CyberHuaTuo.",
+      "Search CyberHuaTuo for this framework error.",
+      "Run a security checkup on this agent code."
+    ]
+  }
+}

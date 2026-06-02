@@ -1,7 +1,6 @@
 ---
-name: CyberHuaTuo Rescue
+name: cyberhuatuo-rescue
 description: Automatic self-rescue and diagnosis of code errors using the CyberHuaTuo (赛博华佗) AI clinic. Activates when you encounter unresolvable errors, bugs, or need a security checkup.
-version: 1.0.0
 ---
 
 # CyberHuaTuo (赛博华佗) Self-Rescue Skill

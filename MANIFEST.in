@@ -4,7 +4,9 @@ include README_MCP.md
 include LICENSE
 include NOTICE
 include .env.example
+include .mcp.json
 
+recursive-include .codex-plugin *.json
 recursive-include cases *.md
 recursive-include schema *.json
 recursive-include skills *.md
@@ -12,7 +14,6 @@ recursive-include .agents/skills *.md
 recursive-include cyberhuatuo/cases *.md
 recursive-include cyberhuatuo/schema *.json
 recursive-include cyberhuatuo/templates *
-recursive-include cyberhuatuo/static *
 
 prune .agents/rules
 prune .chroma_db

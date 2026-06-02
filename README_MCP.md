@@ -28,7 +28,7 @@
   "mcpServers": {
     "cyberhuatuo": {
       "command": "uvx",
-      "args": ["cyberhuatuo"]
+      "args": ["--from", "cyberhuatuo", "cyberhuatuo-mcp"]
     }
   }
 }
@@ -51,7 +51,7 @@
   "mcpServers": {
     "cyberhuatuo": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo", "cyberhuatuo-mcp"]
+      "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]
     }
   }
 }
@@ -66,7 +66,7 @@
   "mcpServers": {
     "cyberhuatuo": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo", "cyberhuatuo-mcp"]
+      "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]
     }
   }
 }
@@ -82,7 +82,7 @@
     "servers": {
       "cyberhuatuo": {
         "command": "uvx",
-        "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo", "cyberhuatuo-mcp"]
+        "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]
       }
     }
   }
@@ -98,7 +98,7 @@
   "mcpServers": {
     "cyberhuatuo": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo", "cyberhuatuo-mcp"]
+      "args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]
     }
   }
 }
@@ -117,7 +117,7 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo
 
 # 2. 安装依赖

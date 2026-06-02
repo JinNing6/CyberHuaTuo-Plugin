@@ -627,7 +627,7 @@ def generate_markdown_report(report: EpidemicReport) -> str:
         "",
         "---",
         "",
-        "*🩺 由 [CyberHuaTuo 赛博华佗](https://github.com/JinNing6/CyberHuaTuo) 自动生成*",
+        "*🩺 由 [CyberHuaTuo 赛博华佗](https://github.com/JinNing6/CyberHuaTuo-Plugin) 自动生成*",
         "*📡 数据来源: GitHub REST API | 更新频率: 每日*",
         "*🦠 掌握 Agent 生态脉搏，定义框架健康标准*",
     ])

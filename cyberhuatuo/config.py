@@ -72,7 +72,7 @@ def _fetch_cases_from_github(target_dir: Path) -> None:
     import json
     import urllib.request
 
-    repo = "JinNing6/CyberHuaTuo"
+    repo = "JinNing6/CyberHuaTuo-Plugin"
     branch = "main"
     api_url = f"https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
 
@@ -166,7 +166,7 @@ class Config:
     # GitHub 同步配置（MCP 纯无后端模式使用）
     GITHUB_SYNC_ENABLED: bool = os.getenv("GITHUB_SYNC_ENABLED", "true").lower() == "true"
     GITHUB_SYNC_OWNER: str = os.getenv("GITHUB_SYNC_OWNER", "JinNing6")
-    GITHUB_SYNC_REPO: str = os.getenv("GITHUB_SYNC_REPO", "CyberHuaTuo")
+    GITHUB_SYNC_REPO: str = os.getenv("GITHUB_SYNC_REPO", "CyberHuaTuo-Plugin")
     GITHUB_SYNC_BRANCH: str = os.getenv("GITHUB_SYNC_BRANCH", "main")
 
     # 瞬时药方搜索配置（GitHub Issues 双层架构）

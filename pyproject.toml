@@ -11,7 +11,7 @@ name = "cyberhuatuo"
 version = "0.1.0"
 description = "开源的 AI Agent 问题诊断知识库 / Open-source diagnostic intelligence for AI agents"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115.0",
@@ -31,6 +31,11 @@ dependencies = [
 cyberhuatuo = "cyberhuatuo.cli:main"
 cyberhuatuo-mcp = "cyberhuatuo.mcp_server:main"
 
+[project.urls]
+Homepage = "https://github.com/JinNing6/CyberHuaTuo-Plugin"
+Repository = "https://github.com/JinNing6/CyberHuaTuo-Plugin"
+Issues = "https://github.com/JinNing6/CyberHuaTuo-Plugin/issues"
+
 # ===== 包发现与数据文件 =====
 
 [tool.setuptools]
@@ -42,7 +47,6 @@ include = ["cyberhuatuo*"]
 [tool.setuptools.package-data]
 cyberhuatuo = [
     "templates/**/*",
-    "static/**/*",
     "cases/**/*.md",
     "schema/**/*.json",
 ]

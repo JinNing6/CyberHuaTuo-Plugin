@@ -16,7 +16,7 @@ This is the most valuable way to contribute. If you've solved an AI Agent framew
 
 **方式一：通过 GitHub Issue 提交**
 
-1. 点击 [💊 贡献药方](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml)
+1. 点击 [💊 贡献药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)
 2. 填写 Issue 模板中的信息
 3. 维护者会将其转化为标准病例文件入库
 
@@ -38,11 +38,11 @@ This is the most valuable way to contribute. If you've solved an AI Agent framew
 
 ### 🐛 报告问题 Report a Bug
 
-发现了 Bug？请通过 [Issue](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=bug_report.yml) 提交。
+发现了 Bug？请通过 [Issue](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=bug_report.yml) 提交。
 
 ### 💡 提出建议 Suggest a Feature
 
-有好的想法？请在 [Discussions](https://github.com/JinNing6/CyberHuaTuo/discussions) 中讨论。
+有好的想法？请在 [Discussions](https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions) 中讨论。
 
 ---
 

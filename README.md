@@ -142,11 +142,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JinNing6/CyberHuaTuo/stargazers"><img src="https://img.shields.io/github/stars/JinNing6/CyberHuaTuo?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00D09C" alt="Stars"/></a>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/network/members"><img src="https://img.shields.io/github/forks/JinNing6/CyberHuaTuo?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00BFFF" alt="Forks"/></a>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/issues"><img src="https://img.shields.io/github/issues/JinNing6/CyberHuaTuo?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=FFD700" alt="Issues"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/stargazers"><img src="https://img.shields.io/github/stars/JinNing6/CyberHuaTuo-Plugin?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00D09C" alt="Stars"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/network/members"><img src="https://img.shields.io/github/forks/JinNing6/CyberHuaTuo-Plugin?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=00BFFF" alt="Forks"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues"><img src="https://img.shields.io/github/issues/JinNing6/CyberHuaTuo-Plugin?style=for-the-badge&logo=github&logoColor=white&labelColor=0A0E1A&color=FFD700" alt="Issues"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-FFD700?style=for-the-badge&labelColor=0A0E1A" alt="License"/></a>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/pulls"><img src="https://img.shields.io/badge/PRs-welcome-00FFFF?style=for-the-badge&labelColor=0A0E1A" alt="PRs Welcome"/></a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls"><img src="https://img.shields.io/badge/PRs-welcome-00FFFF?style=for-the-badge&labelColor=0A0E1A" alt="PRs Welcome"/></a>
 </p>
 
 <p align="center">
@@ -226,7 +226,7 @@ Find proven cures & nourishing recipes.
 
 ```bash
 # Clone → Install → Run. Three steps to your first cure.
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo && pip install -r requirements.txt
 python -m cyberhuatuo serve
 # → Browser opens http://127.0.0.1:8000
@@ -374,37 +374,37 @@ Every prescription includes:
 
 | Framework | Cases | Status | Join 👇 |
 |-----------|:-----:|--------|---------|
-| LangChain | 10+ | 🟢 Live | [Add a case →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| MCP (Anthropic) | 5+ | 🟢 Live | [Add a case →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| CrewAI | 5+ | 🟢 Live | [Add a case →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| LlamaIndex | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| OpenAI Agents SDK | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| AutoGen | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| DSPy | — | 🔵 Planned | [Vote →](https://github.com/JinNing6/CyberHuaTuo/discussions) |
+| LangChain | 10+ | 🟢 Live | [Add a case →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| MCP (Anthropic) | 5+ | 🟢 Live | [Add a case →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| CrewAI | 5+ | 🟢 Live | [Add a case →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| LlamaIndex | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| OpenAI Agents SDK | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| AutoGen | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| DSPy | — | 🔵 Planned | [Vote →](https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions) |
 
 ### 🧠 AI / ML / Deep Learning
 
 | Technology | Cases | Status | Join 👇 |
 |-----------|:-----:|--------|---------|
-| PyTorch | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| Transformers (HuggingFace) | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| TensorFlow | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
+| PyTorch | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| Transformers (HuggingFace) | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| TensorFlow | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 ### 🏗️ Platform & Custom Agents
 
 | Platform | Cases | Status | Join 👇 |
 |-----------|:-----:|--------|---------|
-| GPTs / Coze / Dify | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
-| Custom-built Agents | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
+| GPTs / Coze / Dify | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
+| Custom-built Agents | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 ### 🌿 Nourishing Prescriptions (养生药方)
 
 | Category | Cases | Status | Join 👇 |
 |-----------|:-----:|--------|---------|
-| 🛡️ Security Sandbox | 2+ | 🟢 Live | [Add →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| 🔒 Security Hardening | 3+ | 🟢 Live | [Add →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| 🔗 Supply Chain Audit | 1 | 🟢 Live | [Add →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml) |
-| ⚡ Performance Tuning | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo/issues/new) |
+| 🛡️ Security Sandbox | 2+ | 🟢 Live | [Add →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| 🔒 Security Hardening | 3+ | 🟢 Live | [Add →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| 🔗 Supply Chain Audit | 1 | 🟢 Live | [Add →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| ⚡ Performance Tuning | — | 🟡 Accepting PRs | [Be the first →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 > **Every framework starts with one case. Every nourishing recipe starts with one insight. Yours could be the first.**
 
@@ -420,7 +420,7 @@ Every prescription includes:
 ### Option A: One-Click Launch
 
 ```bash
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo
 
 # Windows
@@ -435,7 +435,7 @@ chmod +x start.sh && ./start.sh
 ### Option B: Manual Setup
 
 ```bash
-git clone https://github.com/JinNing6/CyberHuaTuo.git
+git clone https://github.com/JinNing6/CyberHuaTuo-Plugin.git
 cd CyberHuaTuo
 
 pip install -r requirements.txt
@@ -586,7 +586,7 @@ A living dashboard tracking **what's breaking across the AI ecosystem right now*
 # Copy the Bot workflow to your repo
 mkdir -p .github/workflows
 curl -o .github/workflows/bot-prescribe.yml \
-  https://raw.githubusercontent.com/JinNing6/CyberHuaTuo/main/.github/workflows/bot-prescribe.yml
+  https://raw.githubusercontent.com/JinNing6/CyberHuaTuo-Plugin/main/.github/workflows/bot-prescribe.yml
 ```
 
 > 📖 **[Full installation guide →](docs/GITHUB_BOT.md)**
@@ -696,14 +696,14 @@ Add this to your AI tool's MCP config (Claude Desktop / Cursor / VS Code / Gemin
   "mcpServers": {
     "cyberhuatuo": {
       "command": "uvx",
-      "args": ["cyberhuatuo"]
+      "args": ["--from", "cyberhuatuo", "cyberhuatuo-mcp"]
     }
   }
 }
 ```
 
 > `uvx` auto-installs from PyPI and starts the MCP Server — zero manual setup.
-> For GitHub latest dev version, use: `"args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo", "cyberhuatuo-mcp"]`
+> For GitHub latest dev version, use: `"args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]`
 
 ### 🩺 Available MCP Tools
 
@@ -1014,13 +1014,13 @@ CyberHuaTuo maintains a series of **official alias packages** on PyPI, spanning 
 
 1. **🛡️ Namespace Protection** — Prevent typosquatting and impersonation in the AI-medical tooling space
 2. **🌍 Cultural Bridge** — No matter your context — whether you think "华佗", "Asclepius", or "Hippocrates" — you can find us
-3. **🔗 One Engine, Many Doors** — `uvx cyber-asclepius` works just as well as `uvx cyberhuatuo`
+3. **🔗 One Engine, Many Doors** — use `uvx --from cyberhuatuo cyberhuatuo-mcp` for the MCP server
 
 ### Our Open Stance
 
 We believe in the open-source spirit. These names are registered to **protect the ecosystem, not to hoard**.
 
-If you believe a name in our matrix would serve a better purpose for your project, **we're open to conversation**. [Open a Discussion →](https://github.com/JinNing6/CyberHuaTuo/discussions)
+If you believe a name in our matrix would serve a better purpose for your project, **we're open to conversation**. [Open a Discussion →](https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions)
 
 > *The greatest physicians never hoarded — they shared freely.*
 >
@@ -1089,9 +1089,9 @@ Encountered a mind-bending agent bug? **Your suffering has value.** Turn your 3a
 2. Check `CONTRIBUTING.md` for setup
 3. Submit a PR — every improvement heals thousands
 
-> 💡 **Your first step**: [Submit a Prescription →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml)
+> 💡 **Your first step**: [Submit a Prescription →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)
 >
-> 💡 **你的第一步**: [提交你的第一份药方 →](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml)
+> 💡 **你的第一步**: [提交你的第一份药方 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)
 
 ---
 
@@ -1175,27 +1175,27 @@ Today, 1,800 years later, AI developers face their own "ancient prescriptions" �
 
 ### All Contributors / 所有贡献者
 
-<a href="https://github.com/JinNing6/CyberHuaTuo/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=JinNing6/CyberHuaTuo&columns=12&anon=1" />
+<a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=JinNing6/CyberHuaTuo-Plugin&columns=12&anon=1" />
 </a>
 
 <sub>Made with [contrib.rocks](https://contrib.rocks) · Auto-updated by GitHub commits</sub>
 
 > **🩺 Want to see your avatar here?**
-> [Submit a prescription](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml), [open a PR](https://github.com/JinNing6/CyberHuaTuo/pulls), or [contribute a case](https://github.com/JinNing6/CyberHuaTuo/issues/new) — every contribution counts!
+> [Submit a prescription](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml), [open a PR](https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls), or [contribute a case](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) — every contribution counts!
 >
 > **想在这里看到你的头像？**
-> [提交药方](https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml)、[提 PR](https://github.com/JinNing6/CyberHuaTuo/pulls) 或 [贡献病例](https://github.com/JinNing6/CyberHuaTuo/issues/new)——每一份贡献都算数！
+> [提交药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)、[提 PR](https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls) 或 [贡献病例](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new)——每一份贡献都算数！
 
 ---
 
 ## ⭐ Star History
 
-<a href="https://star-history.com/#JinNing6/CyberHuaTuo&Date">
+<a href="https://star-history.com/#JinNing6/CyberHuaTuo-Plugin&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo-Plugin&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo-Plugin&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=JinNing6/CyberHuaTuo-Plugin&type=Date" />
  </picture>
 </a>
 
@@ -1220,10 +1220,10 @@ Today, 1,800 years later, AI developers face their own "ancient prescriptions" �
   <em>赛博炼丹，魂环永铸。</em><br>
   <em>这是技术对文明的致敬，也是文明对技术的赋能。</em>
   <br><br>
-  <a href="https://github.com/JinNing6/CyberHuaTuo">⭐ Star this repo — 让更多 AI 得到救治</a> · 
-  <a href="https://github.com/JinNing6/CyberHuaTuo/issues/new?template=prescription.yml">💊 Submit Your First Prescription — 提交你的第一份药方</a>
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin">⭐ Star this repo — 让更多 AI 得到救治</a> ·
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml">💊 Submit Your First Prescription — 提交你的第一份药方</a>
   <br>
-  <a href="https://github.com/JinNing6/CyberHuaTuo/discussions">💬 Join the Discussion — 加入讨论</a> · 
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions">💬 Join the Discussion — 加入讨论</a> ·
   <a href="https://discord.gg/cyberhuatuo">🎮 Discord Community</a>
   <br><br>
   <sub>Named after 华佗, the divine physician of ancient China — healer, inventor, and philosopher.</sub><br>
