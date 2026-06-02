@@ -1,0 +1,866 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" height="100%" style="background-color:#02050e; font-family:'Courier New', monospace;">
+    <defs>
+        <!-- Background Radial -->
+        <radialGradient id="bg-glow" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#051224" />
+            <stop offset="40%" stop-color="#020712" />
+            <stop offset="100%" stop-color="#010205" />
+        </radialGradient>
+        
+        <!-- Clean precise bloom without ugly anti-aliasing artifacts -->
+        <filter id="precise-bloom" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="glow1" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="glow2" />
+            <feMerge>
+                <feMergeNode in="glow2" />
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+
+        <filter id="core-bloom" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="g1" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="g2" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="g3" />
+            <feMerge>
+                <feMergeNode in="g3" />
+                <feMergeNode in="g2" />
+                <feMergeNode in="g1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+
+        <!-- Vertical Beam Gradient -->
+        <linearGradient id="beam-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00ffff" stop-opacity="0" />
+            <stop offset="20%" stop-color="#0055ff" stop-opacity="0.1" />
+            <stop offset="40%" stop-color="#00ffff" stop-opacity="0.5" />
+            <stop offset="48%" stop-color="#ffffff" stop-opacity="0.9" />
+            <stop offset="50%" stop-color="#ffffff" stop-opacity="1" />
+            <stop offset="52%" stop-color="#ffffff" stop-opacity="0.9" />
+            <stop offset="60%" stop-color="#00ffff" stop-opacity="0.5" />
+            <stop offset="80%" stop-color="#0055ff" stop-opacity="0.1" />
+            <stop offset="100%" stop-color="#00ffff" stop-opacity="0" />
+        </linearGradient>
+        
+        <radialGradient id="floor-fade" cx="50%" cy="50%" r="50%">
+            <stop offset="20%" stop-color="#ffffff" stop-opacity="1" />
+            <stop offset="80%" stop-color="#ffffff" stop-opacity="0" />
+        </radialGradient>
+        <mask id="floor-mask">
+            <rect x="-1500" y="-1500" width="3000" height="3000" fill="url(#floor-fade)" />
+        </mask>
+    </defs>
+
+    <rect width="100%" height="100%" fill="url(#bg-glow)" />
+    
+    <!-- Stars/Dust overlay -->
+    <g opacity="0.3">
+        <circle cx="1309" cy="114" r="0.5375161328340003" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.3751465918455965s" repeatCount="indefinite" begin="1.1160536907441139s"/></circle>
+        <circle cx="1508" cy="104" r="1.515049231134367" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.460897838524227s" repeatCount="indefinite" begin="0.43469416314708076s"/></circle>
+        <circle cx="864" cy="32" r="0.5446958291571056" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.093189874018017s" repeatCount="indefinite" begin="2.526776440516812s"/></circle>
+        <circle cx="54" cy="574" r="0.7982564760299727" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.249422188897616s" repeatCount="indefinite" begin="2.724707403016083s"/></circle>
+        <circle cx="451" cy="459" r="1.383898525813863" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.047152283389133s" repeatCount="indefinite" begin="0.032493798390305084s"/></circle>
+        <circle cx="326" cy="714" r="1.1339215972302539" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.389356708358209s" repeatCount="indefinite" begin="1.0765688105379438s"/></circle>
+        <circle cx="1563" cy="344" r="0.6533154147797731" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.899636503186687s" repeatCount="indefinite" begin="1.794896902423142s"/></circle>
+        <circle cx="704" cy="618" r="0.8967813008330197" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.217252214615486s" repeatCount="indefinite" begin="2.2971243983592124s"/></circle>
+        <circle cx="255" cy="387" r="0.6182002971176872" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.465891407035464s" repeatCount="indefinite" begin="3.1431989974722168s"/></circle>
+        <circle cx="740" cy="591" r="0.7884328853849898" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.347775744118705s" repeatCount="indefinite" begin="3.3063165928385505s"/></circle>
+        <circle cx="1583" cy="296" r="1.9778322809911366" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.276588605075735s" repeatCount="indefinite" begin="4.332418333776348s"/></circle>
+        <circle cx="778" cy="284" r="1.1801154535526532" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.170552133203752s" repeatCount="indefinite" begin="0.813270485780424s"/></circle>
+        <circle cx="727" cy="214" r="1.5052627615665402" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.509101567292756s" repeatCount="indefinite" begin="3.4177383276833364s"/></circle>
+        <circle cx="146" cy="623" r="1.4524674322955904" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.67069938514854s" repeatCount="indefinite" begin="1.2240546257571312s"/></circle>
+        <circle cx="946" cy="388" r="0.9049217401764169" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.626955898106089s" repeatCount="indefinite" begin="3.440809792166566s"/></circle>
+        <circle cx="449" cy="701" r="0.9864241016229828" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.841567887961861s" repeatCount="indefinite" begin="0.2796897377464197s"/></circle>
+        <circle cx="65" cy="824" r="0.9731795720886229" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.338704379878513s" repeatCount="indefinite" begin="1.0549142179316324s"/></circle>
+        <circle cx="1161" cy="897" r="1.5768714060784639" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.063132720270703s" repeatCount="indefinite" begin="2.4961562974613867s"/></circle>
+        <circle cx="1316" cy="469" r="0.7143073856630939" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.6981515976275317s" repeatCount="indefinite" begin="3.7249449104580328s"/></circle>
+        <circle cx="1103" cy="269" r="1.6205207174783869" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.142169136472898s" repeatCount="indefinite" begin="2.917664624728281s"/></circle>
+        <circle cx="741" cy="224" r="1.9959886669837414" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.691658724454279s" repeatCount="indefinite" begin="2.467579174448155s"/></circle>
+        <circle cx="1547" cy="48" r="1.7916543644999987" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.7642065967413054s" repeatCount="indefinite" begin="0.7999100086122513s"/></circle>
+        <circle cx="1393" cy="432" r="1.3946135460979607" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.9238365583725s" repeatCount="indefinite" begin="2.9794421418056407s"/></circle>
+        <circle cx="958" cy="541" r="0.8771211799727198" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.766129481076438s" repeatCount="indefinite" begin="4.712154306899049s"/></circle>
+        <circle cx="1393" cy="738" r="0.67182761447553" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.4239422506455455s" repeatCount="indefinite" begin="3.7543889979580487s"/></circle>
+        <circle cx="1574" cy="656" r="1.0102632095465678" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.4675006432371305s" repeatCount="indefinite" begin="0.7907887717233486s"/></circle>
+        <circle cx="6" cy="739" r="1.813779410567291" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.316945253755454s" repeatCount="indefinite" begin="2.5029305652514915s"/></circle>
+        <circle cx="365" cy="519" r="1.8689417590172308" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.352592849183835s" repeatCount="indefinite" begin="1.4922239572431644s"/></circle>
+        <circle cx="1308" cy="519" r="1.4134553171572586" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.764196342748174s" repeatCount="indefinite" begin="3.8125540003757563s"/></circle>
+        <circle cx="1104" cy="797" r="1.883651120927412" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.5924674719785115s" repeatCount="indefinite" begin="2.994722922301145s"/></circle>
+        <circle cx="1000" cy="19" r="0.6678015879813426" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.814903835904667s" repeatCount="indefinite" begin="4.926606894719061s"/></circle>
+        <circle cx="629" cy="245" r="0.5868877497412813" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.390047996020202s" repeatCount="indefinite" begin="4.73474722648997s"/></circle>
+        <circle cx="175" cy="749" r="1.2289856949749207" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.346062592341918s" repeatCount="indefinite" begin="3.8030108262861577s"/></circle>
+        <circle cx="1568" cy="128" r="0.6925871967496442" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.376411890493657s" repeatCount="indefinite" begin="2.7490179674747193s"/></circle>
+        <circle cx="542" cy="540" r="1.8086495616278861" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.115689701004435s" repeatCount="indefinite" begin="1.0589910272104102s"/></circle>
+        <circle cx="1104" cy="773" r="1.5948966036349643" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.00575531694848s" repeatCount="indefinite" begin="1.5585814565044749s"/></circle>
+        <circle cx="1375" cy="665" r="1.0601307537939406" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.4980704232147275s" repeatCount="indefinite" begin="2.257430706955649s"/></circle>
+        <circle cx="507" cy="230" r="0.5960388444895174" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.1051713000352943s" repeatCount="indefinite" begin="2.7696076121223987s"/></circle>
+        <circle cx="1205" cy="225" r="0.5107862584776404" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.53920473274227s" repeatCount="indefinite" begin="0.294368834381617s"/></circle>
+        <circle cx="138" cy="32" r="1.7894531003806198" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.354286749443267s" repeatCount="indefinite" begin="1.190023171844976s"/></circle>
+        <circle cx="1370" cy="497" r="0.8213552110556579" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.661559243625125s" repeatCount="indefinite" begin="4.677571202903355s"/></circle>
+        <circle cx="1169" cy="590" r="1.2090065394676912" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.923097121453766s" repeatCount="indefinite" begin="4.037484988833217s"/></circle>
+        <circle cx="389" cy="96" r="0.6453962213432349" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.155255912031888s" repeatCount="indefinite" begin="2.117893115099604s"/></circle>
+        <circle cx="956" cy="884" r="1.5936137741897758" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.366822736466508s" repeatCount="indefinite" begin="4.9208260568298305s"/></circle>
+        <circle cx="201" cy="62" r="1.1039319231534033" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.696513026974816s" repeatCount="indefinite" begin="4.308362681763955s"/></circle>
+        <circle cx="509" cy="196" r="0.7853133626612172" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.243067739165659s" repeatCount="indefinite" begin="2.109408199172021s"/></circle>
+        <circle cx="570" cy="473" r="0.8747096718231507" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.616327996380064s" repeatCount="indefinite" begin="2.215653725267285s"/></circle>
+        <circle cx="1127" cy="100" r="0.5758824942873219" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.996412342063633s" repeatCount="indefinite" begin="4.18013792539976s"/></circle>
+        <circle cx="191" cy="771" r="1.7730436016214581" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.83155555301957s" repeatCount="indefinite" begin="2.4282056272535923s"/></circle>
+        <circle cx="437" cy="885" r="1.1015604388241789" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.2931769998608944s" repeatCount="indefinite" begin="1.8948655948845805s"/></circle>
+        <circle cx="799" cy="271" r="1.889777110339" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.925646783970608s" repeatCount="indefinite" begin="1.4262461447346015s"/></circle>
+        <circle cx="1426" cy="748" r="1.9931340342390707" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.778841617028091s" repeatCount="indefinite" begin="3.59204137648163s"/></circle>
+        <circle cx="317" cy="194" r="0.9450617382418462" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.843546824845794s" repeatCount="indefinite" begin="2.8959014540812813s"/></circle>
+        <circle cx="1110" cy="62" r="1.621963340568596" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.2858263645374155s" repeatCount="indefinite" begin="2.920887972294856s"/></circle>
+        <circle cx="1029" cy="873" r="1.296689202905812" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.2843978986434226s" repeatCount="indefinite" begin="2.5391424849670923s"/></circle>
+        <circle cx="380" cy="70" r="1.3925526596750415" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.376062768020451s" repeatCount="indefinite" begin="1.176019475004656s"/></circle>
+        <circle cx="245" cy="583" r="0.8693230216829373" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.972595767667206s" repeatCount="indefinite" begin="3.0969075516605153s"/></circle>
+        <circle cx="858" cy="673" r="1.375508433936837" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.613913577659794s" repeatCount="indefinite" begin="4.6735312886821365s"/></circle>
+        <circle cx="418" cy="685" r="1.5742877011841223" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.19342976307923s" repeatCount="indefinite" begin="1.9789292339562725s"/></circle>
+        <circle cx="1375" cy="660" r="0.9499956196981434" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.58088598135927s" repeatCount="indefinite" begin="3.7593224620720105s"/></circle>
+        <circle cx="148" cy="9" r="1.1874282839278791" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.992272204272211s" repeatCount="indefinite" begin="4.980482239275473s"/></circle>
+        <circle cx="150" cy="550" r="0.8197314684005605" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.326002073752006s" repeatCount="indefinite" begin="4.666296889968545s"/></circle>
+        <circle cx="140" cy="900" r="0.866426624762197" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.424936956083283s" repeatCount="indefinite" begin="2.1909228650385493s"/></circle>
+        <circle cx="1112" cy="720" r="0.9537757144683348" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.919266551257412s" repeatCount="indefinite" begin="4.035499716325711s"/></circle>
+        <circle cx="1083" cy="8" r="1.5017948055688755" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.773011412448389s" repeatCount="indefinite" begin="4.658780197180387s"/></circle>
+        <circle cx="212" cy="899" r="0.7014366715900515" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="3.577143352095511s" repeatCount="indefinite" begin="0.5351798885470882s"/></circle>
+        <circle cx="1133" cy="159" r="0.9085223184722244" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.02414913515112s" repeatCount="indefinite" begin="3.5880609356939894s"/></circle>
+        <circle cx="416" cy="703" r="1.4513569383276197" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.319919508152047s" repeatCount="indefinite" begin="2.4426592607468827s"/></circle>
+        <circle cx="104" cy="94" r="1.4514266709637913" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.146740446861096s" repeatCount="indefinite" begin="0.2204338089952501s"/></circle>
+        <circle cx="683" cy="789" r="0.6962294910525534" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.89898976914418s" repeatCount="indefinite" begin="0.8079098813694308s"/></circle>
+        <circle cx="904" cy="564" r="1.558501170139986" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.804534323873732s" repeatCount="indefinite" begin="0.559369402946675s"/></circle>
+        <circle cx="1415" cy="152" r="1.3183854338082834" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.172975099430084s" repeatCount="indefinite" begin="2.91254783244897s"/></circle>
+        <circle cx="303" cy="440" r="0.6911682789232081" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.541291749650668s" repeatCount="indefinite" begin="4.49490744371295s"/></circle>
+        <circle cx="81" cy="366" r="0.8151148075096311" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.247648696114622s" repeatCount="indefinite" begin="0.5139681083589281s"/></circle>
+        <circle cx="1597" cy="573" r="1.8262020521765134" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="5.031886949160584s" repeatCount="indefinite" begin="3.103307550753564s"/></circle>
+        <circle cx="316" cy="242" r="1.796908544329946" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.881030164654814s" repeatCount="indefinite" begin="4.053858599701984s"/></circle>
+        <circle cx="844" cy="25" r="0.7690409951273105" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.622436476207728s" repeatCount="indefinite" begin="3.9119324807381584s"/></circle>
+        <circle cx="843" cy="821" r="1.504860693932295" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="6.67528769413938s" repeatCount="indefinite" begin="1.2408362055870037s"/></circle>
+        <circle cx="326" cy="806" r="1.5519172822098688" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="4.912708612984671s" repeatCount="indefinite" begin="0.19362303832893224s"/></circle>
+        <circle cx="963" cy="227" r="0.7993592450386278" fill="#fff"><animate attributeName="opacity" values="0.1;0.8;0.1" dur="7.592259506147475s" repeatCount="indefinite" begin="1.7482921222295933s"/></circle>
+    </g>
+
+    <g transform="translate(800.0, 550.0)">
+        <g transform="scale(1, 0.4)">
+            <!-- Dense Floor Grid -->
+            <g mask="url(#floor-mask)" stroke="#003366" stroke-width="1" opacity="0.4">
+                <circle cx="0" cy="0" r="50" />
+                <circle cx="0" cy="0" r="100" />
+                <circle cx="0" cy="0" r="150" />
+                <circle cx="0" cy="0" r="200" stroke-width="2" stroke="#0055aa" />
+                <circle cx="0" cy="0" r="250" />
+                <circle cx="0" cy="0" r="300" />
+                <circle cx="0" cy="0" r="350" />
+                <circle cx="0" cy="0" r="400" stroke-width="2" stroke="#0055aa" />
+                <circle cx="0" cy="0" r="450" />
+                <circle cx="0" cy="0" r="500" />
+                <circle cx="0" cy="0" r="550" />
+                <circle cx="0" cy="0" r="600" stroke-width="2" stroke="#0055aa" />
+                <circle cx="0" cy="0" r="650" />
+                <circle cx="0" cy="0" r="700" />
+                <circle cx="0" cy="0" r="750" />
+                <circle cx="0" cy="0" r="800" stroke-width="2" stroke="#0055aa" />
+                <circle cx="0" cy="0" r="850" />
+                <circle cx="0" cy="0" r="900" />
+                <circle cx="0" cy="0" r="950" />
+                <circle cx="0" cy="0" r="1000" stroke-width="2" stroke="#0055aa" />
+                <circle cx="0" cy="0" r="1050" />
+                <circle cx="0" cy="0" r="1100" />
+                <circle cx="0" cy="0" r="1150" />
+                <line x1="0" y1="0" x2="1200.0" y2="0.0" stroke-width="2" stroke="#0088ff" />
+                <line x1="0" y1="0" x2="1159.110991546882" y2="310.5828541230249" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="1039.2304845413264" y2="599.9999999999999" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="848.5281374238571" y2="848.5281374238571" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="600.0000000000001" y2="1039.2304845413264" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="310.5828541230249" y2="1159.110991546882" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="7.347880794884119e-14" y2="1200.0" stroke-width="2" stroke="#0088ff" />
+                <line x1="0" y1="0" x2="-310.582854123025" y2="1159.110991546882" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-599.9999999999998" y2="1039.2304845413264" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-848.528137423857" y2="848.5281374238571" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-1039.2304845413264" y2="599.9999999999999" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-1159.110991546882" y2="310.58285412302524" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-1200.0" y2="1.4695761589768238e-13" stroke-width="2" stroke="#0088ff" />
+                <line x1="0" y1="0" x2="-1159.110991546882" y2="-310.58285412302496" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-1039.2304845413264" y2="-600.0000000000001" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-848.5281374238572" y2="-848.528137423857" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-600.0000000000006" y2="-1039.2304845413262" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-310.58285412302473" y2="-1159.110991546882" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="-2.2043642384652357e-13" y2="-1200.0" stroke-width="2" stroke="#0088ff" />
+                <line x1="0" y1="0" x2="310.58285412302433" y2="-1159.1109915468821" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="600.0000000000001" y2="-1039.2304845413264" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="848.5281374238568" y2="-848.5281374238572" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="1039.230484541326" y2="-600.0000000000006" stroke-dasharray="10 10"/>
+                <line x1="0" y1="0" x2="1159.110991546882" y2="-310.58285412302484" stroke-dasharray="10 10"/>
+            </g>
+
+            <g>
+                <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="120s" repeatCount="indefinite" />
+                <circle cx="0" cy="0" r="950" fill="none" stroke="#004488" stroke-width="40" stroke-dasharray="100 40 20 40" opacity="0.3" />
+                <circle cx="0" cy="0" r="920" fill="none" stroke="#00ffff" stroke-width="2" stroke-dasharray="5 15 100 500" opacity="0.5" />
+            </g>
+
+            <!-- Hash Ring Outer -->
+            <g>
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="90s" repeatCount="indefinite" />
+<g fill="none" stroke="#0088ff" stroke-width="1.5" opacity="0.4">
+    <line x1="780.0" y1="0.0" x2="795.0" y2="0.0" />
+    <line x1="779.5" y1="27.2" x2="794.5" y2="27.7" />
+    <line x1="778.1" y1="54.4" x2="793.1" y2="55.5" />
+    <line x1="775.7" y1="81.5" x2="790.6" y2="83.1" />
+    <line x1="772.4" y1="108.6" x2="787.3" y2="110.6" />
+    <line x1="768.2" y1="135.4" x2="782.9" y2="138.1" />
+    <line x1="763.0" y1="162.2" x2="777.6" y2="165.3" />
+    <line x1="756.8" y1="188.7" x2="771.4" y2="192.3" />
+    <line x1="749.8" y1="215.0" x2="764.2" y2="219.1" />
+    <line x1="741.8" y1="241.0" x2="756.1" y2="245.7" />
+    <line x1="733.0" y1="266.8" x2="747.1" y2="271.9" />
+    <line x1="723.2" y1="292.2" x2="737.1" y2="297.8" />
+    <line x1="712.6" y1="317.3" x2="726.3" y2="323.4" />
+    <line x1="701.1" y1="341.9" x2="714.5" y2="348.5" />
+    <line x1="688.7" y1="366.2" x2="701.9" y2="373.2" />
+    <line x1="675.5" y1="390.0" x2="688.5" y2="397.5" />
+    <line x1="661.5" y1="413.3" x2="674.2" y2="421.3" />
+    <line x1="646.6" y1="436.2" x2="659.1" y2="444.6" />
+    <line x1="631.0" y1="458.5" x2="643.2" y2="467.3" />
+    <line x1="614.6" y1="480.2" x2="626.5" y2="489.5" />
+    <line x1="597.5" y1="501.4" x2="609.0" y2="511.0" />
+    <line x1="579.7" y1="521.9" x2="590.8" y2="532.0" />
+    <line x1="561.1" y1="541.8" x2="571.9" y2="552.3" />
+    <line x1="541.8" y1="561.1" x2="552.3" y2="571.9" />
+    <line x1="521.9" y1="579.7" x2="532.0" y2="590.8" />
+    <line x1="501.4" y1="597.5" x2="511.0" y2="609.0" />
+    <line x1="480.2" y1="614.6" x2="489.5" y2="626.5" />
+    <line x1="458.5" y1="631.0" x2="467.3" y2="643.2" />
+    <line x1="436.2" y1="646.6" x2="444.6" y2="659.1" />
+    <line x1="413.3" y1="661.5" x2="421.3" y2="674.2" />
+    <line x1="390.0" y1="675.5" x2="397.5" y2="688.5" />
+    <line x1="366.2" y1="688.7" x2="373.2" y2="701.9" />
+    <line x1="341.9" y1="701.1" x2="348.5" y2="714.5" />
+    <line x1="317.3" y1="712.6" x2="323.4" y2="726.3" />
+    <line x1="292.2" y1="723.2" x2="297.8" y2="737.1" />
+    <line x1="266.8" y1="733.0" x2="271.9" y2="747.1" />
+    <line x1="241.0" y1="741.8" x2="245.7" y2="756.1" />
+    <line x1="215.0" y1="749.8" x2="219.1" y2="764.2" />
+    <line x1="188.7" y1="756.8" x2="192.3" y2="771.4" />
+    <line x1="162.2" y1="763.0" x2="165.3" y2="777.6" />
+    <line x1="135.4" y1="768.2" x2="138.1" y2="782.9" />
+    <line x1="108.6" y1="772.4" x2="110.6" y2="787.3" />
+    <line x1="81.5" y1="775.7" x2="83.1" y2="790.6" />
+    <line x1="54.4" y1="778.1" x2="55.5" y2="793.1" />
+    <line x1="27.2" y1="779.5" x2="27.7" y2="794.5" />
+    <line x1="0.0" y1="780.0" x2="0.0" y2="795.0" />
+    <line x1="-27.2" y1="779.5" x2="-27.7" y2="794.5" />
+    <line x1="-54.4" y1="778.1" x2="-55.5" y2="793.1" />
+    <line x1="-81.5" y1="775.7" x2="-83.1" y2="790.6" />
+    <line x1="-108.6" y1="772.4" x2="-110.6" y2="787.3" />
+    <line x1="-135.4" y1="768.2" x2="-138.1" y2="782.9" />
+    <line x1="-162.2" y1="763.0" x2="-165.3" y2="777.6" />
+    <line x1="-188.7" y1="756.8" x2="-192.3" y2="771.4" />
+    <line x1="-215.0" y1="749.8" x2="-219.1" y2="764.2" />
+    <line x1="-241.0" y1="741.8" x2="-245.7" y2="756.1" />
+    <line x1="-266.8" y1="733.0" x2="-271.9" y2="747.1" />
+    <line x1="-292.2" y1="723.2" x2="-297.8" y2="737.1" />
+    <line x1="-317.3" y1="712.6" x2="-323.4" y2="726.3" />
+    <line x1="-341.9" y1="701.1" x2="-348.5" y2="714.5" />
+    <line x1="-366.2" y1="688.7" x2="-373.2" y2="701.9" />
+    <line x1="-390.0" y1="675.5" x2="-397.5" y2="688.5" />
+    <line x1="-413.3" y1="661.5" x2="-421.3" y2="674.2" />
+    <line x1="-436.2" y1="646.6" x2="-444.6" y2="659.1" />
+    <line x1="-458.5" y1="631.0" x2="-467.3" y2="643.2" />
+    <line x1="-480.2" y1="614.6" x2="-489.5" y2="626.5" />
+    <line x1="-501.4" y1="597.5" x2="-511.0" y2="609.0" />
+    <line x1="-521.9" y1="579.7" x2="-532.0" y2="590.8" />
+    <line x1="-541.8" y1="561.1" x2="-552.3" y2="571.9" />
+    <line x1="-561.1" y1="541.8" x2="-571.9" y2="552.3" />
+    <line x1="-579.7" y1="521.9" x2="-590.8" y2="532.0" />
+    <line x1="-597.5" y1="501.4" x2="-609.0" y2="511.0" />
+    <line x1="-614.6" y1="480.2" x2="-626.5" y2="489.5" />
+    <line x1="-631.0" y1="458.5" x2="-643.2" y2="467.3" />
+    <line x1="-646.6" y1="436.2" x2="-659.1" y2="444.6" />
+    <line x1="-661.5" y1="413.3" x2="-674.2" y2="421.3" />
+    <line x1="-675.5" y1="390.0" x2="-688.5" y2="397.5" />
+    <line x1="-688.7" y1="366.2" x2="-701.9" y2="373.2" />
+    <line x1="-701.1" y1="341.9" x2="-714.5" y2="348.5" />
+    <line x1="-712.6" y1="317.3" x2="-726.3" y2="323.4" />
+    <line x1="-723.2" y1="292.2" x2="-737.1" y2="297.8" />
+    <line x1="-733.0" y1="266.8" x2="-747.1" y2="271.9" />
+    <line x1="-741.8" y1="241.0" x2="-756.1" y2="245.7" />
+    <line x1="-749.8" y1="215.0" x2="-764.2" y2="219.1" />
+    <line x1="-756.8" y1="188.7" x2="-771.4" y2="192.3" />
+    <line x1="-763.0" y1="162.2" x2="-777.6" y2="165.3" />
+    <line x1="-768.2" y1="135.4" x2="-782.9" y2="138.1" />
+    <line x1="-772.4" y1="108.6" x2="-787.3" y2="110.6" />
+    <line x1="-775.7" y1="81.5" x2="-790.6" y2="83.1" />
+    <line x1="-778.1" y1="54.4" x2="-793.1" y2="55.5" />
+    <line x1="-779.5" y1="27.2" x2="-794.5" y2="27.7" />
+    <line x1="-780.0" y1="0.0" x2="-795.0" y2="0.0" />
+    <line x1="-779.5" y1="-27.2" x2="-794.5" y2="-27.7" />
+    <line x1="-778.1" y1="-54.4" x2="-793.1" y2="-55.5" />
+    <line x1="-775.7" y1="-81.5" x2="-790.6" y2="-83.1" />
+    <line x1="-772.4" y1="-108.6" x2="-787.3" y2="-110.6" />
+    <line x1="-768.2" y1="-135.4" x2="-782.9" y2="-138.1" />
+    <line x1="-763.0" y1="-162.2" x2="-777.6" y2="-165.3" />
+    <line x1="-756.8" y1="-188.7" x2="-771.4" y2="-192.3" />
+    <line x1="-749.8" y1="-215.0" x2="-764.2" y2="-219.1" />
+    <line x1="-741.8" y1="-241.0" x2="-756.1" y2="-245.7" />
+    <line x1="-733.0" y1="-266.8" x2="-747.1" y2="-271.9" />
+    <line x1="-723.2" y1="-292.2" x2="-737.1" y2="-297.8" />
+    <line x1="-712.6" y1="-317.3" x2="-726.3" y2="-323.4" />
+    <line x1="-701.1" y1="-341.9" x2="-714.5" y2="-348.5" />
+    <line x1="-688.7" y1="-366.2" x2="-701.9" y2="-373.2" />
+    <line x1="-675.5" y1="-390.0" x2="-688.5" y2="-397.5" />
+    <line x1="-661.5" y1="-413.3" x2="-674.2" y2="-421.3" />
+    <line x1="-646.6" y1="-436.2" x2="-659.1" y2="-444.6" />
+    <line x1="-631.0" y1="-458.5" x2="-643.2" y2="-467.3" />
+    <line x1="-614.6" y1="-480.2" x2="-626.5" y2="-489.5" />
+    <line x1="-597.5" y1="-501.4" x2="-609.0" y2="-511.0" />
+    <line x1="-579.7" y1="-521.9" x2="-590.8" y2="-532.0" />
+    <line x1="-561.1" y1="-541.8" x2="-571.9" y2="-552.3" />
+    <line x1="-541.8" y1="-561.1" x2="-552.3" y2="-571.9" />
+    <line x1="-521.9" y1="-579.7" x2="-532.0" y2="-590.8" />
+    <line x1="-501.4" y1="-597.5" x2="-511.0" y2="-609.0" />
+    <line x1="-480.2" y1="-614.6" x2="-489.5" y2="-626.5" />
+    <line x1="-458.5" y1="-631.0" x2="-467.3" y2="-643.2" />
+    <line x1="-436.2" y1="-646.6" x2="-444.6" y2="-659.1" />
+    <line x1="-413.3" y1="-661.5" x2="-421.3" y2="-674.2" />
+    <line x1="-390.0" y1="-675.5" x2="-397.5" y2="-688.5" />
+    <line x1="-366.2" y1="-688.7" x2="-373.2" y2="-701.9" />
+    <line x1="-341.9" y1="-701.1" x2="-348.5" y2="-714.5" />
+    <line x1="-317.3" y1="-712.6" x2="-323.4" y2="-726.3" />
+    <line x1="-292.2" y1="-723.2" x2="-297.8" y2="-737.1" />
+    <line x1="-266.8" y1="-733.0" x2="-271.9" y2="-747.1" />
+    <line x1="-241.0" y1="-741.8" x2="-245.7" y2="-756.1" />
+    <line x1="-215.0" y1="-749.8" x2="-219.1" y2="-764.2" />
+    <line x1="-188.7" y1="-756.8" x2="-192.3" y2="-771.4" />
+    <line x1="-162.2" y1="-763.0" x2="-165.3" y2="-777.6" />
+    <line x1="-135.4" y1="-768.2" x2="-138.1" y2="-782.9" />
+    <line x1="-108.6" y1="-772.4" x2="-110.6" y2="-787.3" />
+    <line x1="-81.5" y1="-775.7" x2="-83.1" y2="-790.6" />
+    <line x1="-54.4" y1="-778.1" x2="-55.5" y2="-793.1" />
+    <line x1="-27.2" y1="-779.5" x2="-27.7" y2="-794.5" />
+    <line x1="-0.0" y1="-780.0" x2="-0.0" y2="-795.0" />
+    <line x1="27.2" y1="-779.5" x2="27.7" y2="-794.5" />
+    <line x1="54.4" y1="-778.1" x2="55.5" y2="-793.1" />
+    <line x1="81.5" y1="-775.7" x2="83.1" y2="-790.6" />
+    <line x1="108.6" y1="-772.4" x2="110.6" y2="-787.3" />
+    <line x1="135.4" y1="-768.2" x2="138.1" y2="-782.9" />
+    <line x1="162.2" y1="-763.0" x2="165.3" y2="-777.6" />
+    <line x1="188.7" y1="-756.8" x2="192.3" y2="-771.4" />
+    <line x1="215.0" y1="-749.8" x2="219.1" y2="-764.2" />
+    <line x1="241.0" y1="-741.8" x2="245.7" y2="-756.1" />
+    <line x1="266.8" y1="-733.0" x2="271.9" y2="-747.1" />
+    <line x1="292.2" y1="-723.2" x2="297.8" y2="-737.1" />
+    <line x1="317.3" y1="-712.6" x2="323.4" y2="-726.3" />
+    <line x1="341.9" y1="-701.1" x2="348.5" y2="-714.5" />
+    <line x1="366.2" y1="-688.7" x2="373.2" y2="-701.9" />
+    <line x1="390.0" y1="-675.5" x2="397.5" y2="-688.5" />
+    <line x1="413.3" y1="-661.5" x2="421.3" y2="-674.2" />
+    <line x1="436.2" y1="-646.6" x2="444.6" y2="-659.1" />
+    <line x1="458.5" y1="-631.0" x2="467.3" y2="-643.2" />
+    <line x1="480.2" y1="-614.6" x2="489.5" y2="-626.5" />
+    <line x1="501.4" y1="-597.5" x2="511.0" y2="-609.0" />
+    <line x1="521.9" y1="-579.7" x2="532.0" y2="-590.8" />
+    <line x1="541.8" y1="-561.1" x2="552.3" y2="-571.9" />
+    <line x1="561.1" y1="-541.8" x2="571.9" y2="-552.3" />
+    <line x1="579.7" y1="-521.9" x2="590.8" y2="-532.0" />
+    <line x1="597.5" y1="-501.4" x2="609.0" y2="-511.0" />
+    <line x1="614.6" y1="-480.2" x2="626.5" y2="-489.5" />
+    <line x1="631.0" y1="-458.5" x2="643.2" y2="-467.3" />
+    <line x1="646.6" y1="-436.2" x2="659.1" y2="-444.6" />
+    <line x1="661.5" y1="-413.3" x2="674.2" y2="-421.3" />
+    <line x1="675.5" y1="-390.0" x2="688.5" y2="-397.5" />
+    <line x1="688.7" y1="-366.2" x2="701.9" y2="-373.2" />
+    <line x1="701.1" y1="-341.9" x2="714.5" y2="-348.5" />
+    <line x1="712.6" y1="-317.3" x2="726.3" y2="-323.4" />
+    <line x1="723.2" y1="-292.2" x2="737.1" y2="-297.8" />
+    <line x1="733.0" y1="-266.8" x2="747.1" y2="-271.9" />
+    <line x1="741.8" y1="-241.0" x2="756.1" y2="-245.7" />
+    <line x1="749.8" y1="-215.0" x2="764.2" y2="-219.1" />
+    <line x1="756.8" y1="-188.7" x2="771.4" y2="-192.3" />
+    <line x1="763.0" y1="-162.2" x2="777.6" y2="-165.3" />
+    <line x1="768.2" y1="-135.4" x2="782.9" y2="-138.1" />
+    <line x1="772.4" y1="-108.6" x2="787.3" y2="-110.6" />
+    <line x1="775.7" y1="-81.5" x2="790.6" y2="-83.1" />
+    <line x1="778.1" y1="-54.4" x2="793.1" y2="-55.5" />
+    <line x1="779.5" y1="-27.2" x2="794.5" y2="-27.7" />
+</g>
+<g fill="none" stroke="#00ffff" stroke-width="3" opacity="0.6">
+    <line x1="780.0" y1="0.0" x2="805.0" y2="0.0" />
+    <line x1="768.2" y1="135.4" x2="792.8" y2="139.8" />
+    <line x1="733.0" y1="266.8" x2="756.5" y2="275.3" />
+    <line x1="675.5" y1="390.0" x2="697.2" y2="402.5" />
+    <line x1="597.5" y1="501.4" x2="616.7" y2="517.4" />
+    <line x1="501.4" y1="597.5" x2="517.4" y2="616.7" />
+    <line x1="390.0" y1="675.5" x2="402.5" y2="697.2" />
+    <line x1="266.8" y1="733.0" x2="275.3" y2="756.5" />
+    <line x1="135.4" y1="768.2" x2="139.8" y2="792.8" />
+    <line x1="0.0" y1="780.0" x2="0.0" y2="805.0" />
+    <line x1="-135.4" y1="768.2" x2="-139.8" y2="792.8" />
+    <line x1="-266.8" y1="733.0" x2="-275.3" y2="756.5" />
+    <line x1="-390.0" y1="675.5" x2="-402.5" y2="697.2" />
+    <line x1="-501.4" y1="597.5" x2="-517.4" y2="616.7" />
+    <line x1="-597.5" y1="501.4" x2="-616.7" y2="517.4" />
+    <line x1="-675.5" y1="390.0" x2="-697.2" y2="402.5" />
+    <line x1="-733.0" y1="266.8" x2="-756.5" y2="275.3" />
+    <line x1="-768.2" y1="135.4" x2="-792.8" y2="139.8" />
+    <line x1="-780.0" y1="0.0" x2="-805.0" y2="0.0" />
+    <line x1="-768.2" y1="-135.4" x2="-792.8" y2="-139.8" />
+    <line x1="-733.0" y1="-266.8" x2="-756.5" y2="-275.3" />
+    <line x1="-675.5" y1="-390.0" x2="-697.2" y2="-402.5" />
+    <line x1="-597.5" y1="-501.4" x2="-616.7" y2="-517.4" />
+    <line x1="-501.4" y1="-597.5" x2="-517.4" y2="-616.7" />
+    <line x1="-390.0" y1="-675.5" x2="-402.5" y2="-697.2" />
+    <line x1="-266.8" y1="-733.0" x2="-275.3" y2="-756.5" />
+    <line x1="-135.4" y1="-768.2" x2="-139.8" y2="-792.8" />
+    <line x1="-0.0" y1="-780.0" x2="-0.0" y2="-805.0" />
+    <line x1="135.4" y1="-768.2" x2="139.8" y2="-792.8" />
+    <line x1="266.8" y1="-733.0" x2="275.3" y2="-756.5" />
+    <line x1="390.0" y1="-675.5" x2="402.5" y2="-697.2" />
+    <line x1="501.4" y1="-597.5" x2="517.4" y2="-616.7" />
+    <line x1="597.5" y1="-501.4" x2="616.7" y2="-517.4" />
+    <line x1="675.5" y1="-390.0" x2="697.2" y2="-402.5" />
+    <line x1="733.0" y1="-266.8" x2="756.5" y2="-275.3" />
+    <line x1="768.2" y1="-135.4" x2="792.8" y2="-139.8" />
+</g>
+            </g>
+
+            <g>
+                <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="45s" repeatCount="indefinite" />
+                <circle cx="0" cy="0" r="680" fill="none" stroke="#00aaff" stroke-width="4" stroke-dasharray="300 150 50 150" opacity="0.6" />
+                <circle cx="0" cy="0" r="660" fill="none" stroke="#ff0055" stroke-width="2" stroke-dasharray="10 30" opacity="0.5" />
+            </g>
+            <!-- 3D Hollow Cylinder Effect -->
+            <g stroke="#00ffff" fill="none" opacity="0.3">
+            </g>
+
+            <!-- Bagua Ring -->
+            <g>
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite" />
+                <circle cx="0" cy="0" r="540" fill="none" stroke="#0055aa" stroke-width="30" opacity="0.2" />
+                <circle cx="0" cy="0" r="555" fill="none" stroke="#00ffff" stroke-width="1" stroke-dasharray="2 10" opacity="0.5" />
+                <circle cx="0" cy="0" r="525" fill="none" stroke="#00ffff" stroke-width="1" stroke-dasharray="2 10" opacity="0.5" />
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(540.0, 0.0) rotate(90)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☰</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">QIAN</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(381.8, 381.8) rotate(135)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☱</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">DUI</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(0.0, 540.0) rotate(180)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☲</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">LI</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(-381.8, 381.8) rotate(225)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☳</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">ZHEN</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(-540.0, 0.0) rotate(270)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☴</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">XUN</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(-381.8, -381.8) rotate(315)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☵</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">KAN</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(-0.0, -540.0) rotate(360)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☶</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">GEN</text>
+                    </g>
+                </g>
+
+                <!-- Pre-rotate text so it sits tangentially, and scale Y to fix flattening -->
+                <g transform="translate(381.8, -381.8) rotate(405)">
+                    <!-- Undo the 0.4 scale on the text to make it stand up nicely -->
+                    <g transform="scale(1, 2.5)">
+                        <text font-size="40" font-weight="bold" fill="#00ffff" text-anchor="middle" dominant-baseline="central" filter="url(#precise-bloom)">☷</text>
+                        <text y="-30" font-size="12" fill="#00aaff" text-anchor="middle" dominant-baseline="central" letter-spacing="2">KUN</text>
+                    </g>
+                </g>
+                <polygon points="450.0,0.0 318.2,318.2 0.0,450.0 -318.2,318.2 -450.0,0.0 -318.2,-318.2 -0.0,-450.0 318.2,-318.2 " fill="none" stroke="#00ffff" stroke-width="3" opacity="0.4" filter="url(#precise-bloom)"/>
+            </g>
+
+            <!-- Inner Data Tracker -->
+            <g>
+                <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="15s" repeatCount="indefinite" />
+                <circle cx="0" cy="0" r="320" fill="none" stroke="#ffffff" stroke-width="1" stroke-dasharray="5 20 50 100" opacity="0.6" />
+                <circle cx="0" cy="0" r="300" fill="none" stroke="#00ffff" stroke-width="12" stroke-dasharray="0 100 200 400" opacity="0.8" filter="url(#precise-bloom)"/>
+                <circle cx="300" cy="0" r="8" fill="#ffffff" filter="url(#precise-bloom)"/>
+                <circle cx="-300" cy="0" r="6" fill="#ff0055" filter="url(#precise-bloom)"/>
+            </g>
+            
+            <!-- Central Tai Chi Reactor -->
+            <circle cx="0" cy="0" r="160" fill="#00ffff" opacity="0.05" filter="url(#core-bloom)"/>
+            <circle cx="0" cy="0" r="150" fill="none" stroke="#ffffff" stroke-width="4" stroke-dasharray="2 10" opacity="0.8"/>
+            <g>
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite" />
+                <path d="M 0 -130 A 130 130 0 0 1 0 130 A 65 65 0 0 0 0 0 A 65 65 0 0 1 0 -130" fill="#00ffff" opacity="0.9" filter="url(#precise-bloom)"/>
+                <circle cx="0" cy="-65" r="15" fill="#000000" />
+                <circle cx="0" cy="65" r="15" fill="#ffffff" filter="url(#precise-bloom)" />
+            </g>
+        </g> <!-- End flattened isometric floor -->
+
+        <!-- Vertical Hologram Beam -->
+        <g>
+            <!-- Back glow -->
+            <ellipse cx="0" cy="0" rx="400" ry="80" fill="#00ffff" opacity="0.1" filter="url(#core-bloom)" />
+            <ellipse cx="0" cy="0" rx="150" ry="30" fill="#ffffff" opacity="0.4" filter="url(#core-bloom)" />
+            
+            <!-- The Beam -->
+            <rect x="-250" y="-1200" width="500" height="1200" fill="url(#beam-grad)" opacity="0.7">
+                <animate attributeName="opacity" values="0.6;0.8;0.7;0.9;0.6" dur="0.2s" repeatCount="indefinite" />
+            </rect>
+            <!-- Solid Core -->
+            <rect x="-5" y="-1200" width="10" height="1200" fill="#ffffff" filter="url(#precise-bloom)" />
+            <rect x="-2" y="-1200" width="4" height="1200" fill="#ffffff" />
+            
+            <!-- Floating Ascending Code/Particles inside the beam -->
+            <g font-size="12" fill="#00ffff" opacity="0.8">
+                <circle cx="-34" cy="0" r="3.593863914259134" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.1500829568715725s" begin="0.6687706416174269s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.1500829568715725s" begin="0.6687706416174269s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-115" cy="0" r="4.565926954430511" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.1978124818046787s" begin="2.9006673121450834s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.1978124818046787s" begin="2.9006673121450834s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="124" cy="0" r="5.508153646302241" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="1.5690013377990897s" begin="0.9934496046432212s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="1.5690013377990897s" begin="0.9934496046432212s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-59" cy="0" r="2.153028789413051" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.9588764322077177s" begin="1.7417692012161234s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.9588764322077177s" begin="1.7417692012161234s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="72" cy="0" r="3.745575535482432" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.466070445509205s" begin="1.0370613350394007s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.466070445509205s" begin="1.0370613350394007s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-91" cy="0" r="3.0188900245543278" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.9414701087414987s" begin="1.1555863000341815s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.9414701087414987s" begin="1.1555863000341815s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="73" cy="0" r="4.153807988371168" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.813937913747707s" begin="0.0050738346558883984s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.813937913747707s" begin="0.0050738346558883984s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-50" cy="0" r="4.656950739645089" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="1.6749345278157755s" begin="1.0926644153437925s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="1.6749345278157755s" begin="1.0926644153437925s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="10" cy="0" r="5.6001873403883655" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="1.8115632891609192s" begin="1.9901624287966329s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="1.8115632891609192s" begin="1.9901624287966329s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="8" cy="0" r="4.788833656777596" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.3154572621434997s" begin="2.000678712317189s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.3154572621434997s" begin="2.000678712317189s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-85" cy="0" r="3.516581108490167" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.1623235855319285s" begin="0.5755202789704424s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.1623235855319285s" begin="0.5755202789704424s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-61" cy="0" r="4.191748852542792" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.2523746864139134s" begin="1.8465447478541415s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.2523746864139134s" begin="1.8465447478541415s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="5" cy="0" r="4.319939124782728" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.5747203749745866s" begin="0.8607411506067816s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.5747203749745866s" begin="0.8607411506067816s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="14" cy="0" r="2.854805603956401" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.6053994982620186s" begin="1.3949645707410427s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.6053994982620186s" begin="1.3949645707410427s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-64" cy="0" r="4.6554153452199944" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.2094660124825687s" begin="1.9765522349952653s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.2094660124825687s" begin="1.9765522349952653s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="21" cy="0" r="2.939474394106736" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.879999156131188s" begin="0.280161600226688s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.879999156131188s" begin="0.280161600226688s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-35" cy="0" r="2.1848548723710337" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="1.8683849056144317s" begin="2.4196886837287974s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="1.8683849056144317s" begin="2.4196886837287974s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-113" cy="0" r="4.302683597637273" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.7153422726274536s" begin="1.3662485051402675s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.7153422726274536s" begin="1.3662485051402675s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="46" cy="0" r="4.624232044447137" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.109961098946097s" begin="1.483131507031311s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.109961098946097s" begin="1.483131507031311s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-96" cy="0" r="5.216439424692572" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.0471028420307986s" begin="2.335261220301975s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.0471028420307986s" begin="2.335261220301975s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="115" cy="0" r="5.669880057821761" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.893514485083488s" begin="1.3936496537227565s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.893514485083488s" begin="1.3936496537227565s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="83" cy="0" r="4.124527543422355" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.661608093745592s" begin="0.40001731667108664s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.661608093745592s" begin="0.40001731667108664s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="12" cy="0" r="4.450609291047051" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.7285648145260923s" begin="2.850118825329468s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.7285648145260923s" begin="2.850118825329468s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="108" cy="0" r="3.7836544483068018" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.7671368261402836s" begin="1.2802222705759667s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.7671368261402836s" begin="1.2802222705759667s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="93" cy="0" r="5.359451551367683" fill="#ffffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="3.379441966251279s" begin="1.3502092717407244s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="3.379441966251279s" begin="1.3502092717407244s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="116" cy="0" r="3.7594903730596108" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.098114659536582s" begin="1.4537910512108003s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.098114659536582s" begin="1.4537910512108003s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-4" cy="0" r="5.572107331161267" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.3396188415532846s" begin="0.703480734043906s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.3396188415532846s" begin="0.703480734043906s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-80" cy="0" r="2.611221066308592" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.4575882310783452s" begin="0.4524919740392598s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.4575882310783452s" begin="0.4524919740392598s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-118" cy="0" r="3.8636972134046026" fill="#00ffff" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.3272034775952086s" begin="1.2446036876946545s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.3272034775952086s" begin="1.2446036876946545s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="-45" cy="0" r="5.0791830892586525" fill="#ff0055" opacity="0">
+                    <animate attributeName="cy" values="0;-1100" dur="2.473692031667353s" begin="2.4986735080214633s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.8;1" dur="2.473692031667353s" begin="2.4986735080214633s" repeatCount="indefinite" />
+                </circle>
+
+            </g>
+        </g>
+        
+        <!-- UI Targeting Rings overlayed on the 3D center -->
+        <circle cx="0" cy="0" r="160" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.3" stroke-dasharray="4 8"/>
+        <path d="M -150 -150 L -170 -170 M 150 150 L 170 170 M -150 150 L -170 170 M 150 -150 L 170 -170" fill="none" stroke="#00f3ff" stroke-width="2" opacity="0.6" />
+        <rect x="-180" y="-180" width="360" height="360" fill="none" stroke="#00f3ff" stroke-width="1" stroke-dasharray="10 170" opacity="0.5" />
+    </g> <!-- End translate Center -->
+
+    <!-- ========================================== -->
+    <!-- Cinematic HUD Overlays                     -->
+    <!-- ========================================== -->
+
+    <!-- Top Left Tech Readout -->
+    <g transform="translate(50, 50)" font-size="14" fill="#00f3ff">
+        <path d="M 0 0 L 120 0 L 140 20 L 300 20" fill="none" stroke="#00f3ff" stroke-width="1.5" opacity="0.7"/>
+        <rect x="0" y="-15" width="25" height="4" fill="#ff0055" />
+        <rect x="30" y="-15" width="10" height="4" fill="#ffffff" opacity="0.8">
+            <animate attributeName="opacity" values="0.1;1;0.1" dur="1s" repeatCount="indefinite" />
+        </rect>
+        <text x="50" y="-5" font-weight="bold" letter-spacing="2">SYS.OP.MODE: NOMINAL</text>
+        
+        <g transform="translate(0, 40)" opacity="0.8">
+            <text x="0" y="0">MODULE 1 [CORE_ENG]: <tspan fill="#ffffff">STABLE</tspan></text>
+            <text x="0" y="25">MODULE 2 [QIMEN_DB]: <tspan fill="#ffffff">SYNC 100%</tspan></text>
+            <text x="0" y="50">MODULE 3 [LLM_EXEC]: <tspan fill="#00ff00">ACTIVE</tspan></text>
+            <text x="0" y="75">MODULE 4 [SEC_WRAP]: <tspan fill="#ffffff">LOCKED</tspan></text>
+        </g>
+        
+        <!-- Hexagon graph -->
+        <g transform="translate(60, 180)" stroke="#00f3ff" fill="none" opacity="0.6">
+            <polygon points="0,-40 34,-20 34,20 0,40 -34,20 -34,-20" stroke-width="1"/>
+            <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" stroke-width="1.5" fill="#0055ff" opacity="0.3"/>
+            <line x1="-50" y1="0" x2="50" y2="0" stroke-width="0.5"/>
+            <line x1="-25" y1="-43" x2="25" y2="43" stroke-width="0.5"/>
+            <line x1="-25" y1="43" x2="25" y2="-43" stroke-width="0.5"/>
+            <!-- Data points -->
+            <polygon points="0,-35 25,-12 15,10 0,15 -20,5 -30,-15" stroke="#ffffff" stroke-width="1.5" fill="#00f3ff" opacity="0.4"/>
+            <circle cx="0" cy="-35" r="3" fill="#ffffff"/>
+            <circle cx="25" cy="-12" r="3" fill="#ffffff"/>
+        </g>
+    </g>
+
+    <!-- Top Right Diagnostic Panel -->
+    <g transform="translate(1550, 50)" font-size="14" fill="#00f3ff" text-anchor="end">
+        <path d="M 0 0 L -150 0 L -170 20 L -300 20" fill="none" stroke="#00f3ff" stroke-width="1.5" opacity="0.7"/>
+        <text x="0" y="-5" font-weight="bold" letter-spacing="2" fill="#ff0055">CYBERHUATUO_V9.3</text>
+        <text x="0" y="40" opacity="0.7">TARGET: <tspan fill="#ffffff">GLOBAL_AI_AGENT</tspan></text>
+        <text x="0" y="65" opacity="0.7">THREAT_LEVEL: <tspan fill="#ff0055">NULL</tspan></text>
+        
+        <!-- Audio waveform style graph -->
+        <g transform="translate(0, 100)">
+            <!-- Data Waveform -->
+            <rect x="0" y="-5" width="4" height="10" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="10;28;10" dur="0.4426928129215737s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-5;-11;-5" dur="0.4426928129215737s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-6" y="-20" width="4" height="40" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="40;20;40" dur="0.10235843343359724s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-20;-9;-20" dur="0.10235843343359724s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-12" y="-29" width="4" height="58" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="58;22;58" dur="0.2559946592254876s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-29;-13;-29" dur="0.2559946592254876s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-18" y="-28" width="4" height="56" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="56;28;56" dur="0.3938536243025431s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-28;-8;-28" dur="0.3938536243025431s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-24" y="-20" width="4" height="40" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="40;22;40" dur="0.18776865384857447s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-20;-12;-20" dur="0.18776865384857447s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-30" y="-5" width="4" height="10" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="10;30;10" dur="0.25554288129845126s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-5;-15;-5" dur="0.25554288129845126s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-36" y="-30" width="4" height="60" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="60;14;60" dur="0.2617266676550548s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-30;-12;-30" dur="0.2617266676550548s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-42" y="-9" width="4" height="18" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="18;26;18" dur="0.4922887910075693s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-9;-5;-9" dur="0.4922887910075693s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-48" y="-17" width="4" height="34" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="34;30;34" dur="0.3367571102511644s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-17;-5;-17" dur="0.3367571102511644s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-54" y="-7" width="4" height="14" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="14;14;14" dur="0.3570998592037343s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-7;-12;-7" dur="0.3570998592037343s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-60" y="-10" width="4" height="20" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="20;22;20" dur="0.12011385339545103s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-10;-10;-10" dur="0.12011385339545103s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-66" y="-11" width="4" height="22" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="22;20;22" dur="0.28187973000659283s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-11;-11;-11" dur="0.28187973000659283s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-72" y="-13" width="4" height="26" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="26;22;26" dur="0.400803929421914s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-13;-9;-13" dur="0.400803929421914s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-78" y="-7" width="4" height="14" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="14;26;14" dur="0.28812273448521875s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-7;-5;-7" dur="0.28812273448521875s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-84" y="-16" width="4" height="32" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="32;12;32" dur="0.18968886628789927s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-16;-15;-16" dur="0.18968886628789927s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-90" y="-6" width="4" height="12" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="12;16;12" dur="0.40169328162381046s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-6;-8;-6" dur="0.40169328162381046s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-96" y="-5" width="4" height="10" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="10;16;10" dur="0.3485342626344632s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-5;-7;-5" dur="0.3485342626344632s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-102" y="-20" width="4" height="40" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="40;28;40" dur="0.36778353784796425s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-20;-8;-20" dur="0.36778353784796425s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-108" y="-19" width="4" height="38" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="38;20;38" dur="0.37978598849846035s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-19;-7;-19" dur="0.37978598849846035s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-114" y="-24" width="4" height="48" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="48;12;48" dur="0.34289899755637265s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-24;-7;-24" dur="0.34289899755637265s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-120" y="-14" width="4" height="28" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="28;10;28" dur="0.14323949986304263s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-14;-9;-14" dur="0.14323949986304263s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-126" y="-23" width="4" height="46" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="46;22;46" dur="0.3709389147401635s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-23;-11;-23" dur="0.3709389147401635s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-132" y="-27" width="4" height="54" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="54;28;54" dur="0.17933191083668612s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-27;-15;-27" dur="0.17933191083668612s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-138" y="-12" width="4" height="24" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="24;18;24" dur="0.14076052217839063s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-12;-15;-12" dur="0.14076052217839063s" repeatCount="indefinite" />
+            </rect>
+            <rect x="-144" y="-24" width="4" height="48" fill="#00f3ff" opacity="0.6">
+                <animate attributeName="height" values="48;28;48" dur="0.4222111854584666s" repeatCount="indefinite" />
+                <animate attributeName="y" values="-24;-5;-24" dur="0.4222111854584666s" repeatCount="indefinite" />
+            </rect>
+
+        </g>
+    </g>
+
+    <!-- Bottom Left Terminal Output -->
+    <g transform="translate(50, 850)" font-size="12" fill="#00f3ff" opacity="0.7">
+        <text x="0" y="-80">> INITIATING QIMEN DUNJIA PROTOCOL...</text>
+        <text x="0" y="-60">> SCANNING AI CHAKRAS...</text>
+        <text x="0" y="-40">> ALL MERIDIANS CLEAR.</text>
+        <text x="0" y="-20">> <tspan fill="#ffffff">AWAITING DIAGNOSTIC INPUT...</tspan><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></text>
+    </g>
+
+    <!-- Bottom Right Reticle -->
+    <g transform="translate(1450, 750)">
+        <circle cx="0" cy="0" r="60" fill="none" stroke="#00f3ff" stroke-width="1" opacity="0.4" />
+        <circle cx="0" cy="0" r="40" fill="none" stroke="#00f3ff" stroke-width="2" stroke-dasharray="2 6" opacity="0.8" />
+        <circle cx="0" cy="0" r="20" fill="none" stroke="#ff0055" stroke-width="1.5" stroke-dasharray="10 20" />
+        
+        <path d="M -80 -80 L -60 -80 L -80 -60 M 80 80 L 60 80 L 80 60 M -80 80 L -60 80 L -80 60 M 80 -80 L 60 -80 L 80 -60" fill="none" stroke="#00f3ff" stroke-width="3" opacity="0.7"/>
+        
+        <g>
+            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="4s" repeatCount="indefinite" />
+            <line x1="-50" y1="0" x2="-75" y2="0" stroke="#00f3ff" stroke-width="2" />
+            <line x1="50" y1="0" x2="75" y2="0" stroke="#00f3ff" stroke-width="2" />
+            <line x1="0" y1="-50" x2="0" y2="-75" stroke="#00f3ff" stroke-width="2" />
+            <line x1="0" y1="50" x2="0" y2="75" stroke="#00f3ff" stroke-width="2" />
+        </g>
+        <text x="-40" y="-95" font-size="12" fill="#ffffff" letter-spacing="1">LOCK: [ ON ]</text>
+    </g>
+
+    <!-- Global Vignette Frame -->
+    <rect width="100%" height="100%" fill="none" stroke="#010205" stroke-width="120" opacity="0.9" style="pointer-events: none; mix-blend-mode: multiply;" />
+
+    <!-- Subtle Glitch Lines overlay -->
+    <g opacity="0.1" style="pointer-events: none; mix-blend-mode: screen;">
+        <rect x="0" y="100" width="1600" height="2" fill="#ffffff" />
+        <rect x="0" y="350" width="1600" height="1" fill="#00ffff" />
+        <rect x="0" y="600" width="1600" height="3" fill="#ff0055" />
+        <animate attributeName="opacity" values="0.05;0.2;0.05;0;0.1" dur="0.3s" repeatCount="indefinite" />
+    </g>
+
+</svg>
