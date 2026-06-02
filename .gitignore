@@ -1,0 +1,48 @@
+# Python/runtime
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Build outputs
+build/
+dist/
+*.egg
+*.whl
+MANIFEST
+
+# Local state and sensitive config
+.env
+.envrc
+.chroma_db/
+.user_data/
+.last_sync
+.pypirc
+
+# Generated reports/runtime artifacts
+EPIDEMIC_REPORT.md
+reports/
+data/
+tmp/
+out*.txt
+output*.txt
+test_out*.txt
+pytest_output*.txt
+
+# Research-only material must never enter this repo.
+paper/
+paper_usenix/
+academic_benchmark_report.md
+benchmark_report.md
+py_files.txt
+
+# IDE/OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

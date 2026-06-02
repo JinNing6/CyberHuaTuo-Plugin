@@ -1,0 +1,42 @@
+include README.md
+include README_CN.md
+include README_MCP.md
+include LICENSE
+include NOTICE
+include .env.example
+
+recursive-include cases *.md
+recursive-include schema *.json
+recursive-include skills *.md
+recursive-include .agents/skills *.md
+recursive-include cyberhuatuo/cases *.md
+recursive-include cyberhuatuo/schema *.json
+recursive-include cyberhuatuo/templates *
+recursive-include cyberhuatuo/static *
+
+prune .agents/rules
+prune .chroma_db
+prune .pytest_cache
+prune .pytest_cases
+prune .pytest_tmp
+prune .pytest_tmp_run
+prune .ruff_cache
+prune .user_data
+prune .venv
+prune action
+prune build
+prune data
+prune dist
+prune paper
+prune paper_usenix
+prune reports
+prune tmp
+prune tools
+prune cyberhuatuo/sandbox
+
+exclude academic_benchmark_report.md
+exclude benchmark_report.md
+exclude EPIDEMIC_REPORT.md
+exclude py_files.txt
+exclude test_gpt4o.txt
+exclude test_out*.txt
