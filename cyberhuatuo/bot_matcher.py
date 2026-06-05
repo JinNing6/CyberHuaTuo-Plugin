@@ -569,7 +569,7 @@ def format_bot_reply(
         "一个 ⭐ 支持开源中医\n"
         "> \n"
         "> 📝 药方不对？欢迎 [贡献更好的药方]"
-        "(https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)\n"
+        "(https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml)\n"
         "> \n"
         "> 🔮 需要更精准的 AI 望闻问切诊断？访问 "
         "[CyberHuaTuo 在线门诊](https://github.com/JinNing6/CyberHuaTuo-Plugin)\n\n"

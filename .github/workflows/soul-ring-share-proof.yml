@@ -1,0 +1,71 @@
+name: Soul Ring Share Proof IssueOps
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-share-proof-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'soul-ring-share-proof') ||
+        startsWith(github.event.issue.title, '[Soul Ring Share Proof]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring share proof commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const issueUrl = issue.html_url;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const surface = safeTitle.replace(/^\[Soul Ring Share Proof\]\s*/i, "").trim() || "public share proof";
+            const body = [
+              "## Soul Ring Share Proof",
+              "",
+              `@${username}, this issue can become a reviewable source bridge for ${surface}.`,
+              "",
+              "Use a real public share URL. The Issue URL is bound as the reviewable source bridge so the share can be audited later.",
+              "",
+              "Launch Closure Checklist before treating this share proof as part of a market-ready loop:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-share --username ${username} --framework langchain --share-url <public-share-url> --source-url ${issueUrl}`,
+              `cyberhuatuo share-report --username ${username} --framework langchain --top-n 10`,
+              "cyberhuatuo share-leaderboard --framework langchain --top-n 10",
+              `cyberhuatuo activation --username ${username} --framework langchain --sect CyberHuaTuo-Sect --members ${username} --top-n 10`,
+              `cyberhuatuo flywheel --username ${username} --framework langchain --sect CyberHuaTuo-Sect --members ${username} --top-n 10`,
+              "```",
+              "",
+              "Replace `langchain` and `<public-share-url>` with the real framework and reviewable public share URL before recording the ledger event.",
+              "",
+              "No downloads, retention, repost counts, referral conversions, or rewards are invented. Spirit Power is not invented either.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

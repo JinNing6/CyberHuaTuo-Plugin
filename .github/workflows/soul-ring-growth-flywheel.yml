@@ -1,0 +1,78 @@
+name: Soul Ring Growth Flywheel IssueOps
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-growth-flywheel-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'soul-ring-growth') ||
+        startsWith(github.event.issue.title, '[Soul Ring Growth]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring growth flywheel commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const surface = safeTitle.replace(/^\[Soul Ring Growth\]\s*/i, "").trim() || "external launch signal";
+            const body = [
+              "## Soul Ring Growth Flywheel",
+              "",
+              `@${username}, this issue can become a public CyberHuaTuo growth flywheel check for ${surface}.`,
+              "",
+              "Use current real contribution records and the local activation ledger before posting any public growth claim. No downloads, retention, or attribution metrics are invented.",
+              "",
+              "Launch Closure Checklist before any public market claim:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo bounty --username ${username} --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-return --username ${username} --framework langchain --surface "${surface}" --source-url <public-source-url>`,
+              `cyberhuatuo activation --username ${username} --framework langchain --sect CyberHuaTuo-Sect --members ${username} --top-n 10`,
+              `cyberhuatuo flywheel --username ${username} --framework langchain --sect CyberHuaTuo-Sect --members ${username} --top-n 10`,
+              "cyberhuatuo leaderboard --top-n 10",
+              `cyberhuatuo bounty --username ${username} --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo quest ${username} --framework langchain`,
+              "cyberhuatuo season --framework langchain --top-n 10",
+              `cyberhuatuo sect-arena --sect CyberHuaTuo-Sect ${username} --framework langchain`,
+              `cyberhuatuo campaign ${username} --framework langchain`,
+              `cyberhuatuo record-share --username ${username} --framework langchain --share-url <public-share-url>`,
+              "```",
+              "",
+              "Replace `langchain`, `CyberHuaTuo-Sect`, `<public-source-url>`, and `<public-share-url>` with the real framework, real group, and reviewable public URLs before publishing.",
+              "",
+              "Soul Ring Growth Flywheel turns external attention into an operating loop: marketplace attention, activation ledger, first-ring activation, repeat contribution, collaboration / sect, public sharing, and the next executable command.",
+              "",
+              "real-data pledge: flywheel rows must come from current real contribution records; downloads, retention, attribution, fake champions, and adoption claims are not invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

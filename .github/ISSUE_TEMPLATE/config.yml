@@ -1,0 +1,29 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Soul Ring Mission Hall
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml
+    about: Start the First Soul Ring Prescription path, then run cyberhuatuo challenge to claim the real-data contribution loop.
+  - name: Soul Ring Growth Flywheel
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-growth-flywheel.yml
+    about: Start a public growth flywheel check with cyberhuatuo flywheel; missing metrics are disclosed instead of invented.
+  - name: Soul Ring Bounty Board
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-bounty-board.yml
+    about: Request real framework coverage gaps with cyberhuatuo bounty and route contributors into claimable First Soul Ring tasks.
+  - name: Install CyberHuaTuo MCP
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/blob/main/README_MCP.md
+    about: Install the MCP plugin in Codex or Claude before using CyberHuaTuo from an agent.
+  - name: Sect Arena / Team Challenge
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/blob/main/README.md
+    about: Create sect-hall, sect-quest, sect-duel, and sect-arena posts from real GitHub member snapshots.
+  - name: Soul Ring Tournament Cup
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-tournament.yml
+    about: Start a public soul-ring tournament and settle it from current real contribution snapshots with cyberhuatuo tournament-settle.
+  - name: Soul Ring Sect Recruitment
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-sect-recruit.yml
+    about: Start public soul-ring sect recruitment from current real member snapshots with cyberhuatuo sect-recruit.
+  - name: Soul Ring Mentor Pact
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-mentor.yml
+    about: Start a public soul-ring mentor pact and guide one apprentice to the first ring with cyberhuatuo mentor.
+  - name: Soul Ring Season Board
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-season.yml
+    about: Start a public soul-ring season board from the current real leaderboard snapshot with cyberhuatuo season.

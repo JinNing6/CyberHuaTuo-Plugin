@@ -1,0 +1,89 @@
+name: Soul Ring Bounty Board
+description: Request a public Soul Ring Bounty Board with claimable framework coverage gaps from real local case data.
+title: "[Soul Ring Bounty] <framework or auto coverage gap board>"
+labels:
+  - soul-ring
+  - soul-ring-bounty
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when a PyPI, Claude, Codex, GitHub, X, Weibo, Discord, or agent-community visitor needs concrete first-ring tasks instead of generic launch copy.
+
+        It turns public attention into a **Soul Ring Bounty Board**:
+
+        ```bash
+        cyberhuatuo bounty --username <github-username> --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 3
+        cyberhuatuo challenge --username <github-username> --framework <first-framework-from-bounty-board>
+        cyberhuatuo first-invite --username <github-username> --invitee <external-contributor-github-username> --framework <first-framework-from-bounty-board> --release-tag v0.2.0 --target-contributors 3 --source-url <created Growth Issue URL after submission>
+        ```
+
+        The board ranks real local case coverage gaps and links contributors toward a First Soul Ring Prescription Issue. It is not a monetary reward board and it does not invent adoption.
+  - type: input
+    id: github_username
+    attributes:
+      label: GitHub username
+      description: The GitHub username that should receive the bounty-board runbook.
+      placeholder: your-github-username
+    validations:
+      required: true
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Choose auto for the current highest-gap board, or focus one supported framework.
+      options:
+        - auto
+        - autogen
+        - dspy
+        - openai-agents
+        - mcp
+        - langchain
+        - llamaindex
+        - crewai
+        - pydantic-ai
+        - semantic-kernel
+        - other
+    validations:
+      required: true
+  - type: input
+    id: top_n
+    attributes:
+      label: Top N
+      description: Number of claimable bounty rows to show. The workflow clamps this to 1-50.
+      placeholder: "8"
+      value: "8"
+    validations:
+      required: true
+  - type: input
+    id: release_tag
+    attributes:
+      label: Release tag
+      description: Release tag used in the generated proof and invite commands.
+      placeholder: v0.2.0
+      value: v0.2.0
+    validations:
+      required: true
+  - type: input
+    id: target_contributors
+    attributes:
+      label: Target contributors
+      description: Target first-ring contributor count. The workflow clamps this to 1-100.
+      placeholder: "3"
+      value: "3"
+    validations:
+      required: true
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data pledge
+      description: CyberHuaTuo bounty boards are public operating artifacts.
+      options:
+        - label: This bounty request is based on real local case coverage gaps, not a fabricated reward pool.
+          required: true
+        - label: No downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors are invented.
+          required: true
+        - label: I understand the workflow will only comment callable commands and will not award points or run submitted code.
+          required: true
+    validations:
+      required: true

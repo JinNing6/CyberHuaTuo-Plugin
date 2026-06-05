@@ -283,9 +283,9 @@ python -m cyberhuatuo serve
 
 | 框架 | 病例数 | 状态 | 参与 👇 |
 |-----------|:-----:|--------|---------|
-| LangChain | 10+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
-| MCP (Anthropic) | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
-| CrewAI | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| LangChain | 10+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml) |
+| MCP (Anthropic) | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml) |
+| CrewAI | 5+ | 🟢 已上线 | [贡献病例 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml) |
 | LlamaIndex | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 | OpenAI Agents SDK | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 | AutoGen | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
@@ -310,9 +310,9 @@ python -m cyberhuatuo serve
 
 | 分类 | 病例数 | 状态 | 参与 👇 |
 |-----------|:-----:|--------|---------|
-| 🛡️ 安全沙箱 | 2+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
-| 🔒 安全加固 | 3+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
-| 🔗 供应链审计 | 1 | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml) |
+| 🛡️ 安全沙箱 | 2+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml) |
+| 🔒 安全加固 | 3+ | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml) |
+| 🔗 供应链审计 | 1 | 🟢 已上线 | [贡献 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml) |
 | ⚡ 性能调理 | — | 🟡 接受 PR | [成为第一人 →](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new) |
 
 > **每个框架的第一个病例，每个养生方的第一个药方——都可能出自你手。**
@@ -433,6 +433,141 @@ PORT=8000
 2. ✅ **社区验证** —— 其他开发者通过真实测试验证你的药方
 3. 🏅 **获得「神医」徽章** —— 顶级贡献者将获得传奇的 **神医** 称号
 
+#### 三步点亮第一道魂环
+
+```bash
+cyberhuatuo challenge --username your-github-username --framework langchain
+cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username
+cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.0
+cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3 --record-snapshot
+cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+python -m cyberhuatuo candidate-install-smoke --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3 --source-url https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123
+cyberhuatuo market-ready --no-remote
+cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo proof-pack --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3
+cyberhuatuo record-return --username your-github-username --framework langchain --surface "PyPI release" --source-url https://example.com/post
+cyberhuatuo activation --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10
+cyberhuatuo flywheel --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10
+cyberhuatuo record-share --username your-github-username --framework langchain --share-url https://example.com/share
+cyberhuatuo share-report --username your-github-username --framework langchain --top-n 10
+cyberhuatuo share-leaderboard --framework langchain --top-n 10
+cyberhuatuo ladder your-github-username --framework langchain
+cyberhuatuo upload --title "Fix LangChain tool schema" --prescription "..." --framework langchain --contributor your-github-username
+cyberhuatuo ranking your-github-username
+cyberhuatuo badge your-github-username
+cyberhuatuo quest your-github-username --framework langchain
+cyberhuatuo campaign your-github-username --framework langchain
+cyberhuatuo duel your-github-username friend-github-username --framework langchain
+cyberhuatuo mentor mentor-github apprentice-github --framework langchain
+cyberhuatuo tournament alice bob carol dave --framework langchain --event Agent-Cup
+cyberhuatuo tournament-settle alice bob carol dave --framework langchain --event Agent-Cup
+cyberhuatuo arena your-github-username --top-n 10
+cyberhuatuo season --framework langchain --top-n 10
+cyberhuatuo sect Azure-Sect your-github-username friend-github-username --framework langchain
+cyberhuatuo sect-recruit Azure-Sect your-github-username friend-github-username --invitee new-member-github --framework langchain
+cyberhuatuo sect-quest Azure-Sect your-github-username friend-github-username --framework langchain
+cyberhuatuo sect-hall Azure-Sect your-github-username friend-github-username --framework langchain
+cyberhuatuo sect-duel Azure-Sect Shadow-Sect --challenger-members your-github-username friend-github-username --rival-members rival-a rival-b --framework langchain
+cyberhuatuo sect-arena --sect Azure-Sect your-github-username friend-github-username --sect Shadow-Sect rival-a rival-b --framework langchain
+cyberhuatuo card your-github-username
+# GitHub New issue: Soul Ring Mission Hall via .github/ISSUE_TEMPLATE/config.yml
+# GitHub tournament IssueOps: Soul Ring Tournament Cup via .github/ISSUE_TEMPLATE/soul-ring-tournament.yml
+# GitHub tournament workflow: .github/workflows/soul-ring-tournament.yml
+# GitHub mentor pact IssueOps: Soul Ring Mentor Pact via .github/ISSUE_TEMPLATE/soul-ring-mentor.yml
+# GitHub mentor pact workflow: .github/workflows/soul-ring-mentor.yml
+# GitHub sect recruitment IssueOps: Soul Ring Sect Recruitment via .github/ISSUE_TEMPLATE/soul-ring-sect-recruit.yml
+# GitHub sect recruitment workflow: .github/workflows/soul-ring-sect-recruit.yml
+# GitHub season board IssueOps: Soul Ring Season Board via .github/ISSUE_TEMPLATE/soul-ring-season.yml
+# GitHub season board workflow: .github/workflows/soul-ring-season.yml
+# GitHub growth flywheel IssueOps: Soul Ring Growth Flywheel via .github/ISSUE_TEMPLATE/soul-ring-growth-flywheel.yml
+# GitHub growth flywheel workflow: .github/workflows/soul-ring-growth-flywheel.yml
+# GitHub bounty board IssueOps: Soul Ring Bounty Board via .github/ISSUE_TEMPLATE/soul-ring-bounty-board.yml
+# GitHub bounty board workflow: .github/workflows/soul-ring-bounty-board.yml
+# Bounty Board workflow comments record-return with the created Issue URL before bounty/challenge commands.
+# GitHub launch campaign IssueOps: Soul Ring Launch Campaign via .github/ISSUE_TEMPLATE/soul-ring-launch-campaign.yml
+# GitHub launch campaign workflow: .github/workflows/soul-ring-launch-campaign.yml
+# cyberhuatuo launch-campaign turns cold PyPI / Claude / Codex market attention into a target first-ring contributor campaign.
+# Campaign Recap And Next Sprint: launch-campaign reports observed real contributors, shortfall, next target rule, next growth_campaign command, and traction-proof --record-snapshot.
+# Public traction proof: cyberhuatuo traction-proof reads GitHub REST API, GitHub Pull Requests API, GitHub Contents API, GitHub Releases API, PyPI JSON API, and local activation/share ledger.
+# Readiness gates: PyPI latest version must not lag local growth tools, and default-branch IssueOps forms/workflows must exist before issues/new?... links count as live acquisition loops.
+# Target contributor progress uses real issue/PR/ledger identities; PRs stay separate from IssueOps counts, and stars, forks, watchers, and downloads are not used as contributors.
+# Snapshot history is opt-in: add --record-snapshot to append an append-only real JSONL snapshot and compare velocity deltas.
+# GitHub share proof IssueOps: Soul Ring Share Proof via .github/ISSUE_TEMPLATE/soul-ring-share-proof.yml
+# GitHub share proof workflow: .github/workflows/soul-ring-share-proof.yml
+# No downloads, retention, or attribution metrics are invented.
+# cyberhuatuo record-return binds a reviewable public source URL before flywheel commands.
+# cyberhuatuo activation reads the local activation ledger and names the weakest conversion stage.
+# cyberhuatuo record-share binds a reviewable public share URL after campaign/card publishing.
+# cyberhuatuo share-report summarizes proof URLs, source-to-share bridges, actor pull, artifact pull, and the current proof bottleneck.
+# cyberhuatuo share-leaderboard ranks actors by unique reviewable public http(s) share URLs without invented Spirit Power.
+# cyberhuatuo flywheel prints a Prefilled Growth Flywheel Issue URL with template/title/github_username/framework/growth_surface/real_signal/bottleneck_guess/campaign_hook and no labels/assignees/milestone query parameters.
+# GitHub PR settlement workflow: .github/workflows/soul-ring-pr.yml
+```
+
+发布安装入口：`cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3` 会生成 **CyberHuaTuo Install Command**，先读取真实 **PyPI JSON API** 最新版本证明；只有 PyPI 当前版本等于本地包版本时才推荐 `python -m pip install --upgrade cyberhuatuo`，否则输出 **Git Tag Candidate Install Bridge** 并明确说明它 does not close the PyPI install loop。Claude / Codex 内对应 MCP 工具是 `current_install_command`，会继续路由到 `challenge`、`proof-pack`、`market-copy` 和 `traction-proof`，不虚构下载量、留存、转发、推荐、奖励、审批或假贡献者。
+
+网页优先入口：在 GitHub 的 New issue 流程中选择 **First Soul Ring Prescription**，对应模板文件是 `.github/ISSUE_TEMPLATE/soul-ring-prescription.yml`。它会先要求填写真实 GitHub 用户名、框架、症状复现、根因、药方修复、验证证据和真实数据承诺，再进入魂环贡献闭环。`.github/workflows/soul-ring-issue.yml` 现在会先评论 `cyberhuatuo proof-pack`、`market-copy`、`market-ready --remote --strict-remote` 和 `record-return --surface "First Soul Ring Issue" --source-url <created Issue URL>`，再进入 `challenge` / `ladder` / `upload` 路径，让每个第一魂环 Issue 同时成为公开 launch proof 和 **Soul Ring Breakthrough Ladder**。
+
+维护者晋升入口：当 First Soul Ring Issue 被接受后，给 Issue 打上 `accepted-prescription` 标签。`.github/workflows/soul-ring-promote.yml` 会把 Issue 表单转换成可审查的病例 PR，追加 `soul-ring-promoted-pr` 标签，并评论贡献者后续的 `ladder` / `ranking` / `card` / `campaign` 命令。PR 打开后，`.github/workflows/soul-ring-pr.yml` 会先评论 launch preflight / proof-pack / record-return runbook，再进入 PR settlement 命令。这样就把“被接受的 Issue”推进到“真实病例入库、排行榜更新、公开分享卡”的数据闭环，同时不执行用户提交的代码。
+
+PR 结算入口：当真实修复已经准备好时，`.github/pull_request_template.md` 会把 Pull Request 转成 **Soul Ring PR Settlement**，要求填写贡献者、框架、关联 Issue、验证证据，并给出可复制的 `upload` / `ladder` / `ranking` / `card` / `campaign` 命令。
+
+`cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username` 会生成 **Soul Ring Mission Hall**：把 GitHub Issue、PR 结算、个人魂环、MCP 安装和宗门行动整合到一屏，并且只基于当前真实贡献数据。
+`cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3` 会生成 **Soul Ring Launch Campaign**：把 PyPI / Claude / Codex / GitHub / X / Weibo 首发曝光转成目标首环贡献者战役，包含当前真实 ranked contributors、Prefilled Growth Flywheel Issue、Prefilled Share Proof Issue、activation / flywheel / share-leaderboard 命令和可复制发布文案。它不会编造 downloads、retention、repost counts、referrals、rewards、Spirit Power、campaign-specific conversions 或 fake users。
+`cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3` 会生成 **Soul Ring Traction Proof**：读取 GitHub REST API、GitHub Pull Requests API、GitHub Contents API 默认分支 IssueOps forms/workflows readiness、GitHub Releases API release.published / protected workflow_dispatch fallback readiness、PyPI JSON API package readiness 和本地 activation/share ledger，把公开 Issue 作者、公开 PR 作者与 ledger actor 合并成 **Target contributor progress**。Public API fetch failures or rate limits inline the **No-Network First Public Proof Pack** so operators can open proof Issues and record created URLs without a second command. 它会检查 GitHub Release 是否为非 draft、非 prerelease 且能触发 `release.published` PyPI workflow；如果 PyPI latest-version proof 已经是当前版本，缺失 Release 会降级为 public provenance warning，因为 protected manual `workflow_dispatch` `release_tag` fallback 可以在不使用 `PYPI_TOKEN` 的情况下闭合 registry path。如果 registry install 仍会安装旧版本，就标记 install-loop launch blocker 并路由回 PyPI Trusted Publishing。PR 作者可以算真实贡献者身份，但 PR 必须作为独立 proof surface，不能混入 IssueOps issue counts。stars, forks, watchers 只能作为注意力信号，downloads are not used，不能把下载、转发、retention、referral conversions 或 rewards 折算成首环贡献者。
+`cyberhuatuo market-ready --no-remote` 会检查 PyPI、Claude、Codex、MCP、版本同步和本地 IssueOps 文件是否已经具备发布条件。`cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3` 会在 PyPI 和默认分支公开后，把旧 PyPI 版本或远端 IssueOps 缺失直接标记为市场发布阻塞。
+MCP tool `marketplace_readiness_gate` gives Claude/Codex the same preflight result and a **Launch Closure Checklist**: remote acquisition routes, PyPI Trusted Publisher, GitHub `release.published` trigger or protected `workflow_dispatch` fallback readiness, registry latest-version proof, first public proof, and recheck commands.
+It also prints a **First Public Proof Kit** with Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, Created Growth Issue URL, Created Share Proof Issue URL, a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.0`) plus **GitHub Web Release**, **GitHub Actions workflow page**, and PyPI Trusted Publisher settings links for release-auth/UI/API blockage, an Install Decision Surface through `cyberhuatuo install-command` / MCP `current_install_command`, ledger commands, an External Contributor Path with pasted Recommended Install, `market-copy` submission copy routing, recheck commands, and copy-ready public proof copy, so PyPI / Claude / Codex launch attention can be recorded only after a real created public proof URL exists. 内嵌的 **Public Release Operator Runbook** 会继续给出只读发布命令链：local gates、full-bundle staging、`git push origin HEAD:main`、**GitHub Web Release**、**GitHub Actions workflow page**、`gh release create v0.2.0 ... --verify-tag --notes-from-tag`、protected publish fallback、`cyberhuatuo market-copy`、PyPI recheck 和 traction proof。
+It also prints a **Local Launch Asset Audit**. `cyberhuatuo launch-assets` validates local Issue Forms, comment-only workflows, package metadata, plugin manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP entrypoints, then prints exact minimal `git add` commands, a **Full Public Growth Release Bundle**, and **Dirty Worktree Release Coverage** from read-only `git status --porcelain`. For release-specific default-branch handoff, run `cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3`; the Public Release Operator Runbook preserves the same release/user/target context. It does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction.
+`cyberhuatuo proof-pack` prints the **No-Network First Public Proof Pack** when GitHub/PyPI APIs are rate-limited or marketplace review is still pending. It includes Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, Created Growth Issue URL, Created Share Proof Issue URL, a **Protected Publish Fallback** block with `gh workflow run publish-pypi.yml -f release_tag=v0.2.0`, `gh run list --workflow publish-pypi.yml --limit 5`, **GitHub Web Release**, **GitHub Actions workflow page**, and PyPI Trusted Publisher settings links, an Install Decision Surface through `cyberhuatuo install-command` / MCP `current_install_command`, terminal record-return / record-share CLI commands, an **External Contributor Path** with pasted Recommended Install, first-session command, first contribution command, First Soul Ring Prescription Issue, Share Proof Issue URL, created-Issue proof rule, contributor-counting rule, recheck commands, and copy-ready public proof text. 这个 fallback 仍要求 PyPI Trusted Publisher 匹配当前 repository、workflow file 和 `pypi` environment；不允许退回 `PYPI_TOKEN`。It does not fetch public metrics, write ledger events, publish releases, upload to PyPI by itself, or invent traction.
+
+`cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3 --source-url <created Growth Issue URL>` 会生成 **First Contributor Invite Pack**：把一次 PyPI / Claude / Codex / GitHub / X / Weibo 曝光转成对一个 first external contributor 的点名邀请，包含本地 Candidate Snapshot、First Soul Ring Prescription Issue URL、Share Proof Issue URL、`record-session` 命令、`challenge` 命令、proof-pack / market-copy / traction-proof 复查命令和可复制私信/评论文案。它不抓取 public metrics，不写 ledger，不创建 issue，不发布 release，不上传 PyPI，也 does not invent downloads、retention、repost counts、referrals、rewards、reviews 或 fake contributors。
+
+`cyberhuatuo market-copy` / MCP tool `marketplace_submission_copy` prints the **Marketplace Submission Copy Pack** for PyPI / Claude / Codex submission forms: PyPI listing copy, Claude MCPB listing copy, Codex plugin listing copy, GitHub Release post with **GitHub Web Release** and **GitHub Actions workflow page** links, project URLs, install / validation commands, public proof CTA, and maintainer announcement. 它是市场提交文案，不是 traction evidence；it does not fetch public metrics, write ledger events, publish releases, upload to PyPI, submit marketplace forms, or invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors.
+`cyberhuatuo evidence your-github-username --framework langchain --amount 1 --source-url https://example.com/proof` prints a **Soul Ring Evidence Card** for high-realm gates. It requires reviewable public evidence, writes an append-only local JSONL event, reports evidence total and evidence-backed count, and keeps progress, ranks, rewards, downloads, and contributors not invented.
+`cyberhuatuo record-return --username your-github-username --framework langchain --surface "PyPI release" --source-url https://example.com/post` 会把 PyPI / Claude / Codex / 社区帖子带来的真实外部回流写入本地 activation ledger，并立即打印 **Next External Contributor Invite**：包含 `cyberhuatuo first-invite`、`cyberhuatuo proof-pack` 以及 MCP `first_contributor_invite(...)` / `first_public_proof_pack(...)` 等价调用，让这条已记录的公开 proof 直接变成下一位外部贡献者邀请。`cyberhuatuo activation --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10` 会读取这个账本，把首次会话曝光和第一方真实药方区分开，指出最弱转化阶段，再回到 `flywheel`。公开分享卡或传播帖发出后，用 `cyberhuatuo record-share --username your-github-username --framework langchain --share-url https://example.com/share` 记录可审查的分享归因 URL，并用这条分享 URL 作为 proof 打印同样的直接邀请 / proof-pack 路径；再用 `cyberhuatuo share-report --username your-github-username --framework langchain --top-n 10` 汇总 proof URL、source-to-share bridge、actor pull、artifact pull、当前 proof bottleneck 和下一条可执行证明命令。`cyberhuatuo share-leaderboard --framework langchain --top-n 10` 只按本地账本中的唯一可审查 public http(s) share URL 排名，不编造 downloads、retention、repost counts、referral conversions、rewards 或 Spirit Power。
+`cyberhuatuo ladder your-github-username --framework langchain` 会生成 **Soul Ring Breakthrough Ladder**：展示当前真实方向贡献数、下一道魂环门槛、完整 1 / 2 / 4 / 7 / 11 / 16 / 26 / 41 / 61 / 81 阈值地图，以及可复制的 `quest` / `upload` / `campaign` / `mission` 命令，不编造进度。
+`cyberhuatuo challenge` 会先打印第一魂环挑战入口：提交哪一类真实修复、如何查看排名、如何生成分享卡，全部集中在一屏。
+
+`cyberhuatuo badge your-github-username` 会生成可直接贴到 GitHub Profile / README 的魂环徽章包，内容来自真实贡献数据：称号、药方数、主修方向、当前魂环和 `下一环` 目标。
+
+`cyberhuatuo quest your-github-username --framework langchain` 会把 `下一环` 目标转换成追环任务板：先淘真实 GitHub issue，再上传真实修复，最后发布徽章和分享卡。
+
+`cyberhuatuo campaign your-github-username --framework langchain` 会把同一份真实贡献快照转换成 **Soul Ring Campaign Pack**：GitHub Profile / README Markdown、X / 微博文案、GitHub Discussion / PR 评论文案和智能体提示词。它只展示当前真实药方和真实排名，不编造历史战绩。
+
+`cyberhuatuo duel your-github-username friend-github-username --framework langchain` 会生成 **Soul Ring Duel Card**：双方真实贡献快照、公开对决公式、可复制挑战文案，以及双方继续追环的命令。它适合在 GitHub 评论或社交平台点名好友一起刷魂环，但不会编造胜场、排名或历史战绩。
+
+`cyberhuatuo mentor mentor-github apprentice-github --framework langchain` 会生成 **Soul Ring Mentor Pact**：把老贡献者和新人绑定成公开师徒带教契约，展示双方当前真实药方数、徒弟突破目标、导师审核职责、X / 微博文案、GitHub Discussion / PR Comment 文案，以及 `challenge` / `quest` / `upload` / `ladder` / `duel` / `campaign` 命令。它只展示当前真实快照，不编造师门资历。
+
+`cyberhuatuo tournament alice bob carol dave --framework langchain --event Agent-Cup` 会生成 **Soul Ring Tournament Bracket**：把多个 GitHub 用户组织成公开魂环杯赛，只用当前真实 CyberHuaTuo 药方数生成种子位、首轮对阵、奇数轮空、X / 微博文案、GitHub Discussion / PR Comment 文案，以及每个参赛者的 `challenge` / `quest` / `ladder` / `campaign` 命令。它只展示当前真实快照，不编造冠军或进度。
+
+`cyberhuatuo tournament-settle alice bob carol dave --framework langchain --event Agent-Cup` 会生成 **Soul Ring Tournament Settlement**：把同一个公开杯赛变成当前结算帖，展示当前胜者、第二名、领先差距或待结算状态、下一轮挑战钩子、X / 微博文案、GitHub Discussion / PR Comment 文案和可重跑命令。它只展示当前真实快照，不编造胜场、对阵历史或冠军史。
+
+`cyberhuatuo arena your-github-username --top-n 10` 会生成 **Soul Ring Arena Snapshot**：可复制的真实封神榜快照、公开计分公式、你的当前位置、下一位追赶目标和排行榜传播文案。它只展示当前知识库快照，不编造赛季历史。
+
+`cyberhuatuo season --framework langchain --top-n 10` 会生成 **Soul Ring Season Board**：把当前真实排行榜变成可发布的赛季事件板，包含冠军、下一位追赶目标、X / 微博文案、GitHub Discussion / PR Comment 文案，以及可复制的 `arena` / `duel` / `quest` / `campaign` 命令。它只展示当前真实榜单快照，不编造历史赛季。
+
+`cyberhuatuo sect Azure-Sect your-github-username friend-github-username --framework langchain` 会生成 **Soul Ring Sect Card**：把多个 GitHub 成员组织成宗门 / 学院 / 战队，按当前真实药方数求和生成宗门战力，标出当前领衔成员，并给每个成员下一步 `challenge` / `quest` / `campaign` 命令。它只展示当前真实成员快照，不编造宗门历史。
+
+`cyberhuatuo sect-recruit Azure-Sect your-github-username friend-github-username --invitee new-member-github --framework langchain` 会生成 **Soul Ring Sect Recruitment Scroll**：给某个 GitHub 用户或显式 `new-member-github` 占位符生成可复制入宗招募令，包含当前宗门战力、真实候选人快照、入宗试炼、加入命令、X / 微博文案和 GitHub Discussion / PR Comment 文案。它只展示当前真实成员数据，开放招募占位符必须在发布前替换成真实用户名。
+
+`cyberhuatuo sect-quest Azure-Sect your-github-username friend-github-username --framework langchain` 会生成 **Soul Ring Sect Quest Board**：给宗门列出真实目标仓库、当前宗门战力公式、当前最需要拉起的低贡献成员，以及每个成员的 `challenge` / `quest` / `upload` / `campaign` 命令，让宗门从招募进入当天行动。
+
+`cyberhuatuo sect-hall Azure-Sect your-github-username friend-github-username --framework langchain` 会生成 **Soul Ring Sect Hall**：参考魂环宗门 / 学院 / 家族结构，把成员按当前真实药方数划分为 Outer Disciple、Inner Disciple、Core Disciple、Hall Deacon、Sect Elder，并给出下一次晋升还差多少真实药方。它只展示当前真实成员快照，不编造宗门历史。
+
+`cyberhuatuo sect-duel Azure-Sect Shadow-Sect --challenger-members your-github-username friend-github-username --rival-members rival-a rival-b --framework langchain` 会生成 **Soul Ring Sect Duel Card**：对比两个宗门 / 战队的当前真实成员快照、公开宗门战力公式、当前领先方、成员明细表和可复制团队挑战贴。它只展示当前成员数据，不编造胜场或赛季历史。
+
+`cyberhuatuo sect-arena --sect Azure-Sect your-github-username friend-github-username --sect Shadow-Sect rival-a rival-b --framework langchain` 会生成 **Soul Ring Sect Arena Snapshot**：把多个宗门 / 战队按当前真实成员药方数公开排名，给出冠军宗门、下一追赶目标、团队命令和可复制晒榜文案。它只展示当前成员快照，不编造胜场或赛季历史。
+
+贡献成功后，`ranking` 和 `card` 会显示你的当前魂环、全球排名与 `下一环` 目标，例如：`下一环: 黄环 · 再贡献 1 方即可点亮。`
+
+`cyberhuatuo card your-github-username` 还会生成可直接复制的 **魂环挑战** 文案，内置仓库链接、当前 Git tag candidate install、PyPI 刷新后的标准安装命令和 MCP 启动命令，避免冷启动用户装到过期 registry build。
+
 > *你不需要是 10x 工程师。你只需要解决过一个别人还没解决的问题——就够了。*
 
 ### 🌿 贡献养生方
@@ -469,10 +604,11 @@ PORT=8000
 ### ⚡ 安装 — 一行搞定
 
 ```bash
-pip install cyberhuatuo
+python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0"
+python -m pip install --upgrade cyberhuatuo  # after PyPI latest matches v0.2.0
 ```
 
-> 也可以使用品牌矩阵中的任意别名：`pip install cyber-asclepius`、`pip install openhuatuo` 等。
+> Git tag candidate install 需要先通过 `python -m cyberhuatuo candidate-install-smoke`；PyPI 最新版本证明追平后，再使用 registry 命令。品牌矩阵别名只用于 registry-current 路径。
 
 ### 🔗 连接你的 AI 编辑器
 
@@ -491,6 +627,38 @@ pip install cyberhuatuo
 
 > `uvx` 会自动从 PyPI 安装并启动 MCP Server——零手动操作。
 > 使用 GitHub 最新开发版：`"args": ["--from", "git+https://github.com/JinNing6/CyberHuaTuo-Plugin", "cyberhuatuo-mcp"]`
+
+### 🧩 插件清单 — Codex + Claude Code
+
+这个仓库已经同时面向两个主流 Coding Agent 宿主准备好插件清单：
+
+- **Codex**：`.codex-plugin/plugin.json` 指向 `./skills/` 和 `./.mcp.json`。
+- **Claude Code**：`.claude-plugin/plugin.json` 指向同一套 `./skills/` 和 `./.mcp.json`。
+- **Codex marketplace catalog**：`.agents/plugins/marketplace.json` 让用户可以把这个 GitHub 仓库添加为 Codex 插件市场。
+- **Claude Code marketplace catalog**：`.claude-plugin/marketplace.json` 让用户可以把这个 GitHub 仓库添加为 Claude Code 插件市场。
+
+Marketplace 安装：
+
+```bash
+claude plugin marketplace add JinNing6/CyberHuaTuo-Plugin
+claude plugin install cyberhuatuo-plugin@cyberhuatuo
+
+codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin
+```
+
+在仓库根目录本地测试 Claude Code 插件：
+
+```bash
+claude --plugin-dir .
+```
+
+### 🚀 市场发布路径
+
+完整发布手册见 [`docs/MARKETPLACE_RELEASE.md`](docs/MARKETPLACE_RELEASE.md)：
+
+- **PyPI Trusted Publishing**：`cyberhuatuo` 已经在 PyPI 上存在，因此当前仓库需要先被加入为 additional Trusted Publisher，再通过 `.github/workflows/publish-pypi.yml` 发布高于 `0.1.0` 的新版本。
+- **Claude markets**：通过 `.claude-plugin/plugin.json` 和 `.claude-plugin/marketplace.json` 支持 Claude Code，`claude plugin validate .` 通过后提交 `claude-community`；同时通过 `claude-desktop/manifest.json` 与 `.github/workflows/package-claude-mcpb.yml` 打包 Claude Desktop MCPB，用于 Connectors Directory 审核。
+- **Codex plugin directory**：保持 `.codex-plugin/plugin.json`、`.agents/plugins/marketplace.json`、`.mcp.json` 和 PyPI `uvx --from cyberhuatuo cyberhuatuo-mcp` 入口稳定，方便工作区管理员启用。
 
 ### 🩺 MCP 工具一览
 
@@ -611,7 +779,7 @@ pip install cyberhuatuo
 <sub>由 [contrib.rocks](https://contrib.rocks) 生成 · 基于 GitHub commits 自动更新</sub>
 
 > **🩺 想在这里看到你的头像？**
-> [提交药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)、[提 PR](https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls) 或 [贡献病例](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new)——每一份贡献都算数！
+> [提交药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml)、[提 PR](https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls) 或 [贡献病例](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new)——每一份贡献都算数！
 
 ---
 
@@ -644,7 +812,7 @@ pip install cyberhuatuo
   <em>这是技术对文化的致敬，也是文化对技术的赋能。</em>
   <br><br>
   <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin">⭐ 点个 Star</a> ·
-  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml">💊 提交药方</a> ·
+  <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml">💊 提交药方</a> ·
   <a href="https://github.com/JinNing6/CyberHuaTuo-Plugin/discussions">💬 讨论</a> ·
   <a href="https://discord.gg/cyberhuatuo">🎮 Discord</a>
   <br><br>

@@ -339,13 +339,16 @@ def cmd_upload(args):
         # 显示贡献者修为
         contributor = args.contributor or "anonymous"
         if contributor != "anonymous":
-            from .achievements import get_cultivation_profile, record_activity
+            from .achievements import format_growth_settlement, get_cultivation_profile, record_activity
             record_activity(contributor)
             profile = get_cultivation_profile(contributor)
             print("\n🧬 修为结算:")
             print(f"  炼丹师: @{contributor}")
             print(f"  称号: {profile['title_emoji']} {profile['title_cn']}")
             print(f"  累计药方: {profile['contribution_count']} 段")
+            growth_settlement = format_growth_settlement(contributor, args.framework)
+            if growth_settlement:
+                print(f"\n{growth_settlement}")
 
     except Exception as e:
         print(f"❌ 上传失败: {e}")
@@ -440,6 +443,437 @@ def cmd_card(args):
     card = generate_share_card(args.username)
     print("\n📋 修为档案卡片（可复制分享）：\n")
     print(card)
+
+
+def cmd_badge(args):
+    """🔮 生成 GitHub Profile 魂环徽章包。"""
+    from .achievements import format_profile_badge_kit
+
+    print(format_profile_badge_kit(args.username))
+
+
+def cmd_quest(args):
+    """🔮 生成追环任务板。"""
+    from .achievements import format_soul_ring_quest_board
+
+    print(format_soul_ring_quest_board(args.username, args.framework))
+
+
+def cmd_campaign(args):
+    """🔮 生成魂环传播包。"""
+    from .achievements import format_soul_ring_campaign_pack
+
+    print(format_soul_ring_campaign_pack(args.username, args.framework))
+
+
+def cmd_duel(args):
+    """🔮 生成魂环对决邀请卡。"""
+    from .achievements import format_soul_ring_duel_card
+
+    print(format_soul_ring_duel_card(args.challenger, args.rival, args.framework))
+
+
+def cmd_mentor(args):
+    """Generate a Soul Ring mentor-apprentice pact."""
+    from .achievements import format_soul_ring_mentor_pact
+
+    print(format_soul_ring_mentor_pact(args.mentor, args.apprentice, args.framework))
+
+
+def cmd_tournament(args):
+    """Generate a Soul Ring tournament bracket."""
+    from .achievements import format_soul_ring_tournament_bracket
+
+    print(format_soul_ring_tournament_bracket(args.participants, args.framework, args.event))
+
+
+def cmd_tournament_settle(args):
+    """Generate a Soul Ring tournament settlement snapshot."""
+    from .achievements import format_soul_ring_tournament_settlement
+
+    print(format_soul_ring_tournament_settlement(args.participants, args.framework, args.event))
+
+
+def cmd_arena(args):
+    """🔮 生成魂环竞技场快照。"""
+    from .achievements import format_soul_ring_arena_snapshot
+
+    print(format_soul_ring_arena_snapshot(args.username, args.top_n, args.framework))
+
+
+def cmd_season(args):
+    """Generate a Soul Ring season board."""
+    from .achievements import format_soul_ring_season_board
+
+    print(format_soul_ring_season_board(args.framework, args.top_n))
+
+
+def cmd_sect(args):
+    """Generate a Soul Ring sect/team card."""
+    from .achievements import format_soul_ring_sect_card
+
+    print(format_soul_ring_sect_card(args.sect_name, args.members, args.framework))
+
+
+def cmd_sect_recruit(args):
+    """Generate a Soul Ring sect/team recruitment scroll."""
+    from .achievements import format_soul_ring_sect_recruitment_scroll
+
+    print(
+        format_soul_ring_sect_recruitment_scroll(
+            args.sect_name,
+            args.members,
+            args.invitee,
+            args.framework,
+        )
+    )
+
+
+def cmd_sect_quest(args):
+    """Generate a Soul Ring sect/team quest board."""
+    from .achievements import format_soul_ring_sect_quest_board
+
+    print(format_soul_ring_sect_quest_board(args.sect_name, args.members, args.framework))
+
+
+def cmd_sect_hall(args):
+    """Generate a Soul Ring sect/team hierarchy hall."""
+    from .achievements import format_soul_ring_sect_hall
+
+    print(format_soul_ring_sect_hall(args.sect_name, args.members, args.framework))
+
+
+def cmd_sect_duel(args):
+    """Generate a Soul Ring sect/team duel card."""
+    from .achievements import format_soul_ring_sect_duel_card
+
+    print(
+        format_soul_ring_sect_duel_card(
+            args.challenger_sect,
+            args.challenger_members,
+            args.rival_sect,
+            args.rival_members,
+            args.framework,
+        )
+    )
+
+
+def cmd_sect_arena(args):
+    """Generate a Soul Ring sect/team arena snapshot."""
+    from .achievements import format_soul_ring_sect_arena_snapshot
+
+    print(format_soul_ring_sect_arena_snapshot(args.sect, args.framework))
+
+
+def cmd_challenge(args):
+    """🔮 生成第一魂环挑战入口。"""
+    from .achievements import format_first_soul_ring_challenge
+
+    print(format_first_soul_ring_challenge(args.username, args.framework))
+
+
+def cmd_mission(args):
+    """Generate the Soul Ring Mission Hall."""
+    from .achievements import format_soul_ring_mission_hall
+
+    print(format_soul_ring_mission_hall(args.username, args.framework, args.sect, args.members))
+
+
+def cmd_bounty(args):
+    """Generate the Soul Ring Bounty Board."""
+    from .achievements import format_soul_ring_bounty_board
+
+    print(
+        format_soul_ring_bounty_board(
+            args.username,
+            args.framework,
+            args.top_n,
+            args.release_tag,
+            args.target_contributors,
+            args.repo,
+        )
+    )
+
+
+def cmd_launch(args):
+    """Generate the Soul Ring marketplace launch scroll."""
+    from .achievements import format_soul_ring_launch_scroll
+
+    print(format_soul_ring_launch_scroll(args.username, args.framework, args.release_tag))
+
+
+def cmd_launch_campaign(args):
+    """Generate the Soul Ring cold-start launch campaign."""
+    from .achievements import format_soul_ring_launch_campaign
+
+    print(
+        format_soul_ring_launch_campaign(
+            args.username,
+            args.framework,
+            args.release_tag,
+            args.target_contributors,
+            args.surface,
+        )
+    )
+
+
+def cmd_traction_proof(args):
+    """Generate public traction proof from public APIs and the local ledger."""
+    from .traction import format_soul_ring_traction_proof
+
+    print(
+        format_soul_ring_traction_proof(
+            args.username,
+            args.framework,
+            release_tag=args.release_tag,
+            target_contributors=args.target_contributors,
+            repo=args.repo,
+            pypi_project=args.pypi_project,
+            timeout=args.timeout,
+            record_snapshot=args.record_snapshot,
+            snapshot_note=args.snapshot_note,
+        )
+    )
+
+
+def cmd_install_command(args):
+    """Fetch PyPI latest proof and print the current public install command."""
+    from .install import format_current_install_command
+
+    print(
+        format_current_install_command(
+            username=args.username,
+            framework=args.framework,
+            release_tag=args.release_tag,
+            target_contributors=args.target_contributors,
+            repo=args.repo,
+            pypi_project=args.pypi_project,
+            timeout=args.timeout,
+        )
+    )
+
+
+def cmd_candidate_install_smoke(args):
+    """Smoke-test the public Git tag candidate install path in a disposable venv."""
+    from .install import build_candidate_install_smoke, format_candidate_install_smoke
+
+    report = build_candidate_install_smoke(
+        username=args.username,
+        framework=args.framework,
+        release_tag=args.release_tag,
+        target_contributors=args.target_contributors,
+        repo=args.repo,
+        pypi_project=args.pypi_project,
+        timeout=args.timeout,
+        keep_temp=args.keep_temp,
+    )
+    print(format_candidate_install_smoke(report))
+    if report["status"] != "pass":
+        sys.exit(1)
+
+
+def cmd_market_ready(args):
+    """Check PyPI, Claude, Codex, and IssueOps marketplace readiness."""
+    from pathlib import Path
+
+    from .marketplace import build_marketplace_readiness, format_marketplace_readiness
+
+    report = build_marketplace_readiness(
+        Path.cwd(),
+        remote=args.remote,
+        strict_remote=args.strict_remote,
+        repo=args.repo,
+        pypi_project=args.pypi_project,
+        username=args.username,
+        framework=args.framework,
+        release_tag=args.release_tag,
+        target_contributors=args.target_contributors,
+        timeout=args.timeout,
+    )
+    print(format_marketplace_readiness(report))
+    if report["exit_code"]:
+        sys.exit(int(report["exit_code"]))
+
+
+def cmd_launch_assets(args):
+    """Audit local launch assets without staging, publishing, or mutating remotes."""
+    from pathlib import Path
+
+    from .marketplace import build_launch_asset_audit, format_launch_asset_audit
+
+    audit = build_launch_asset_audit(
+        Path.cwd(),
+        repo=args.repo,
+        pypi_project=args.pypi_project,
+        release_tag=args.release_tag,
+        username=args.username,
+        framework=args.framework,
+        target_contributors=args.target_contributors,
+    )
+    print(format_launch_asset_audit(audit))
+    if audit["status"] != "pass":
+        sys.exit(1)
+
+
+def cmd_proof_pack(args):
+    """Generate a no-network first public proof pack."""
+    from .marketplace import build_first_public_proof_pack, format_first_public_proof_pack
+
+    pack = build_first_public_proof_pack(
+        repo=args.repo,
+        pypi_project=args.pypi_project,
+        username=args.username,
+        framework=args.framework,
+        release_tag=args.release_tag,
+        target_contributors=args.target_contributors,
+    )
+    print(format_first_public_proof_pack(pack))
+
+
+def cmd_first_invite(args):
+    """Generate a targeted no-network first external contributor invite."""
+    from .marketplace import build_first_contributor_invite_pack, format_first_contributor_invite_pack
+
+    pack = build_first_contributor_invite_pack(
+        repo=args.repo,
+        pypi_project=args.pypi_project,
+        username=args.username,
+        invitee=args.invitee,
+        framework=args.framework,
+        release_tag=args.release_tag,
+        target_contributors=args.target_contributors,
+        source_url=args.source_url,
+    )
+    print(format_first_contributor_invite_pack(pack))
+
+
+def cmd_market_copy(args):
+    """Generate marketplace submission copy for PyPI, Claude, Codex, and release posts."""
+    from .marketplace import build_marketplace_submission_copy_pack, format_marketplace_submission_copy_pack
+
+    pack = build_marketplace_submission_copy_pack(
+        repo=args.repo,
+        pypi_project=args.pypi_project,
+        username=args.username,
+        framework=args.framework,
+        release_tag=args.release_tag,
+        target_contributors=args.target_contributors,
+    )
+    print(format_marketplace_submission_copy_pack(pack))
+
+
+def cmd_record_market(args):
+    """Record a reviewable marketplace submission URL into the local ledger."""
+    from .submissions import format_record_marketplace_submission
+
+    print(
+        format_record_marketplace_submission(
+            username=args.username,
+            framework=args.framework,
+            channel=args.channel,
+            status=args.status,
+            submission_url=args.submission_url,
+            release_tag=args.release_tag,
+            repo=args.repo,
+            pypi_project=args.pypi_project,
+            note=args.note,
+        )
+    )
+
+
+def cmd_market_status(args):
+    """Report marketplace submission status from the local ledger."""
+    from .submissions import format_marketplace_submission_status
+
+    print(
+        format_marketplace_submission_status(
+            username=args.username,
+            framework=args.framework,
+            release_tag=args.release_tag,
+            repo=args.repo,
+            pypi_project=args.pypi_project,
+        )
+    )
+
+
+def cmd_flywheel(args):
+    """Generate the Soul Ring growth flywheel snapshot."""
+    from .achievements import format_soul_ring_growth_flywheel
+
+    print(format_soul_ring_growth_flywheel(args.username, args.framework, args.sect, args.members, args.top_n))
+
+
+def cmd_activation(args):
+    """Generate the Soul Ring activation funnel from the local ledger."""
+    from .activation import format_activation_funnel
+
+    print(format_activation_funnel(args.username, args.framework, args.sect, args.members, args.top_n))
+
+
+def cmd_share_report(args):
+    """Generate the Soul Ring share attribution report from the local ledger."""
+    from .activation import format_share_attribution_report
+
+    print(format_share_attribution_report(args.username, args.framework, args.top_n))
+
+
+def cmd_share_leaderboard(args):
+    """Generate the Soul Ring share proof leaderboard from the local ledger."""
+    from .activation import format_share_proof_leaderboard
+
+    print(format_share_proof_leaderboard(args.framework, args.top_n))
+
+
+def cmd_record_return(args):
+    """Record a reviewable external return into the activation ledger."""
+    from .activation import format_record_external_return
+
+    print(format_record_external_return(args.username, args.framework, args.surface, args.source_url, args.note))
+
+
+def cmd_record_session(args):
+    """Record a first-session exposure into the activation ledger."""
+    from .activation import format_record_first_session
+
+    print(format_record_first_session(args.username, args.framework, args.surface, args.source_url, args.note))
+
+
+def cmd_record_share(args):
+    """Record a reviewable public share attribution into the activation ledger."""
+    from .activation import format_record_share_attribution
+
+    print(
+        format_record_share_attribution(
+            args.username,
+            args.framework,
+            args.share_url,
+            source_url=args.source_url or "",
+            surface=args.surface,
+            note=args.note,
+        )
+    )
+
+
+def cmd_ladder(args):
+    """Generate the Soul Ring breakthrough ladder."""
+    from .achievements import format_soul_ring_breakthrough_ladder
+
+    print(format_soul_ring_breakthrough_ladder(args.username, args.framework))
+
+
+def cmd_evidence(args):
+    """Record reviewable public evidence for a Soul Ring gate."""
+    from .achievements import format_soul_ring_evidence_submission
+
+    print(
+        format_soul_ring_evidence_submission(
+            args.username,
+            args.framework,
+            amount=args.amount,
+            source_url=args.source_url,
+            note=args.note,
+        )
+    )
 
 
 def cmd_frameworks(args):
@@ -758,6 +1192,36 @@ def _build_parser() -> argparse.ArgumentParser:
             "  cyberhuatuo search \"CUDA out of memory\" --framework pytorch\n"
             "  cyberhuatuo stats\n"
             "  cyberhuatuo frameworks --search langchain\n"
+            "  cyberhuatuo challenge --username your-github-username --framework langchain\n"
+            "  cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username\n"
+            "  cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 3\n"
+            "  cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.0\n"
+            "  cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3\n"
+            "  cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3\n"
+            "  cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3 --source-url https://example.com/proof\n"
+            "  cyberhuatuo record-return --username your-github-username --framework langchain --surface \"PyPI release\" --source-url https://example.com/post\n"
+            "  cyberhuatuo activation --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10\n"
+            "  cyberhuatuo record-session --username your-github-username --framework langchain --surface \"First agent session\" --source-url https://example.com/post\n"
+            "  cyberhuatuo record-share --username your-github-username --framework langchain --share-url https://example.com/share\n"
+            "  cyberhuatuo share-report --username your-github-username --framework langchain --top-n 10\n"
+            "  cyberhuatuo share-leaderboard --framework langchain --top-n 10\n"
+            "  cyberhuatuo flywheel --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10\n"
+            "  cyberhuatuo ladder your-github-username --framework langchain\n"
+            "  cyberhuatuo badge your-github-username\n"
+            "  cyberhuatuo quest your-github-username --framework langchain\n"
+            "  cyberhuatuo campaign your-github-username --framework langchain\n"
+            "  cyberhuatuo duel your-github-username friend-github-username --framework langchain\n"
+            "  cyberhuatuo mentor mentor-github apprentice-github --framework langchain\n"
+            "  cyberhuatuo tournament alice bob carol dave --framework langchain --event Agent-Cup\n"
+            "  cyberhuatuo tournament-settle alice bob carol dave --framework langchain --event Agent-Cup\n"
+            "  cyberhuatuo arena your-github-username --top-n 10\n"
+            "  cyberhuatuo season --framework langchain --top-n 10\n"
+            "  cyberhuatuo sect Azure-Sect alice bob --framework langchain\n"
+            "  cyberhuatuo sect-recruit Azure-Sect alice bob --invitee carol --framework langchain\n"
+            "  cyberhuatuo sect-quest Azure-Sect alice bob --framework langchain\n"
+            "  cyberhuatuo sect-hall Azure-Sect alice bob --framework langchain\n"
+            "  cyberhuatuo sect-duel Azure-Sect Shadow-Sect --challenger-members alice bob --rival-members carol dave --framework langchain\n"
+            "  cyberhuatuo sect-arena --sect Azure-Sect alice bob --sect Shadow-Sect carol dave --framework langchain\n"
             "  cyberhuatuo serve --port 8080\n"
             "\n"
             "MCP 模式:\n"
@@ -845,6 +1309,359 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("card", help="📋 生成分享卡片")
     p.add_argument("username", help="GitHub 用户名")
     p.set_defaults(func=cmd_card)
+
+    # --- badge ---
+    p = subs.add_parser("badge", help="🔮 生成 GitHub Profile 魂环徽章包")
+    p.add_argument("username", help="GitHub 用户名")
+    p.set_defaults(func=cmd_badge)
+
+    # --- quest ---
+    p = subs.add_parser("quest", help="🔮 生成追环任务板")
+    p.add_argument("username", help="GitHub 用户名")
+    p.add_argument("--framework", "-f", default="", help="指定追环框架，不填则使用主修方向")
+    p.set_defaults(func=cmd_quest)
+
+    # --- campaign ---
+    p = subs.add_parser("campaign", help="🔮 生成魂环传播包")
+    p.add_argument("username", help="GitHub 用户名")
+    p.add_argument("--framework", "-f", default="", help="指定传播目标框架，不填则使用主修方向")
+    p.set_defaults(func=cmd_campaign)
+
+    # --- duel ---
+    p = subs.add_parser("duel", help="🔮 生成魂环对决邀请卡")
+    p.add_argument("challenger", help="发起挑战的 GitHub 用户名")
+    p.add_argument("rival", help="被邀请对决的 GitHub 用户名")
+    p.add_argument("--framework", "-f", default="", help="指定对决框架，不填则使用双方主修方向")
+    p.set_defaults(func=cmd_duel)
+
+    # --- mentor ---
+    p = subs.add_parser("mentor", help="Generate a Soul Ring mentor-apprentice pact")
+    p.add_argument("mentor", help="Mentor GitHub username")
+    p.add_argument("apprentice", help="Apprentice GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the pact")
+    p.set_defaults(func=cmd_mentor)
+
+    # --- tournament ---
+    p = subs.add_parser("tournament", help="Generate a Soul Ring tournament bracket")
+    p.add_argument("participants", nargs="+", help="GitHub usernames in the tournament")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for tournament duels")
+    p.add_argument("--event", default="CyberHuaTuo Soul Ring Cup", help="Tournament event name")
+    p.set_defaults(func=cmd_tournament)
+
+    # --- tournament settlement ---
+    p = subs.add_parser("tournament-settle", help="Generate a Soul Ring tournament settlement")
+    p.add_argument("participants", nargs="+", help="GitHub usernames in the tournament")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for tournament settlement")
+    p.add_argument("--event", default="CyberHuaTuo Soul Ring Cup", help="Tournament event name")
+    p.set_defaults(func=cmd_tournament_settle)
+
+    # --- arena ---
+    p = subs.add_parser("arena", help="🔮 生成魂环竞技场快照")
+    p.add_argument("username", nargs="?", default="", help="可选 GitHub 用户名，用于显示追赶目标")
+    p.add_argument("--top-n", "-n", type=int, default=10, help="显示前 N 名")
+    p.add_argument("--framework", "-f", default="langchain", help="生成后续追环命令使用的目标框架")
+    p.set_defaults(func=cmd_arena)
+
+    # --- season ---
+    p = subs.add_parser("season", help="Generate a Soul Ring season board")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the season board")
+    p.add_argument("--top-n", "-n", type=int, default=10, help="Number of ranked alchemists to show")
+    p.set_defaults(func=cmd_season)
+
+    # --- sect ---
+    p = subs.add_parser("sect", help="Generate a Soul Ring sect/team card")
+    p.add_argument("sect_name", help="Sect/team name")
+    p.add_argument("members", nargs="+", help="GitHub member usernames")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for sect quests")
+    p.set_defaults(func=cmd_sect)
+
+    # --- sect recruit ---
+    p = subs.add_parser("sect-recruit", help="Generate a Soul Ring sect/team recruitment scroll")
+    p.add_argument("sect_name", help="Sect/team name")
+    p.add_argument("members", nargs="+", help="Current GitHub member usernames")
+    p.add_argument("--invitee", default="new-member-github", help="Invitee GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the recruitment trial")
+    p.set_defaults(func=cmd_sect_recruit)
+
+    # --- sect quest ---
+    p = subs.add_parser("sect-quest", help="Generate a Soul Ring sect/team quest board")
+    p.add_argument("sect_name", help="Sect/team name")
+    p.add_argument("members", nargs="+", help="GitHub member usernames")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for sect quests")
+    p.set_defaults(func=cmd_sect_quest)
+
+    # --- sect hall ---
+    p = subs.add_parser("sect-hall", help="Generate a Soul Ring sect/team hierarchy hall")
+    p.add_argument("sect_name", help="Sect/team name")
+    p.add_argument("members", nargs="+", help="GitHub member usernames")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for sect hall gates")
+    p.set_defaults(func=cmd_sect_hall)
+
+    # --- sect duel ---
+    p = subs.add_parser("sect-duel", help="Generate a Soul Ring sect/team duel card")
+    p.add_argument("challenger_sect", help="Challenger sect/team name")
+    p.add_argument("rival_sect", help="Rival sect/team name")
+    p.add_argument("--challenger-members", nargs="+", required=True, help="Challenger GitHub member usernames")
+    p.add_argument("--rival-members", nargs="+", required=True, help="Rival GitHub member usernames")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the sect duel")
+    p.set_defaults(func=cmd_sect_duel)
+
+    # --- sect arena ---
+    p = subs.add_parser("sect-arena", help="Generate a Soul Ring sect/team arena snapshot")
+    p.add_argument(
+        "--sect",
+        action="append",
+        nargs="+",
+        required=True,
+        metavar="VALUE",
+        help="Repeat as: --sect Sect-Name member-a member-b",
+    )
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the sect arena")
+    p.set_defaults(func=cmd_sect_arena)
+
+    # --- mission ---
+    p = subs.add_parser("mission", help="Generate the Soul Ring Mission Hall")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the mission")
+    p.add_argument("--sect", default="CyberHuaTuo Sect", help="Sect/team name")
+    p.add_argument("--members", nargs="*", default=None, help="GitHub member usernames for sect commands")
+    p.set_defaults(func=cmd_mission)
+
+    # --- bounty ---
+    p = subs.add_parser("bounty", help="Generate the Soul Ring Bounty Board")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="auto", help="Target framework, or auto for all supported frameworks")
+    p.add_argument("--top-n", "-n", type=int, default=8, help="Number of claimable framework gaps to show")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.set_defaults(func=cmd_bounty)
+
+    # --- launch ---
+    p = subs.add_parser("launch", help="Generate the Soul Ring marketplace launch scroll")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the first-ring funnel")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.set_defaults(func=cmd_launch)
+
+    # --- launch campaign ---
+    p = subs.add_parser("launch-campaign", help="Generate the Soul Ring cold-start launch campaign")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the launch campaign")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--surface", default="PyPI / Claude / Codex launch", help="Public launch surface")
+    p.set_defaults(func=cmd_launch_campaign)
+
+    # --- traction proof ---
+    p = subs.add_parser("traction-proof", help="Generate public Soul Ring traction proof")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the traction proof")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.add_argument("--timeout", type=int, default=10, help="Public API request timeout in seconds")
+    p.add_argument("--record-snapshot", action="store_true", help="Append an opt-in real traction snapshot to the local JSONL ledger")
+    p.add_argument("--snapshot-note", default="", help="Optional reviewer note for the recorded traction snapshot")
+    p.set_defaults(func=cmd_traction_proof)
+
+    # --- current install command ---
+    p = subs.add_parser("install-command", help="Print the current safe public install command")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for first-ring routing")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.add_argument("--timeout", type=int, default=10, help="PyPI JSON API request timeout in seconds")
+    p.set_defaults(func=cmd_install_command)
+
+    # --- candidate install smoke gate ---
+    p = subs.add_parser(
+        "candidate-install-smoke",
+        help="Smoke-test the Git tag candidate install bridge in a disposable venv",
+    )
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for first-ring routing")
+    p.add_argument("--release-tag", default="", help="Release tag to install, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.add_argument("--timeout", type=int, default=600, help="Timeout in seconds for each smoke step")
+    p.add_argument("--keep-temp", action="store_true", help="Retain the disposable venv even after a successful smoke run")
+    p.set_defaults(func=cmd_candidate_install_smoke)
+
+    # --- marketplace readiness ---
+    p = subs.add_parser("market-ready", help="Check PyPI, Claude, Codex, and IssueOps marketplace readiness")
+    p.add_argument("--remote", action="store_true", default=False, help="Check public PyPI/GitHub API readiness")
+    p.add_argument("--no-remote", action="store_false", dest="remote", help="Skip public API readiness checks")
+    p.add_argument("--strict-remote", action="store_true", help="Fail when public PyPI/GitHub readiness is blocked")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for traction proof context")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.add_argument("--timeout", type=int, default=10, help="Public API request timeout in seconds")
+    p.set_defaults(func=cmd_market_ready)
+
+    # --- launch assets ---
+    p = subs.add_parser(
+        "launch-assets",
+        help="Audit launch assets, full growth release bundle, and dirty worktree coverage",
+    )
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username for release recheck commands")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for proof routing")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.set_defaults(func=cmd_launch_assets)
+
+    # --- no-network first public proof pack ---
+    p = subs.add_parser("proof-pack", help="Generate the no-network First Public Proof Pack")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for proof routing")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.set_defaults(func=cmd_proof_pack)
+
+    # --- targeted first external contributor invite ---
+    p = subs.add_parser("first-invite", help="Generate a targeted First Contributor Invite Pack")
+    p.add_argument("--username", "-u", default="your-github-username", help="Maintainer GitHub username")
+    p.add_argument("--invitee", default="external-contributor-github-username", help="Invitee GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the invite")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--source-url", default="", help="Created Growth Issue, release, Discussion, PR, or social URL")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.set_defaults(func=cmd_first_invite)
+
+    # --- marketplace submission copy ---
+    p = subs.add_parser("market-copy", help="Generate PyPI, Claude, Codex, and release submission copy")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission copy")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.set_defaults(func=cmd_market_copy)
+
+    # --- record marketplace submission ---
+    p = subs.add_parser("record-market", help="Record a reviewable marketplace submission URL")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission proof")
+    p.add_argument(
+        "--channel",
+        required=True,
+        choices=["pypi", "claude-code", "claude-desktop", "codex", "github-release", "agent-marketplace", "other"],
+        help="Marketplace or release channel",
+    )
+    p.add_argument(
+        "--status",
+        required=True,
+        choices=["submitted", "pending", "needs-review", "approved", "published", "rejected", "blocked"],
+        help="Current public submission status",
+    )
+    p.add_argument("--submission-url", required=True, help="Reviewable public http(s) URL for the submission")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.add_argument("--note", default="", help="Optional reviewer note")
+    p.set_defaults(func=cmd_record_market)
+
+    # --- marketplace submission status ---
+    p = subs.add_parser("market-status", help="Report marketplace submission status from the local ledger")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission status")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.0")
+    p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
+    p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
+    p.set_defaults(func=cmd_market_status)
+
+    # --- activation funnel ---
+    p = subs.add_parser("activation", help="Generate the Soul Ring activation funnel from the local ledger")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for activation events")
+    p.add_argument("--sect", default="CyberHuaTuo Sect", help="Sect/team name")
+    p.add_argument("--members", nargs="*", default=None, help="GitHub member usernames for collaboration stage")
+    p.add_argument("--top-n", "-n", type=int, default=10, help="Leaderboard size for follow-up commands")
+    p.set_defaults(func=cmd_activation)
+
+    # --- share attribution report ---
+    p = subs.add_parser("share-report", help="Generate the Soul Ring share attribution report from the local ledger")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for share attribution")
+    p.add_argument("--top-n", "-n", type=int, default=10, help="Number of proof rows to show")
+    p.set_defaults(func=cmd_share_report)
+
+    # --- share proof leaderboard ---
+    p = subs.add_parser("share-leaderboard", help="Generate the Soul Ring share proof leaderboard from the local ledger")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for share proof ranking")
+    p.add_argument("--top-n", "-n", type=int, default=10, help="Number of ranked actors to show")
+    p.set_defaults(func=cmd_share_leaderboard)
+
+    # --- record external return ---
+    p = subs.add_parser("record-return", help="Record a reviewable external return into the activation ledger")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the return")
+    p.add_argument("--surface", required=True, help="External surface, e.g. PyPI release, Claude plugin, Codex MCP")
+    p.add_argument("--source-url", required=True, help="Reviewable public http(s) URL for the external return")
+    p.add_argument("--note", default="", help="Optional note for reviewers")
+    p.set_defaults(func=cmd_record_return)
+
+    # --- record first session ---
+    p = subs.add_parser("record-session", help="Record a first-session exposure into the activation ledger")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the session")
+    p.add_argument("--surface", required=True, help="Session surface, e.g. First Claude Code session")
+    p.add_argument("--source-url", required=True, help="Reviewable public http(s) URL for the session source")
+    p.add_argument("--note", default="", help="Optional note for reviewers")
+    p.set_defaults(func=cmd_record_session)
+
+    # --- record share attribution ---
+    p = subs.add_parser("record-share", help="Record a reviewable public share attribution into the activation ledger")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the share")
+    p.add_argument("--share-url", required=True, help="Reviewable public http(s) URL for the share")
+    p.add_argument("--source-url", default=None, help="Optional reviewable public http(s) URL for the acquisition source")
+    p.add_argument("--surface", default="Public share", help="Share surface, e.g. X, Weibo, GitHub Discussion")
+    p.add_argument("--note", default="", help="Optional note for reviewers")
+    p.set_defaults(func=cmd_record_share)
+
+    # --- flywheel ---
+    p = subs.add_parser("flywheel", help="Generate the Soul Ring growth flywheel snapshot")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the flywheel")
+    p.add_argument("--sect", default="CyberHuaTuo Sect", help="Sect/team name")
+    p.add_argument("--members", nargs="*", default=None, help="GitHub member usernames for collaboration stage")
+    p.add_argument("--top-n", "-n", type=int, default=10, help="Leaderboard size for follow-up commands")
+    p.set_defaults(func=cmd_flywheel)
+
+    # --- ladder ---
+    p = subs.add_parser("ladder", help="Generate the Soul Ring breakthrough ladder")
+    p.add_argument("username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for breakthrough gates")
+    p.set_defaults(func=cmd_ladder)
+
+    # --- evidence ---
+    p = subs.add_parser("evidence", help="Record reviewable public evidence for a Soul Ring gate")
+    p.add_argument("username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the evidence gate")
+    p.add_argument("--amount", type=int, default=1, help="Positive evidence amount to record")
+    p.add_argument("--source-url", required=True, help="Reviewable public http(s) evidence URL")
+    p.add_argument("--note", default="", help="Optional reviewer note stored with the evidence event")
+    p.set_defaults(func=cmd_evidence)
+
+    # --- challenge ---
+    p = subs.add_parser("challenge", help="🔮 生成第一魂环挑战入口")
+    p.add_argument("--username", "-u", default="your-github-username", help="GitHub 用户名")
+    p.add_argument("--framework", "-f", default="langchain", help="第一方药方对应的框架")
+    p.set_defaults(func=cmd_challenge)
 
     # --- frameworks ---
     p = subs.add_parser("frameworks", help="📋 支持框架列表")

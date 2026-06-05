@@ -1,0 +1,24 @@
+{
+  "name": "cyberhuatuo",
+  "description": "CyberHuaTuo Claude Code plugin marketplace for AI-agent debugging workflows, MCP tools, and soul-ring contribution loops.",
+  "owner": {
+    "name": "CyberHuaTuo Contributors",
+    "url": "https://github.com/JinNing6/CyberHuaTuo-Plugin"
+  },
+  "plugins": [
+    {
+      "name": "cyberhuatuo-plugin",
+      "source": "./",
+      "version": "0.2.0",
+      "description": "Diagnose AI-agent and coding framework failures, search reusable prescriptions, and join the First Soul Ring contribution ladder.",
+      "category": "Developer Tools",
+      "keywords": [
+        "mcp",
+        "claude-code",
+        "debugging",
+        "ai-agents",
+        "soul-ring"
+      ]
+    }
+  ]
+}

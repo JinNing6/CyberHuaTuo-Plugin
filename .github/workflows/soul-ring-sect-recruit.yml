@@ -1,0 +1,74 @@
+name: Soul Ring Sect Recruitment IssueOps
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-sect-recruit-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'soul-ring-sect') ||
+        startsWith(github.event.issue.title, '[Soul Ring Sect]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring sect recruitment commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const issueUrl = issue.html_url;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const sectName = safeTitle.replace(/^\[Soul Ring Sect\]\s*/i, "").trim() || "CyberHuaTuo-Sect";
+            const starterMembers = `${username} friend-github-username`;
+            const invitee = "new-member-github";
+            const body = [
+              "## Soul Ring Sect Recruitment",
+              "",
+              `@${username}, this issue can become a public CyberHuaTuo sect recruitment event.`,
+              "",
+              "Use real GitHub usernames from the issue body before posting the scroll. The scroll, hall, and quest board use current real member snapshots only.",
+              "",
+              "Launch Closure Checklist before treating this sect recruitment as part of the public market loop:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-return --username ${username} --framework langchain --surface "Sect Recruitment Issue" --source-url ${issueUrl}`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo sect-recruit ${sectName} ${starterMembers} --invitee ${invitee} --framework langchain`,
+              `cyberhuatuo sect-hall ${sectName} ${starterMembers} --framework langchain`,
+              `cyberhuatuo sect-quest ${sectName} ${starterMembers} --framework langchain`,
+              `cyberhuatuo sect-duel ${sectName} Rival-Sect --challenger-members ${starterMembers} --rival-members rival-github-username --framework langchain`,
+              `cyberhuatuo challenge --username ${username} --framework langchain`,
+              `cyberhuatuo campaign ${username} --framework langchain`,
+              "```",
+              "",
+              "Replace `friend-github-username`, `new-member-github`, and `rival-github-username` with real participants before publishing the recruitment post.",
+              "",
+              "Soul Ring Sect Recruitment Scroll turns the invite into a repeat loop: current sect power, candidate snapshot or placeholder warning, admission trial, join command, and next sect quest.",
+              "",
+              "real-data pledge: members, invitees, sect power, recruitment claims, and promotion claims must come from current real member snapshots and are not invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

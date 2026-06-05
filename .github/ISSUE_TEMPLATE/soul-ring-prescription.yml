@@ -1,0 +1,109 @@
+name: First Soul Ring Prescription
+description: Submit one real AI-agent fix and claim your first CyberHuaTuo soul ring.
+title: "[Soul Ring Prescription] "
+labels:
+  - soul-ring
+  - first-soul-ring
+  - prescription
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for a real AI-agent, LLM, MCP, or framework problem you personally investigated.
+        CyberHuaTuo soul rings are based on real prescriptions only: no invented bugs, no invented users, no simulated fixes.
+
+        After this issue is accepted, publish the prescription with:
+
+        ```bash
+        cyberhuatuo ladder <your-github-username> --framework <framework>
+        cyberhuatuo upload --title "<real issue title>" --prescription "<root cause and fix>" --framework <framework> --contributor <your-github-username>
+        cyberhuatuo ranking <your-github-username>
+        cyberhuatuo card <your-github-username>
+        ```
+
+        The Soul Ring Breakthrough Ladder shows the current real direction count, the next gate, and the full threshold map before you publish the accepted prescription.
+
+  - type: input
+    id: github_username
+    attributes:
+      label: GitHub username
+      description: The GitHub username that should receive the soul-ring credit.
+      placeholder: your-github-username
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Pick the primary target of the real issue.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai-sdk
+        - llamaindex
+        - nextjs
+        - pytorch
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: symptom
+    attributes:
+      label: Real symptom and reproduction
+      description: Paste the real error message, traceback, broken behavior, environment, and reproduction steps.
+      placeholder: |
+        Error:
+        Environment:
+        Reproduction steps:
+    validations:
+      required: true
+
+  - type: textarea
+    id: root_cause
+    attributes:
+      label: Root cause
+      description: Explain why the problem happens. Include the relevant version, API behavior, config, or lifecycle detail.
+      placeholder: The issue happens because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: prescription
+    attributes:
+      label: Prescription / fix
+      description: Describe the concrete fix that worked. Include commands, code changes, or configuration changes when relevant.
+      placeholder: |
+        Fix:
+        Commands or patch:
+        Why this fixes it:
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification evidence
+      description: Show the command, test, screenshot, log, or production evidence proving the fix works.
+      placeholder: |
+        Verified with:
+        Result:
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data pledge
+      description: CyberHuaTuo growth surfaces are public, so every prescription must be real and reproducible.
+      options:
+        - label: This is a real error or real broken behavior I investigated.
+          required: true
+        - label: The fix and verification are not invented, simulated, or copied without context.
+          required: true
+        - label: I understand that accepted prescriptions may appear in public soul-ring ranking and sharing surfaces.
+          required: true
+    validations:
+      required: true

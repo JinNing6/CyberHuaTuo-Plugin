@@ -1,0 +1,32 @@
+{
+  "name": "cyberhuatuo",
+  "description": "CyberHuaTuo Codex plugin marketplace for AI-agent debugging workflows, MCP tools, and soul-ring contribution loops.",
+  "interface": {
+    "displayName": "CyberHuaTuo Plugins"
+  },
+  "plugins": [
+    {
+      "name": "cyberhuatuo-plugin",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "CyberHuaTuo Plugin",
+        "shortDescription": "Diagnose AI-agent errors and route real fixes into the First Soul Ring loop.",
+        "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for diagnosing AI-agent, MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures using a curated public prescription knowledge base.",
+        "developerName": "CyberHuaTuo Contributors",
+        "capabilities": [
+          "MCP",
+          "Skills",
+          "Diagnostics"
+        ]
+      }
+    }
+  ]
+}

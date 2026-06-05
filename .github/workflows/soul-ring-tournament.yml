@@ -1,0 +1,72 @@
+name: Soul Ring Tournament IssueOps
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-tournament-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'soul-ring-tournament') ||
+        startsWith(github.event.issue.title, '[Soul Ring Tournament]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring tournament commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const issueUrl = issue.html_url;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const eventName = safeTitle.replace(/^\[Soul Ring Tournament\]\s*/i, "").trim() || "CyberHuaTuo Soul Ring Cup";
+            const starterParticipants = `${username} friend-github-username rival-github-username`;
+            const body = [
+              "## Soul Ring Tournament Cup",
+              "",
+              `@${username}, this issue can become a public CyberHuaTuo soul-ring tournament event.`,
+              "",
+              "Use real GitHub usernames from the issue body before posting the bracket. The bracket and settlement use current real prescription counts only.",
+              "",
+              "Launch Closure Checklist before treating this tournament as part of the public market loop:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-return --username ${username} --framework langchain --surface "Tournament Issue" --source-url ${issueUrl}`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo tournament ${starterParticipants} --framework langchain --event \"${eventName}\"`,
+              `cyberhuatuo tournament-settle ${starterParticipants} --framework langchain --event \"${eventName}\"`,
+              `cyberhuatuo duel ${username} friend-github-username --framework langchain`,
+              `cyberhuatuo challenge --username ${username} --framework langchain`,
+              `cyberhuatuo campaign ${username} --framework langchain`,
+              "```",
+              "",
+              "Replace `friend-github-username` and `rival-github-username` with real participants before publishing the bracket.",
+              "",
+              "Soul Ring Tournament Settlement turns the event into a repeat loop: current victor, runner-up, gap or pending state, and next-round hook.",
+              "",
+              "real-data pledge: participants, contribution counts, brackets, and settlement claims must come from current real prescription counts and are not invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

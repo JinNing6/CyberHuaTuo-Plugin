@@ -1,0 +1,110 @@
+name: Soul Ring Launch Campaign
+description: Start a public launch campaign with target first-ring contributors and real proof loops.
+title: "[Soul Ring Launch Campaign] <surface or release moment>"
+labels:
+  - soul-ring
+  - soul-ring-launch-campaign
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when PyPI, Claude, Codex, GitHub Discussions, X, Weibo, Discord, or agent-community attention needs a concrete public launch campaign.
+
+        It turns a cold market launch into a target-driven but real-data-only operating loop:
+
+        ```bash
+        cyberhuatuo launch-campaign --username <github-username> --framework <framework> --release-tag <release-tag> --target-contributors <positive-integer>
+        cyberhuatuo record-return --username <github-username> --framework <framework> --surface "<launch-surface>" --source-url <https-url>
+        cyberhuatuo activation --username <github-username> --framework <framework>
+        cyberhuatuo flywheel --username <github-username> --framework <framework>
+        cyberhuatuo record-share --username <github-username> --framework <framework> --share-url <https-url>
+        cyberhuatuo share-leaderboard --framework <framework> --top-n 10
+        ```
+
+        No downloads, retention, repost counts, referrals, rewards, or Spirit Power are invented.
+  - type: input
+    id: github_username
+    attributes:
+      label: GitHub username
+      description: The maintainer or contributor who owns this launch campaign.
+      placeholder: your-github-username
+    validations:
+      required: true
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Choose the first-ring direction this launch should recruit toward.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai
+        - autogen
+        - llamaindex
+        - pytorch
+        - other
+    validations:
+      required: true
+  - type: dropdown
+    id: launch_surface
+    attributes:
+      label: Launch surface
+      description: Where will this campaign start?
+      options:
+        - PyPI release
+        - Claude Desktop MCPB
+        - Claude Code plugin
+        - Codex plugin
+        - GitHub release or Discussion
+        - X / Weibo / Discord
+        - Agent community prompt
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: release_tag
+    attributes:
+      label: Release tag
+      description: Public release tag for the campaign.
+      placeholder: v0.2.0
+    validations:
+      required: true
+  - type: input
+    id: target_contributors
+    attributes:
+      label: Target first-ring contributors
+      description: Positive integer target for real first-ring contributors recruited by this campaign.
+      placeholder: "3"
+    validations:
+      required: true
+  - type: textarea
+    id: real_signal
+    attributes:
+      label: Real launch signal
+      description: Link or describe the actual release, listing, post, install question, or community prompt.
+      placeholder: "Example: PyPI 0.2.0 release page and Claude MCPB install feedback."
+    validations:
+      required: true
+  - type: textarea
+    id: campaign_hook
+    attributes:
+      label: Campaign hook
+      description: The public promise that should convert attention into first-ring prescriptions.
+      placeholder: "Example: Diagnose one real LangChain/MCP bug and publish your First Soul Ring prescription."
+    validations:
+      required: true
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data pledge
+      description: CyberHuaTuo launch campaigns must stay reviewable.
+      options:
+        - label: This campaign is based on a real public launch or community signal.
+          required: true
+        - label: The target is a goal, not a claimed result.
+          required: true
+        - label: No downloads, retention, repost counts, referrals, rewards, or Spirit Power are invented.
+          required: true
+    validations:
+      required: true

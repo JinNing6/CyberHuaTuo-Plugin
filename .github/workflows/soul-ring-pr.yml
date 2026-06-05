@@ -1,0 +1,68 @@
+name: Soul Ring PR Settlement
+
+"on":
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-pr-comment:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring settlement commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const username = pr.user.login;
+            const prUrl = pr.html_url;
+            const safeTitle = pr.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const body = [
+              "## Soul Ring PR Settlement",
+              "",
+              `@${username}, this PR can become a public CyberHuaTuo soul-ring prescription after review.`,
+              "",
+              "Fill the PR template with the real framework, symptom, root cause, fix, and verification evidence. Then run the settlement commands after the PR is accepted:",
+              "",
+              "Launch Closure Checklist before treating this PR as part of the public market loop:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework <framework> --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework <framework> --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework <framework> --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-return --username ${username} --framework <framework> --surface "Pull Request" --source-url ${prUrl}`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo upload --title \"${safeTitle}\" --prescription \"<root cause and fix>\" --framework <framework> --contributor ${username}`,
+              `cyberhuatuo ladder ${username} --framework <framework>`,
+              `cyberhuatuo ranking ${username}`,
+              `cyberhuatuo card ${username}`,
+              `cyberhuatuo campaign ${username} --framework <framework>`,
+              `cyberhuatuo sect-hall CyberHuaTuo-Sect ${username} --framework <framework>`,
+              "```",
+              "",
+              "Replace `<framework>` with the real framework from the PR template before running the commands.",
+              "",
+              "The Soul Ring Breakthrough Ladder shows the next gate after settlement, so the PR comment becomes a public chase prompt instead of a dead-end receipt.",
+              "",
+              "real-data pledge: the symptom, root cause, fix, and verification must be real, reproducible, and not invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body,
+            });

@@ -1,0 +1,174 @@
+{
+  "manifest_version": "0.4",
+  "name": "cyberhuatuo",
+  "display_name": "CyberHuaTuo",
+  "version": "0.2.0",
+  "description": "An MCP clinic for diagnosing AI-agent failures and turning real fixes into ranked soul-ring prescriptions.",
+  "long_description": "CyberHuaTuo packages a Python MCP server for Claude Desktop. It can diagnose AI-agent and framework failures, search a public prescription knowledge base, fetch official framework documentation, and generate shareable soul-ring contribution artifacts from real repository data.",
+  "author": {
+    "name": "CyberHuaTuo Contributors",
+    "url": "https://github.com/JinNing6/CyberHuaTuo-Plugin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JinNing6/CyberHuaTuo-Plugin.git"
+  },
+  "homepage": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+  "documentation": "https://github.com/JinNing6/CyberHuaTuo-Plugin/blob/main/README_MCP.md",
+  "support": "https://github.com/JinNing6/CyberHuaTuo-Plugin/issues",
+  "server": {
+    "type": "uv",
+    "entry_point": "src/server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "src/server.py"
+      ]
+    }
+  },
+  "tools": [
+    {
+      "name": "diagnose",
+      "description": "Diagnose AI-agent or framework failures and return a CyberHuaTuo prescription with supporting evidence."
+    },
+    {
+      "name": "search_knowledge_base",
+      "description": "Search the CyberHuaTuo public prescription knowledge base for matching AI-agent failure cases."
+    },
+    {
+      "name": "security_checkup",
+      "description": "Audit AI-agent code for sandboxing, secret handling, prompt safety, output safety, resilience, and observability risks."
+    },
+    {
+      "name": "fetch_official_docs",
+      "description": "Fetch official framework documentation snippets for a specific framework and query."
+    },
+    {
+      "name": "upload_prescription",
+      "description": "Submit a real community prescription to CyberHuaTuo using configured GitHub credentials."
+    },
+    {
+      "name": "soul_ring_campaign_pack",
+      "description": "Generate a copy-ready campaign pack from a contributor's real soul-ring contribution snapshot."
+    },
+    {
+      "name": "soul_ring_launch_scroll",
+      "description": "Generate a marketplace launch scroll that routes PyPI, Claude, Codex, and GitHub release attention into the First Soul Ring contribution loop."
+    },
+    {
+      "name": "soul_ring_launch_campaign",
+      "description": "Generate a cold-start soul-ring launch campaign with a target first-ring contributor count, Growth Issue, Share Proof Issue, market-copy submission copy routing, activation ledger commands, flywheel commands, proof leaderboard commands, and a Campaign Recap And Next Sprint with observed real contributors, shortfall, next growth_campaign command, and traction-proof --record-snapshot without inventing adoption metrics."
+    },
+    {
+      "name": "marketplace_readiness_gate",
+      "description": "Run the Marketplace Readiness Gate and Launch Closure Checklist before PyPI, Claude, Codex, or public agent-marketplace pushes. It first prints a Flywheel Closure Verdict with closed, not closed, or unverified, Ready gates / total gate counts, real evidence basis, blocking gates, and non-fabrication boundaries, then checks local release contracts, optional GitHub Contents API remote IssueOps readiness, GitHub Releases API release.published or protected workflow_dispatch fallback readiness, PyPI JSON API latest-version proof, PyPI Trusted Publisher recovery, first public proof, a First Public Proof Kit with Growth Flywheel Issue, Share Proof Issue, and Bounty Board Issue routes, a Community Challenge Pack for Tournament, Mentor Pact, Sect Recruitment, and Season Board routes, plus a Protected Publish Fallback command, GitHub Web Release and GitHub Actions workflow page links, market-copy submission copy routing, and a Local Launch Asset Audit with minimal git add commands, a Full Public Growth Release Bundle, a Public Release Operator Runbook with GitHub Web Release, GitHub Actions workflow page, gh release create, gh workflow run publish-pypi.yml, and market-copy commands, and Dirty Worktree Release Coverage without publishing or mutating remote state."
+    },
+    {
+      "name": "current_install_command",
+      "description": "Fetch real PyPI JSON API latest-version proof and return the current public install command before PyPI, Claude, Codex, or MCP marketplace onboarding. It recommends python -m pip install --upgrade cyberhuatuo only when PyPI latest matches the local package version; otherwise it prints a Git Tag Candidate Install Bridge, first Soul Ring challenge, proof-pack, market-copy, and traction-proof commands without publishing or mutating ledgers, and does not invent downloads, retention, referrals, rewards, approvals, or fake contributors. CLI equivalent: cyberhuatuo install-command."
+    },
+    {
+      "name": "local_launch_asset_audit",
+      "description": "Run the read-only Local Launch Asset Audit before pushing default-branch IssueOps, PyPI, Claude, Codex, or MCPB release assets. It validates local issue forms, comment-only workflows, package metadata, plugin manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP entrypoints, then prints exact minimal git add commands, a Full Public Growth Release Bundle, a Public Release Operator Runbook with GitHub Web Release, GitHub Actions workflow page, gh release create and gh workflow run publish-pypi.yml commands, and Dirty Worktree Release Coverage from read-only git status --porcelain. It does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction."
+    },
+    {
+      "name": "first_public_proof_pack",
+      "description": "Generate the No-Network First Public Proof Pack, the MCP equivalent of cyberhuatuo proof-pack. It outputs Growth Flywheel Issue, Share Proof Issue, and Bounty Board Issue form URLs, Created Growth Issue URL, Created Share Proof Issue URL, and Created Bounty Board Issue URL placeholders, a Community Challenge Pack for Tournament Cup, Mentor Pact, Sect Recruitment, and Season Board routes, a Protected Publish Fallback command with gh workflow run publish-pypi.yml -f release_tag=<tag> and gh run list verification, GitHub Web Release, GitHub Actions workflow page, PyPI Trusted Publisher settings links, terminal record-return and record-share commands, an External Contributor Path with install, first-session command, first contribution command, Share Proof Issue URL, contributor-counting rule, market-copy submission copy routing, recheck commands, and copy-ready public proof text. The fallback still requires the PyPI Trusted Publisher to match this repository, workflow file, and pypi environment; no PYPI_TOKEN fallback is allowed. It does not fetch public metrics, write ledger events, create issues, publish releases, upload to PyPI by itself, or invent traction."
+    },
+    {
+      "name": "first_contributor_invite",
+      "description": "Generate a First Contributor Invite Pack that can target one external contributor after PyPI, Claude, Codex, GitHub, X, Weibo, or community launch exposure. It outputs a concrete First Soul Ring Prescription Issue URL, Share Proof Issue URL, record-session command, challenge command, proof-pack / market-copy / traction-proof recheck commands, local candidate snapshot, contributor-counting rule, and copy-ready direct invite text. It does not fetch public metrics, write ledger events, create issues, publish releases, upload to PyPI, submit marketplace forms, and does not invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors."
+    },
+    {
+      "name": "marketplace_submission_copy",
+      "description": "Generate the Marketplace Submission Copy Pack for PyPI listing copy, Claude MCPB listing copy, Codex plugin listing copy, a GitHub Release post, public proof CTAs, and the Community Challenge Pack for Tournament, Mentor Pact, Sect Recruitment, and Season Board routes. It includes install commands, validation commands, project URL suggestions, record-return and record-share commands, target-contributor routing, and copy-ready maintainer announcement text. It does not fetch public metrics, write ledger events, submit marketplace forms, publish releases, upload to PyPI, and does not invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors."
+    },
+    {
+      "name": "record_marketplace_submission",
+      "description": "Record a reviewable public URL for a PyPI, Claude Code, Claude Desktop MCPB, Codex, GitHub Release, or agent-marketplace submission into the local Marketplace Submission Ledger. It requires a real http(s) proof URL, status, channel, release tag, does not submit forms, and does not invent downloads, retention, repost counts, referrals, rewards, reviews, approvals, or fake contributors. CLI equivalent: cyberhuatuo record-market."
+    },
+    {
+      "name": "marketplace_submission_status",
+      "description": "Report the local Marketplace Submission Ledger by channel, showing latest recorded status and proof URL for PyPI, Claude Code, Claude Desktop MCPB, Codex, and GitHub Release, missing channels, and next record-market / market-copy / traction-proof commands. It does not invent approvals, downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors. CLI equivalent: cyberhuatuo market-status."
+    },
+    {
+      "name": "soul_ring_traction_proof",
+      "description": "Generate public soul-ring traction proof from GitHub REST API, GitHub Pull Requests API, GitHub Contents API remote IssueOps readiness, GitHub Releases API release.published trigger or protected workflow_dispatch fallback readiness, PyPI JSON API package readiness, and local activation/share ledger events. Public PR authors count as contributor identities but PRs stay separate from IssueOps issue counts; stars, forks, watchers, downloads, retention, referrals, and rewards are not contributor progress. Public API fetch failures or rate limits inline the No-Network First Public Proof Pack so operators can open proof Issues without a second tool call, and next proof commands include market-copy. Older PyPI latest versions and missing default-branch IssueOps files are launch blockers; missing/draft/prerelease GitHub Releases become provenance warnings when PyPI latest-version proof is already current through the protected fallback. This read-only tool does not record a snapshot."
+    },
+    {
+      "name": "record_soul_ring_traction_snapshot",
+      "description": "Record an opt-in append-only local JSONL Soul Ring Traction Proof snapshot, including separate public PR author proof, PyPI package readiness, GitHub Releases API release trigger readiness, and remote IssueOps readiness, compare it against the previous real snapshot, and report velocity deltas without recording downloads, retention, repost counts, referrals, rewards, or private analytics."
+    },
+    {
+      "name": "soul_ring_growth_flywheel",
+      "description": "Generate a real-data growth flywheel snapshot that identifies the current soul-ring bottleneck and discloses missing downloads, retention, and attribution metrics."
+    },
+    {
+      "name": "soul_ring_activation_funnel",
+      "description": "Generate the local soul-ring activation funnel from real JSONL ledger events and name the weakest conversion stage."
+    },
+    {
+      "name": "soul_ring_share_attribution_report",
+      "description": "Generate a local soul-ring share attribution report with public proof URLs, source-to-share bridges, actor pull, artifact pull, the current proof bottleneck, and next callable proof commands."
+    },
+    {
+      "name": "soul_ring_share_proof_leaderboard",
+      "description": "Generate a local soul-ring share proof leaderboard from reviewable public share URLs in the activation ledger without inventing downloads, retention, repost counts, referrals, rewards, or Spirit Power."
+    },
+    {
+      "name": "record_soul_ring_external_return",
+      "description": "Record a reviewable external return URL into the local soul-ring activation ledger, then route the recorded public proof directly into first_contributor_invite and first_public_proof_pack equivalents for the next external contributor. It does not invent downloads, retention, referrals, rewards, or fake contributors."
+    },
+    {
+      "name": "record_soul_ring_first_session",
+      "description": "Record a first-session exposure separately from successful prescription contribution events."
+    },
+    {
+      "name": "record_soul_ring_share_attribution",
+      "description": "Record a reviewable public share URL into the local soul-ring activation ledger, then route the share proof directly into first_contributor_invite and first_public_proof_pack equivalents for the next external contributor. It does not invent downloads, repost counts, referrals, rewards, or fake contributors."
+    },
+    {
+      "name": "record_soul_ring_evidence",
+      "description": "Generate a Soul Ring Evidence Card by appending reviewable public evidence to the local append-only JSONL evidence ledger, reporting whether it triggered an evidence-backed breakthrough without inventing prescriptions, rankings, downloads, rewards, or contributors."
+    },
+    {
+      "name": "soul_ring_quest_board",
+      "description": "Generate the next real-data quest board for a contributor pursuing the next soul ring."
+    },
+    {
+      "name": "soul_ring_bounty_board",
+      "description": "Generate the Soul Ring Bounty Board from real local framework coverage gap data. It ranks claimable first-ring prescription tasks, prints cyberhuatuo bounty / challenge / first-invite / proof-pack / market-copy / traction-proof commands, and does not invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors."
+    },
+    {
+      "name": "global_leaderboard",
+      "description": "Show the current CyberHuaTuo global contribution leaderboard from real prescription counts."
+    }
+  ],
+  "tools_generated": true,
+  "keywords": [
+    "mcp",
+    "claude",
+    "codex",
+    "ai-agents",
+    "debugging",
+    "soul-ring"
+  ],
+  "license": "Apache-2.0",
+  "privacy_policies": [
+    "https://github.com/JinNing6/CyberHuaTuo-Plugin/blob/main/docs/PRIVACY.md"
+  ],
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  }
+}

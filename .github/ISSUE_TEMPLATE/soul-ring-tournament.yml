@@ -1,0 +1,86 @@
+name: Soul Ring Tournament Cup
+description: Start a public soul-ring cup from real GitHub users and current CyberHuaTuo contribution snapshots.
+title: "[Soul Ring Tournament] "
+labels:
+  - soul-ring
+  - soul-ring-tournament
+  - tournament
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to start a public CyberHuaTuo Soul Ring Tournament from real GitHub users.
+        Tournament brackets and settlements use current real CyberHuaTuo prescription counts only: no invented users, no invented wins, no simulated adoption.
+
+        After opening the issue, publish the bracket and current settlement with:
+
+        ```bash
+        cyberhuatuo tournament <participants...> --framework <framework> --event "<event-name>"
+        cyberhuatuo tournament-settle <participants...> --framework <framework> --event "<event-name>"
+        ```
+
+        The Soul Ring Tournament Settlement turns the same public event into a repeat loop: current victor, runner-up, victory gap or pending state, next-round hook, and copy-ready Discussion / PR Comment text.
+
+  - type: input
+    id: event_name
+    attributes:
+      label: Tournament event name
+      description: A short public name for the cup.
+      placeholder: Agent Soul Cup
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Pick the primary target for tournament quests and duels.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai-sdk
+        - llamaindex
+        - nextjs
+        - pytorch
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: participants
+    attributes:
+      label: Participant GitHub usernames
+      description: List real GitHub usernames, separated by spaces, commas, or new lines.
+      placeholder: |
+        alice
+        bob
+        carol
+        dave
+    validations:
+      required: true
+
+  - type: textarea
+    id: event_goal
+    attributes:
+      label: Public event goal
+      description: Explain what real contribution behavior this cup should create.
+      placeholder: |
+        Invite four AI-agent builders to publish real LangChain/MCP fixes and settle the cup from current real prescription counts.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data tournament pledge
+      description: CyberHuaTuo tournament surfaces are public growth artifacts.
+      options:
+        - label: All participants are real GitHub usernames or explicit placeholders that must be replaced before posting.
+          required: true
+        - label: I understand the bracket and settlement use current real prescription counts only.
+          required: true
+        - label: Tournament wins, champion history, adoption, and progress are not invented.
+          required: true
+    validations:
+      required: true

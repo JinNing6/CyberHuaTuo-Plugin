@@ -1,0 +1,74 @@
+name: Soul Ring Season IssueOps
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-season-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'soul-ring-season') ||
+        startsWith(github.event.issue.title, '[Soul Ring Season]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring season commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const issueUrl = issue.html_url;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const seasonName = safeTitle.replace(/^\[Soul Ring Season\]\s*/i, "").trim() || "CyberHuaTuo Soul Ring Season";
+            const body = [
+              "## Soul Ring Season Board",
+              "",
+              `@${username}, this issue can become a public CyberHuaTuo leaderboard season event.`,
+              "",
+              "Use the current real leaderboard snapshot before posting the board. Historical seasons are not invented.",
+              "",
+              "Launch Closure Checklist before treating this season board as part of the public market loop:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-return --username ${username} --framework langchain --surface "Season Board Issue" --source-url ${issueUrl}`,
+              "```",
+              "",
+              "```bash",
+              "cyberhuatuo season --framework langchain --top-n 10",
+              `cyberhuatuo arena ${username} --top-n 10`,
+              "cyberhuatuo duel leader-github chaser-github --framework langchain",
+              `cyberhuatuo challenge --username ${username} --framework langchain`,
+              `cyberhuatuo quest ${username} --framework langchain`,
+              `cyberhuatuo campaign ${username} --framework langchain`,
+              "```",
+              "",
+              "Replace `leader-github` and `chaser-github` with real users from the current season board before publishing a duel.",
+              "",
+              `Season label: ${seasonName}`,
+              "",
+              "Soul Ring Season Board turns the current leaderboard into a repeat loop: champion snapshot, next chase target, scoring formula, arena replay, duel challenge, and public follow-up.",
+              "",
+              "real-data pledge: champion, chaser, ranks, and contribution counts must come from the current real leaderboard snapshot; historical seasons are not invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

@@ -1,0 +1,21 @@
+{
+  "name": "cyberhuatuo-plugin",
+  "version": "0.2.0",
+  "description": "CyberHuaTuo diagnostic workflows, MCP tools, and agent skills for AI agent and coding framework failures.",
+  "author": {
+    "name": "CyberHuaTuo"
+  },
+  "homepage": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+  "repository": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "mcp",
+    "claude-code",
+    "skills",
+    "debugging",
+    "ai-agents",
+    "soul-ring"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

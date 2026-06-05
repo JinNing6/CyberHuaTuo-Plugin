@@ -1,0 +1,83 @@
+name: Soul Ring Season Board
+description: Start a public soul-ring season board from the current CyberHuaTuo leaderboard snapshot.
+title: "[Soul Ring Season] "
+labels:
+  - soul-ring
+  - soul-ring-season
+  - leaderboard
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to start a public CyberHuaTuo Soul Ring Season Board from the current real leaderboard snapshot.
+        Season boards use current real contribution data only: no invented champions, no invented chasers, no simulated historical seasons.
+
+        After opening the issue, publish the season board and chase actions with:
+
+        ```bash
+        cyberhuatuo season --framework <framework> --top-n <top-n>
+        cyberhuatuo arena <github-username> --top-n <top-n>
+        cyberhuatuo duel <leader-github> <chaser-github> --framework <framework>
+        ```
+
+        The Soul Ring Season Board turns the current leaderboard into a repeatable public event: champion snapshot, next chase target, ranking formula, social copy, and Discussion / PR Comment text.
+
+  - type: input
+    id: season_name
+    attributes:
+      label: Season name
+      description: A short public name for the leaderboard event.
+      placeholder: Agent Soul Season
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Pick the leaderboard focus.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai-sdk
+        - llamaindex
+        - nextjs
+        - pytorch
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: top_n
+    attributes:
+      label: Leaderboard size
+      description: Number of leaderboard rows to publish.
+      placeholder: "10"
+    validations:
+      required: true
+
+  - type: textarea
+    id: season_goal
+    attributes:
+      label: Public season goal
+      description: Explain what real contribution behavior this season should create.
+      placeholder: |
+        Publish the current LangChain/MCP leaderboard, name the current champion, and invite the next chaser to submit one real fix.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data season pledge
+      description: CyberHuaTuo season boards are public leaderboard artifacts.
+      options:
+        - label: I understand this board uses the current real leaderboard snapshot only.
+          required: true
+        - label: Current champion, next chaser, ranking formula, and contribution counts must come from real data.
+          required: true
+        - label: historical seasons are not invented, simulated, or backfilled.
+          required: true
+    validations:
+      required: true

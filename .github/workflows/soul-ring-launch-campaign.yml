@@ -1,0 +1,78 @@
+name: Soul Ring Launch Campaign IssueOps
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  soul-ring-launch-campaign-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'soul-ring-launch-campaign') ||
+        startsWith(github.event.issue.title, '[Soul Ring Launch Campaign]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with soul ring launch campaign commands
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const issueBody = issue.body || "";
+            const issueUrl = issue.html_url;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const surface = safeTitle.replace(/^\[Soul Ring Launch Campaign\]\s*/i, "").trim() || "public launch campaign";
+            const targetSection = issueBody.match(/### Target first-ring contributors\s+([\s\S]*?)(?:\n### |\n## |$)/i);
+            const targetRaw = targetSection ? (targetSection[1].match(/\d+/) || [""])[0] : "";
+            const parsedTarget = Number.parseInt(targetRaw, 10);
+            const target = Number.isFinite(parsedTarget) && parsedTarget > 0 ? Math.min(parsedTarget, 100) : 3;
+            const body = [
+              "## Soul Ring Launch Campaign",
+              "",
+              `@${username}, this issue can become a target-driven launch campaign for ${surface}.`,
+              "",
+              "The target below is a goal, not a claimed result. Record real public URLs before making any growth claim.",
+              "",
+              "Launch Closure Checklist before any public market claim:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target}`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target}`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target}`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target}`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target}`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target}`,
+              `cyberhuatuo launch-campaign --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors ${target} --surface "${surface}"`,
+              `cyberhuatuo record-return --username ${username} --framework langchain --surface "${surface}" --source-url ${issueUrl}`,
+              `cyberhuatuo activation --username ${username} --framework langchain --sect CyberHuaTuo-Sect --members ${username} --top-n 10`,
+              `cyberhuatuo flywheel --username ${username} --framework langchain --sect CyberHuaTuo-Sect --members ${username} --top-n 10`,
+              `cyberhuatuo record-share --username ${username} --framework langchain --share-url <public-share-url> --source-url ${issueUrl}`,
+              `cyberhuatuo share-report --username ${username} --framework langchain --top-n 10`,
+              "cyberhuatuo share-leaderboard --framework langchain --top-n 10",
+              "```",
+              "",
+              "Replace `langchain`, `v0.2.0`, and `<public-share-url>` with the real framework, release tag, and reviewable public share URL before recording the ledger event.",
+              "",
+              "No downloads, retention, repost counts, referrals, rewards, or Spirit Power are invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

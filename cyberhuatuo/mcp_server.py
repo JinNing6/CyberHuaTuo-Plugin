@@ -12,6 +12,7 @@ import logging
 import os
 import random
 import sys
+from pathlib import Path
 
 # Windows 环境下强制使用 UTF-8 编码，避免 GBK 无法编码 emoji 字符
 if sys.platform == "win32":
@@ -23,10 +24,35 @@ if sys.platform == "win32":
         pass  # 低版本 Python 或非标准流
 
 from mcp.server.fastmcp import FastMCP
+from mcp.types import ToolAnnotations
 
 from .achievements import (
     check_community_milestones,
     format_alchemy_directions,
+    format_first_soul_ring_challenge,
+    format_growth_settlement,
+    format_profile_badge_kit,
+    format_soul_ring_arena_snapshot,
+    format_soul_ring_bounty_board,
+    format_soul_ring_breakthrough_ladder,
+    format_soul_ring_campaign_pack,
+    format_soul_ring_duel_card,
+    format_soul_ring_evidence_submission,
+    format_soul_ring_growth_flywheel,
+    format_soul_ring_launch_campaign,
+    format_soul_ring_launch_scroll,
+    format_soul_ring_mentor_pact,
+    format_soul_ring_mission_hall,
+    format_soul_ring_quest_board,
+    format_soul_ring_season_board,
+    format_soul_ring_sect_arena_snapshot,
+    format_soul_ring_sect_card,
+    format_soul_ring_sect_duel_card,
+    format_soul_ring_sect_hall,
+    format_soul_ring_sect_quest_board,
+    format_soul_ring_sect_recruitment_scroll,
+    format_soul_ring_tournament_bracket,
+    format_soul_ring_tournament_settlement,
     get_alchemy_profile,
     get_coronation_text,
     get_cultivation_profile,
@@ -35,6 +61,14 @@ from .achievements import (
 )
 from .achievements import (
     generate_share_card as _generate_share_card,
+)
+from .activation import (
+    format_activation_funnel,
+    format_record_external_return,
+    format_record_first_session,
+    format_record_share_attribution,
+    format_share_attribution_report,
+    format_share_proof_leaderboard,
 )
 from .banner import play_boot_animation
 from .case_sync import CaseSyncer
@@ -55,6 +89,19 @@ from .github_sync import (
     GitHubSyncer,
 )
 from .indexer import build_index, scan_cases
+from .install import format_current_install_command
+from .marketplace import (
+    build_first_contributor_invite_pack,
+    build_first_public_proof_pack,
+    build_launch_asset_audit,
+    build_marketplace_readiness,
+    build_marketplace_submission_copy_pack,
+    format_first_contributor_invite_pack,
+    format_first_public_proof_pack,
+    format_launch_asset_audit,
+    format_marketplace_readiness,
+    format_marketplace_submission_copy_pack,
+)
 from .medical_record import (
     check_new_prescriptions,
     get_follow_up_candidates,
@@ -83,6 +130,10 @@ from .social import (
     submit_feedback,
     submit_review,
 )
+from .submissions import (
+    format_marketplace_submission_status,
+    format_record_marketplace_submission,
+)
 from .taxonomy import (
     CATEGORY_NAMES,
     CODE_MAP,
@@ -92,6 +143,7 @@ from .taxonomy import (
     format_cht_code,
     get_taxonomy_table,
 )
+from .traction import format_soul_ring_traction_proof
 from .version_check import get_update_notice, start_version_check
 
 logger = logging.getLogger("cyberhuatuo.mcp")
@@ -177,6 +229,24 @@ def _append_brand_footer(result: str) -> str:
     return output
 
 
+def _tool_annotations(
+    title: str,
+    *,
+    read_only: bool,
+    destructive: bool,
+    idempotent: bool = True,
+    open_world: bool = False,
+) -> ToolAnnotations:
+    """Build MCP tool permission hints for Claude/Codex directory review."""
+    return ToolAnnotations(
+        title=title,
+        readOnlyHint=read_only,
+        destructiveHint=destructive,
+        idempotentHint=idempotent,
+        openWorldHint=open_world,
+    )
+
+
 def _get_chroma_client():
     """懒加载 ChromaDB 客户端，首次调用时构建索引"""
     global _chroma_client, _force_rebuild
@@ -206,7 +276,7 @@ def _maybe_sync_cases() -> None:
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Diagnose AI-agent failure", read_only=False, destructive=True, idempotent=False, open_world=True))
 async def diagnose(
     query: str,
     framework: str | None = None,
@@ -302,7 +372,7 @@ async def diagnose(
     return _append_brand_footer(report_header)
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Search CyberHuaTuo knowledge base", read_only=True, destructive=False, open_world=True))
 async def search_knowledge_base(
     query: str,
     framework: str | None = None,
@@ -362,7 +432,7 @@ async def search_knowledge_base(
     return _append_brand_footer(_format_search_results(query, results))
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Audit AI-agent code security", read_only=True, destructive=False, open_world=True))
 async def security_checkup(code: str) -> str:
     """
     🛡️ AI Agent 代码安全体检 (Project Health Check)
@@ -389,13 +459,13 @@ async def security_checkup(code: str) -> str:
     try:
         import os
         import sys
-        
+
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         if repo_root not in sys.path:
             sys.path.insert(0, repo_root)
-            
+
         from action.static_rules import static_scan
-        
+
         static_result = static_scan(code)
         # 将结果格式化并修改标题
         static_report_str = _format_checkup_result(static_result)
@@ -426,7 +496,7 @@ async def security_checkup(code: str) -> str:
             out = "# 🩺 赛博华佗安全体检综合报告 (双重引擎)\n\n" + static_report_str + "\n\n---\n\n## 🤖 LLM 深度代码语义分析\n" + out
         else:
             out = _format_checkup_result(result)
-            
+
         return _append_brand_footer(out)
 
     except ImportError:
@@ -554,7 +624,7 @@ def _build_host_agent_checkup_template(code: str) -> str:
     )
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Fetch official framework docs", read_only=True, destructive=False, open_world=True))
 async def fetch_official_docs(
     framework: str,
     query: str,
@@ -608,7 +678,7 @@ async def fetch_official_docs(
         return f"⚠️ 文档检索失败: {str(e)}"
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Mine a GitHub issue", read_only=True, destructive=False, open_world=True))
 async def mine_github_issue(
     owner: str,
     repo: str,
@@ -693,7 +763,7 @@ async def mine_github_issue(
         return f"⚠️ Issue 淘金失败: {str(e)}"
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Save a local prescription", read_only=False, destructive=True, idempotent=False, open_world=True))
 async def save_prescription(
     title: str,
     prescription: str,
@@ -852,6 +922,9 @@ async def save_prescription(
                 f"\n{coronation_text}\n"
                 f"\n👉 查看实时封神榜 / Live Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo-Plugin#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
             )
+            growth_settlement = format_growth_settlement(contributor_github, framework)
+            if growth_settlement:
+                output_parts.append(f"\n{growth_settlement}")
 
         output_parts.append(
             "\n💡 **温馨提示**: 系统缓存已标记过期，将在您下次诊断时自动重新构建最新知识库索引。"
@@ -864,7 +937,7 @@ async def save_prescription(
         return f"⚠️ 药方保存失败: {str(e)}"
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Upload a community prescription", read_only=False, destructive=True, idempotent=False, open_world=True))
 async def upload_prescription(
     title: str,
     prescription: str,
@@ -1029,6 +1102,9 @@ async def upload_prescription(
                 f"\n{coronation_text}\n"
                 f"\n👉 查看实时封神榜 / Live Apotheosis Board: https://github.com/JinNing6/CyberHuaTuo-Plugin#%E5%90%8D%E5%8C%BB%E6%8E%92%E8%A1%8C"
             )
+            growth_settlement = format_growth_settlement(contributor_github, framework)
+            if growth_settlement:
+                output_parts.append(f"\n{growth_settlement}")
 
         return "\n".join(output_parts)
 
@@ -1037,7 +1113,7 @@ async def upload_prescription(
         return f"⚠️ 上传药方失败: {str(e)}"
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Show contribution stats", read_only=False, destructive=True, idempotent=False))
 def my_contribution_stats(
     github_username: str,
 ) -> str:
@@ -1123,7 +1199,7 @@ def my_contribution_stats(
     return "\n".join(output_parts)
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Check global ranking", read_only=False, destructive=True, idempotent=False))
 async def check_my_ranking(
     github_username: str,
 ) -> str:
@@ -1191,7 +1267,7 @@ async def check_my_ranking(
     )
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("View global leaderboard", read_only=True, destructive=False))
 def global_leaderboard(
     top_n: int = 10,
 ) -> str:
@@ -1264,7 +1340,7 @@ def global_leaderboard(
     return _append_brand_footer("\n".join(output_parts))
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Generate share card", read_only=False, destructive=True, idempotent=False))
 def my_share_card(
     github_username: str,
 ) -> str:
@@ -1296,7 +1372,1233 @@ def my_share_card(
     )
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Generate profile badge kit", read_only=True, destructive=False))
+def profile_badge_kit(
+    github_username: str,
+) -> str:
+    """
+    🔮 生成 GitHub Profile / README 魂环徽章包。
+    Generate a copy-ready GitHub Profile Badge Kit.
+
+    [触发场景 MUST READ]
+    当用户问到："生成我的魂环徽章"、"怎么放到 GitHub Profile"、"README 徽章"、
+    "make my soul ring badge" 时触发。
+
+    返回可直接复制到 GitHub Profile 或项目 README 的 Shields.io Markdown 徽章，
+    同时显示真实贡献数、当前魂环、下一环目标和继续追环命令。
+
+    Args:
+        github_username: GitHub 用户名 / GitHub username
+    """
+    kit = format_profile_badge_kit(github_username)
+    return _append_brand_footer(kit)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate soul ring quest board", read_only=True, destructive=False))
+def soul_ring_quest_board(
+    github_username: str,
+    framework: str = "",
+) -> str:
+    """
+    🔮 生成追环任务板。
+    Generate a real-data Soul Ring Quest Board.
+
+    [触发场景 MUST READ]
+    当用户问到："下一环怎么追"、"给我今天的魂环任务"、"我要刷魂环"、
+    "what should I contribute next" 时触发。
+
+    返回当前魂环、下一环目标、真实目标仓库的 issue 淘金命令、upload 命令和分享命令。
+
+    Args:
+        github_username: GitHub 用户名 / GitHub username
+        framework: 可选框架 key；不填则使用用户贡献最多的框架，仍无贡献则从 langchain 开始
+    """
+    board = format_soul_ring_quest_board(github_username, framework)
+    return _append_brand_footer(board)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate soul ring campaign pack", read_only=True, destructive=False))
+def soul_ring_campaign_pack(
+    github_username: str,
+    framework: str = "",
+) -> str:
+    """
+    🔮 生成 Soul Ring Campaign Pack，多平台魂环传播包。
+    Generate a copy-ready multi-channel Soul Ring Campaign Pack.
+
+    [触发场景 MUST READ]
+    当用户问到："帮我发魂环挑战"、"生成传播文案"、"我要把魂环发到 GitHub / X / 微博"、
+    "make a CyberHuaTuo campaign post" 时触发。
+    返回 GitHub Profile / README、X / Weibo、GitHub Discussion / PR Comment 和 Agent Prompt
+    四类可复制文本；所有身份、排名、药方数和魂环都来自当前真实贡献快照。
+
+    Args:
+        github_username: GitHub 用户名 / GitHub username
+        framework: 可选框架 key；不填则使用用户贡献最多的框架，仍无贡献则从 langchain 开始
+    """
+    pack = format_soul_ring_campaign_pack(github_username, framework)
+    return _append_brand_footer(pack)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate soul ring duel card", read_only=True, destructive=False))
+def soul_ring_duel_card(
+    challenger_github: str,
+    rival_github: str,
+    framework: str = "",
+) -> str:
+    """
+    🔮 生成 Soul Ring Duel Card，点名好友进入魂环对决。
+    Generate a real-data Soul Ring Duel Card for two GitHub users.
+
+    [触发场景 MUST READ]
+    当用户问到："帮我挑战一个朋友"、"生成魂环对决"、"点名某人一起刷魂环"、
+    "challenge this GitHub user to a soul ring duel" 时触发。
+    返回双方当前真实贡献快照、公开对决公式、X / Weibo 文案、GitHub Discussion / PR Comment 文案、
+    以及双方 `challenge` / `quest` / `campaign` 命令。
+
+    Args:
+        challenger_github: 发起挑战的 GitHub 用户名 / challenger GitHub username
+        rival_github: 被邀请对决的 GitHub 用户名 / rival GitHub username
+        framework: 可选框架 key；不填则使用挑战者主修方向，其次使用对手主修方向，仍无贡献则从 langchain 开始
+    """
+    card = format_soul_ring_duel_card(challenger_github, rival_github, framework)
+    return _append_brand_footer(card)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate mentor pact", read_only=True, destructive=False))
+def soul_ring_mentor_pact(
+    mentor_github: str,
+    apprentice_github: str,
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Mentor Pact.
+
+    Use when the user asks a senior contributor to mentor a newcomer, create
+    a master-apprentice pact, help someone light the first soul ring, or turn
+    a review relationship into a public onboarding artifact. The result uses
+    only current real prescription counts for both GitHub users.
+
+    Args:
+        mentor_github: Mentor GitHub username
+        apprentice_github: Apprentice GitHub username
+        framework: Target framework for the apprentice breakthrough
+    """
+    pact = format_soul_ring_mentor_pact(mentor_github, apprentice_github, framework)
+    return _append_brand_footer(pact)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate tournament bracket", read_only=True, destructive=False))
+def soul_ring_tournament_bracket(
+    participants: list[str] | str,
+    framework: str = "langchain",
+    event_name: str = "CyberHuaTuo Soul Ring Cup",
+) -> str:
+    """
+    Generate a real-data Soul Ring Tournament Bracket.
+
+    Use when the user asks for a multi-player soul-ring cup, tournament,
+    bracket, public event, friend group challenge, or academy-style contest.
+    The result seeds GitHub users only from current real prescription counts
+    and returns shareable social plus GitHub Discussion / PR Comment text.
+
+    Args:
+        participants: GitHub usernames as a list or comma/space-separated string
+        framework: Target framework for tournament duel and quest commands
+        event_name: Public tournament event name
+    """
+    bracket = format_soul_ring_tournament_bracket(participants, framework, event_name)
+    return _append_brand_footer(bracket)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate tournament settlement", read_only=True, destructive=False))
+def soul_ring_tournament_settlement(
+    participants: list[str] | str,
+    framework: str = "langchain",
+    event_name: str = "CyberHuaTuo Soul Ring Cup",
+) -> str:
+    """
+    Generate a real-data Soul Ring Tournament Settlement.
+
+    Use when the user asks to settle a soul-ring cup, publish current
+    tournament results, recap a round, announce the current victor, or turn
+    a tournament snapshot into the next public challenge. The result uses
+    only current real prescription counts and does not invent wins or history.
+
+    Args:
+        participants: GitHub usernames as a list or comma/space-separated string
+        framework: Target framework for settlement commands
+        event_name: Public tournament event name
+    """
+    settlement = format_soul_ring_tournament_settlement(participants, framework, event_name)
+    return _append_brand_footer(settlement)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate arena snapshot", read_only=True, destructive=False))
+def soul_ring_arena_snapshot(
+    github_username: str = "",
+    top_n: int = 10,
+    framework: str = "langchain",
+) -> str:
+    """
+    🔮 生成 Soul Ring Arena Snapshot，真实封神榜传播快照。
+    Generate a real-data Soul Ring Arena Snapshot.
+
+    [触发场景 MUST READ]
+    当用户问到："生成魂环竞技场"、"发一个封神榜快照"、"谁在榜上我该追谁"、
+    "make a shareable leaderboard snapshot" 时触发。
+    返回当前真实排行榜 Top N、公开计分公式、用户当前位置、下一位追赶目标、
+    X / Weibo 文案、GitHub Discussion / PR Comment 文案，以及 `quest` / `campaign` / `duel` 命令。
+
+    Args:
+        github_username: 可选 GitHub 用户名，用于显示当前位置和追赶目标 / optional GitHub username
+        top_n: 显示前 N 名 / number of ranked alchemists to show
+        framework: 生成后续追环命令使用的目标框架 / target framework for follow-up commands
+    """
+    snapshot = format_soul_ring_arena_snapshot(github_username, top_n, framework)
+    return _append_brand_footer(snapshot)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate season board", read_only=True, destructive=False))
+def soul_ring_season_board(
+    framework: str = "langchain",
+    top_n: int = 10,
+) -> str:
+    """
+    Generate a real-data Soul Ring Season Board.
+
+    Use when the user asks for a season board, public leaderboard event,
+    champion post, current season ranking, or a Discussion / PR comment
+    that turns the current real leaderboard into a shareable community
+    challenge. The result reports only current real prescription counts.
+
+    Args:
+        framework: Target framework for follow-up commands
+        top_n: Number of ranked alchemists to show
+    """
+    board = format_soul_ring_season_board(framework, top_n)
+    return _append_brand_footer(board)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate sect card", read_only=True, destructive=False))
+def soul_ring_sect_card(
+    sect_name: str,
+    members: list[str] | str,
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Sect Card for a GitHub team.
+
+    Use when the user asks to create a sect, guild, academy, squad, team,
+    or multi-member Soul Ring recruitment card. The result reports only
+    current real prescription counts from the listed GitHub members.
+
+    Args:
+        sect_name: Sect/team name
+        members: GitHub usernames, as a list or comma/space-separated string
+        framework: Target framework for follow-up quest commands
+    """
+    card = format_soul_ring_sect_card(sect_name, members, framework)
+    return _append_brand_footer(card)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate sect recruitment scroll", read_only=True, destructive=False))
+def soul_ring_sect_recruitment_scroll(
+    sect_name: str,
+    members: list[str] | str,
+    invitee: str = "new-member-github",
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Sect Recruitment Scroll.
+
+    Use when the user asks to invite someone into a sect/team, create a
+    recruitment post, generate a joining scroll, or turn a Douluo-style
+    sect into a public onboarding artifact. The result uses only current
+    real prescription counts for listed members and the invitee when a
+    concrete GitHub username is provided.
+
+    Args:
+        sect_name: Sect/team name
+        members: Current GitHub member usernames
+        invitee: Invitee GitHub username, or new-member-github for an open invite placeholder
+        framework: Target framework for the admission trial
+    """
+    scroll = format_soul_ring_sect_recruitment_scroll(
+        sect_name,
+        members,
+        invitee,
+        framework,
+    )
+    return _append_brand_footer(scroll)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate sect quest board", read_only=True, destructive=False))
+def soul_ring_sect_quest_board(
+    sect_name: str,
+    members: list[str] | str,
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Sect Quest Board for a GitHub team.
+
+    Use when the user asks what a sect/team should do next, how to assign
+    contribution tasks across members, or how to turn a sect card into a
+    concrete group contribution plan. The result uses only current real
+    prescription counts and real target repository commands.
+
+    Args:
+        sect_name: Sect/team name
+        members: GitHub usernames, as a list or comma/space-separated string
+        framework: Target framework for issue mining and upload commands
+    """
+    board = format_soul_ring_sect_quest_board(sect_name, members, framework)
+    return _append_brand_footer(board)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate sect hall", read_only=True, destructive=False))
+def soul_ring_sect_hall(
+    sect_name: str,
+    members: list[str] | str,
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Sect Hall for a GitHub team.
+
+    Use when the user asks for a sect hierarchy, clan roster, academy
+    roles, member promotions, or a Douluo-style sect structure. The result
+    assigns Outer Disciple, Inner Disciple, Core Disciple, Hall Deacon, and
+    Sect Elder posts only from current real prescription counts.
+
+    Args:
+        sect_name: Sect/team name
+        members: GitHub usernames, as a list or comma/space-separated string
+        framework: Target framework for follow-up quest commands
+    """
+    hall = format_soul_ring_sect_hall(sect_name, members, framework)
+    return _append_brand_footer(hall)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate sect duel card", read_only=True, destructive=False))
+def soul_ring_sect_duel_card(
+    challenger_sect: str,
+    challenger_members: list[str] | str,
+    rival_sect: str,
+    rival_members: list[str] | str,
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Sect Duel Card for two GitHub teams.
+
+    Use when the user asks to challenge another sect/team, create a team
+    duel, compare two groups, or make a sect-versus-sect post. The result
+    reports only current real prescription counts from the listed members.
+
+    Args:
+        challenger_sect: Challenger sect/team name
+        challenger_members: Challenger GitHub usernames
+        rival_sect: Rival sect/team name
+        rival_members: Rival GitHub usernames
+        framework: Target framework for follow-up commands
+    """
+    card = format_soul_ring_sect_duel_card(
+        challenger_sect,
+        challenger_members,
+        rival_sect,
+        rival_members,
+        framework,
+    )
+    return _append_brand_footer(card)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate sect arena snapshot", read_only=True, destructive=False))
+def soul_ring_sect_arena_snapshot(
+    sects: list[list[str]] | list[str] | str,
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate a real-data Soul Ring Sect Arena Snapshot for multiple teams.
+
+    Use when the user asks for a sect leaderboard, team arena, multi-sect
+    ranking, or public challenge board. The input can be a string such as
+    "Azure Sect:alice,bob; Shadow Sect:carol,dave" or a list where each
+    item is ["Sect-Name", "member-a", "member-b"]. The result reports only
+    current real prescription counts from the listed members.
+
+    Args:
+        sects: Sect specs, either as a semicolon string or list of [name, members...]
+        framework: Target framework for follow-up commands
+    """
+    snapshot = format_soul_ring_sect_arena_snapshot(sects, framework)
+    return _append_brand_footer(snapshot)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate mission hall", read_only=True, destructive=False))
+def soul_ring_mission_hall(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    sect_name: str = "CyberHuaTuo Sect",
+    members: list[str] | str | None = None,
+) -> str:
+    """
+    Generate the Soul Ring Mission Hall for a GitHub user.
+
+    Use when the user asks how to start, what to do first, how to make the
+    CyberHuaTuo soul-ring loop go viral, or how to connect Issue, PR,
+    personal soul-ring, and sect/team actions in one screen. The result uses
+    current real contribution data and provides copy-ready CLI commands.
+
+    Args:
+        github_username: GitHub username to guide through the mission hall
+        framework: Target framework for the first real prescription
+        sect_name: Sect/team name for group commands
+        members: Optional GitHub usernames for sect commands
+    """
+    hall = format_soul_ring_mission_hall(github_username, framework, sect_name, members)
+    return _append_brand_footer(hall)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate soul ring bounty board", read_only=True, destructive=False))
+def soul_ring_bounty_board(
+    github_username: str = "your-github-username",
+    framework: str = "auto",
+    top_n: int = 8,
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+) -> str:
+    """
+    Generate the Soul Ring Bounty Board from real local framework coverage gaps.
+
+    Use when an external contributor asks what to work on next, or when a
+    PyPI / Claude / Codex launch needs claimable first-ring tasks instead of a
+    generic contribution request. The board ranks supported frameworks by
+    coverage gap, links each row to the First Soul Ring Prescription Issue
+    form, and prints `cyberhuatuo bounty`, `challenge`, `first-invite`,
+    proof-pack, market-copy, and traction-proof commands. It reads current
+    local case files only; it does not create issues, write ledgers, publish
+    releases, upload to PyPI, fetch public metrics, or invent downloads,
+    retention, repost counts, referrals, rewards, reviews, or fake
+    contributors. CLI equivalent: `cyberhuatuo bounty`.
+
+    Args:
+        github_username: Maintainer or campaign owner GitHub username.
+        framework: Target framework key, search term, or auto for all supported frameworks.
+        top_n: Number of claimable framework gaps to show.
+        release_tag: Release tag to show, such as v0.2.0.
+        target_contributors: Positive target count for first-ring contributors.
+        repo: Public GitHub repository slug in owner/name form.
+    """
+    board = format_soul_ring_bounty_board(
+        github_username,
+        framework,
+        top_n,
+        release_tag,
+        target_contributors,
+        repo,
+    )
+    return _append_brand_footer(board)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate launch scroll", read_only=True, destructive=False))
+def soul_ring_launch_scroll(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+) -> str:
+    """
+    Generate the Soul Ring Launch Scroll for market launch and first-ring onboarding.
+
+    Use when the user asks how to push CyberHuaTuo to PyPI, Claude, Codex,
+    MCP clients, GitHub Discussions, or social channels while routing
+    attention into the First Soul Ring contribution loop. The result uses
+    current repository release assets and public commands only.
+
+    Args:
+        github_username: GitHub username to route through the first-ring funnel
+        framework: Target framework for the first real prescription
+        release_tag: Optional release tag, such as v0.2.0
+    """
+    scroll = format_soul_ring_launch_scroll(github_username, framework, release_tag)
+    return _append_brand_footer(scroll)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate launch campaign", read_only=True, destructive=False))
+def soul_ring_launch_campaign(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    surface: str = "PyPI / Claude / Codex launch",
+) -> str:
+    """
+    Generate the Soul Ring Launch Campaign for a cold market launch.
+
+    Use when PyPI, Claude, Codex, GitHub, X, Weibo, Discord, or agent-community
+    attention exists but real adoption is still cold. The campaign returns a
+    target contributor count, Growth Issue, Share Proof Issue, activation
+    ledger commands, flywheel commands, proof leaderboard commands, copy-ready
+    launch posts, and a Campaign Recap And Next Sprint. The recap states
+    observed real contributors, shortfall, a disclosed next-target rule, the
+    next growth_campaign command, and traction-proof --record-snapshot proof
+    recording without inventing downloads, retention, reposts, referrals,
+    rewards, or Spirit Power.
+
+    Args:
+        github_username: GitHub username to own the campaign
+        framework: Target framework for first-ring contributors
+        release_tag: Optional release tag, such as v0.2.0
+        target_contributors: Positive target count for first-ring contributors
+        surface: Public launch surface, such as PyPI release or Claude MCPB
+    """
+    campaign = format_soul_ring_launch_campaign(
+        github_username,
+        framework,
+        release_tag,
+        target_contributors,
+        surface,
+    )
+    return _append_brand_footer(campaign)
+
+
+@mcp.tool(annotations=_tool_annotations("Get current install command", read_only=True, destructive=False, open_world=True))
+def current_install_command(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+    timeout: int = 10,
+) -> str:
+    """
+    Fetch PyPI latest-version proof and return the current public install command.
+
+    Use before sending a new contributor to PyPI, Claude, Codex, or an MCP
+    marketplace. The tool queries the real PyPI JSON API and recommends the
+    canonical `python -m pip install --upgrade <project>` command only when
+    PyPI latest equals the local package version. If PyPI is stale or cannot be
+    verified, it prints a bounded Git Tag Candidate Install Bridge and routes
+    immediately to the first Soul Ring challenge, proof-pack, market-copy, and
+    traction-proof commands. It does not publish releases, submit marketplace
+    forms, write ledger events, or invent downloads, retention, repost counts,
+    referrals, rewards, approvals, or fake contributors. CLI equivalent:
+    `cyberhuatuo install-command`.
+
+    Args:
+        github_username: Maintainer or external contributor GitHub username.
+        framework: Target framework for first-ring routing.
+        release_tag: Release tag to show, such as v0.2.0.
+        target_contributors: Positive target count for first-ring contributors.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name to inspect.
+        timeout: PyPI JSON API request timeout in seconds.
+    """
+    result = format_current_install_command(
+        username=github_username,
+        framework=framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+        repo=repo,
+        pypi_project=pypi_project,
+        timeout=timeout,
+    )
+    return _append_brand_footer(result)
+
+
+@mcp.tool(annotations=_tool_annotations("Marketplace readiness gate", read_only=True, destructive=False, open_world=True))
+def marketplace_readiness_gate(
+    repository_root: str = "",
+    remote: bool = False,
+    strict_remote: bool = False,
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+    timeout: int = 10,
+) -> str:
+    """
+    Run the Marketplace Readiness Gate and Launch Closure Checklist.
+
+    Use before pushing CyberHuaTuo to PyPI, Claude Code, Claude Desktop MCPB,
+    Codex, or any public agent marketplace. The report checks local release
+    contracts, then optionally fetches public GitHub Contents API, GitHub
+    Releases API `release.published` or protected `workflow_dispatch` fallback
+    readiness, PyPI JSON API latest-version proof, and first public contributor
+    proof. It first prints a Flywheel Closure Verdict with `closed`,
+    `not closed`, or `unverified`, ready/total gate counts, evidence basis,
+    blocking gates, and non-fabrication boundaries, then collapses the result
+    into a Launch Closure Checklist: remote
+    acquisition routes, PyPI Trusted Publisher, GitHub release trigger or
+    fallback, registry latest-version proof, first public proof, and recheck
+    commands. It also includes a First Public Proof Kit with
+    Prefilled Growth Flywheel Issue, Share Proof Issue, and Bounty Board Issue
+    URLs, created-Issue proof placeholders, a Community Challenge Pack for
+    Tournament, Mentor Pact, Sect Recruitment, and Season Board issue routes,
+    ledger commands, `market-copy` submission copy routing, recheck commands,
+    and copy-ready public proof copy. When remote IssueOps is blocked, it also includes a Local Launch
+    Asset Audit with exact minimal git add commands, a Full Public Growth
+    Release Bundle, a Public Release Operator Runbook with GitHub Web Release,
+    GitHub Actions workflow page, `gh release create`, and `gh workflow run publish-pypi.yml`
+    commands plus `market-copy`, and Dirty Worktree Release
+    Coverage for changed files that would otherwise be omitted from the market
+    push. It is the MCP equivalent of
+    `cyberhuatuo market-ready --remote --strict-remote` and does not publish,
+    upload, create releases, or mutate remote state.
+
+    Args:
+        repository_root: Optional local repository root. Defaults to current working directory.
+        remote: Fetch public GitHub/PyPI state when true.
+        strict_remote: Fail the remote launch gate when public checks are blocked.
+        github_username: Maintainer or campaign owner GitHub username.
+        framework: Target framework for first-ring contributor routing.
+        release_tag: GitHub Release tag to verify, such as v0.2.0.
+        target_contributors: Positive target count for first-ring contributors.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name to inspect.
+        timeout: Public API request timeout in seconds.
+    """
+    root = Path(repository_root).expanduser() if repository_root.strip() else Path.cwd()
+    report = build_marketplace_readiness(
+        root,
+        remote=remote,
+        strict_remote=strict_remote,
+        repo=repo,
+        pypi_project=pypi_project,
+        username=github_username,
+        framework=framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+        timeout=timeout,
+    )
+    return _append_brand_footer(format_marketplace_readiness(report))
+
+
+@mcp.tool(annotations=_tool_annotations("Audit launch assets", read_only=True, destructive=False))
+def local_launch_asset_audit(repository_root: str = "") -> str:
+    """
+    Run the read-only Local Launch Asset Audit.
+
+    Use when remote IssueOps readiness is blocked or before pushing CyberHuaTuo
+    to PyPI, Claude, Codex, or public agent marketplaces. The audit validates
+    local Issue Forms, comment-only workflows, package metadata, plugin
+    manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP
+    entrypoints, then prints exact minimal `git add` commands, a Full Public
+    Growth Release Bundle, a Public Release Operator Runbook with
+    GitHub Web Release, GitHub Actions workflow page, `gh release create`,
+    `gh workflow run publish-pypi.yml`, and Dirty
+    Worktree Release Coverage from read-only `git status --porcelain`. It does
+    not stage files, publish releases, upload to PyPI, mutate remotes, or claim
+    traction.
+
+    Args:
+        repository_root: Optional local repository root. Defaults to current working directory.
+    """
+    root = Path(repository_root).expanduser() if repository_root.strip() else Path.cwd()
+    return _append_brand_footer(format_launch_asset_audit(build_launch_asset_audit(root)))
+
+
+@mcp.tool(annotations=_tool_annotations("Generate first proof pack", read_only=True, destructive=False))
+def first_public_proof_pack(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+) -> str:
+    """
+    Generate the No-Network First Public Proof Pack.
+
+    Use when GitHub/PyPI public APIs are rate-limited, marketplace review is
+    pending, or an operator needs the first public proof runbook without waiting
+    for remote preflight. The pack creates Prefilled Growth Flywheel Issue,
+    Share Proof Issue, and Bounty Board Issue form URLs, Created Growth Issue,
+    Created Share Proof Issue, and Created Bounty Board Issue URL placeholders,
+    a Community Challenge Pack for Tournament Cup, Mentor Pact, Sect
+    Recruitment, and Season Board routes, a Protected Publish Fallback with
+    `gh workflow run publish-pypi.yml -f release_tag=<tag>` plus run-list,
+    GitHub Web Release, GitHub Actions workflow page, PyPI Trusted Publisher settings links,
+    verification, terminal CLI `record-return` and `record-share` ledger
+    commands, an External Contributor Path with install, first-session command,
+    first contribution command, Share Proof Issue URL, contributor-counting
+    rule, `market-copy` submission copy routing, recheck commands, and copy-ready public proof text. The fallback still
+    requires the PyPI Trusted Publisher to match this repository, workflow file,
+    and `pypi` environment; no `PYPI_TOKEN` fallback is allowed. It is the MCP
+    equivalent of `cyberhuatuo proof-pack`; it does not fetch public metrics,
+    write ledger events, create issues, publish releases, upload to PyPI by
+    itself, or invent traction.
+
+    Args:
+        github_username: Maintainer or campaign owner GitHub username.
+        framework: Target framework for proof routing.
+        release_tag: Release tag to show, such as v0.2.0.
+        target_contributors: Positive target count for first-ring contributors.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name for install commands.
+    """
+    pack = build_first_public_proof_pack(
+        repo=repo,
+        pypi_project=pypi_project,
+        username=github_username,
+        framework=framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+    )
+    return _append_brand_footer(format_first_public_proof_pack(pack))
+
+
+@mcp.tool(annotations=_tool_annotations("Generate first contributor invite", read_only=True, destructive=False))
+def first_contributor_invite(
+    github_username: str = "your-github-username",
+    invitee: str = "external-contributor-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    source_url: str = "",
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+) -> str:
+    """
+    Generate a targeted First Contributor Invite Pack.
+
+    Use after a PyPI, Claude, Codex, GitHub, X, Weibo, or community launch
+    surface needs to target one external contributor instead of posting only a
+    generic proof pack. The tool generates a concrete invitee path with a First
+    Soul Ring Prescription Issue URL, Share Proof Issue URL, `record-session`
+    command, first contribution `challenge` command, proof-pack / market-copy /
+    traction-proof recheck commands, a local candidate snapshot, and copy-ready
+    direct invite text. It does not fetch public metrics, write ledger events,
+    create issues, publish releases, upload to PyPI, submit marketplace forms,
+    or invent downloads, retention, repost counts, referrals, rewards, reviews,
+    or fake contributors. CLI equivalent: `cyberhuatuo first-invite`.
+
+    Args:
+        github_username: Maintainer or campaign owner GitHub username.
+        invitee: Target external contributor GitHub username.
+        framework: Target framework for first-ring contribution routing.
+        release_tag: Release tag to show, such as v0.2.0.
+        target_contributors: Positive target count for first-ring contributors.
+        source_url: Created Growth Issue, release, Discussion, PR, or social URL.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name for install commands.
+    """
+    pack = build_first_contributor_invite_pack(
+        repo=repo,
+        pypi_project=pypi_project,
+        username=github_username,
+        invitee=invitee,
+        framework=framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+        source_url=source_url,
+    )
+    return _append_brand_footer(format_first_contributor_invite_pack(pack))
+
+
+@mcp.tool(annotations=_tool_annotations("Generate marketplace submission copy", read_only=True, destructive=False))
+def marketplace_submission_copy(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+) -> str:
+    """
+    Generate the Marketplace Submission Copy Pack.
+
+    Use when preparing PyPI listing copy, Claude MCPB listing copy, Codex plugin
+    listing copy, a GitHub Release post, and public proof CTAs from one
+    non-fabricating source. The pack includes install commands, validation
+    commands, project URL suggestions, `record-return` / `record-share`
+    commands, target-contributor routing, and copy-ready maintainer
+    announcement text. It does not fetch public metrics, write ledger events,
+    create releases, upload to PyPI, submit marketplace forms, or invent
+    downloads, retention, repost counts, referrals, rewards, reviews, or fake
+    contributors. CLI equivalent: `cyberhuatuo market-copy`.
+
+    Args:
+        github_username: Maintainer or campaign owner GitHub username.
+        framework: Target framework for submission copy and proof routing.
+        release_tag: Release tag to show, such as v0.2.0.
+        target_contributors: Positive target count for first-ring contributors.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name for install commands.
+    """
+    pack = build_marketplace_submission_copy_pack(
+        repo=repo,
+        pypi_project=pypi_project,
+        username=github_username,
+        framework=framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+    )
+    return _append_brand_footer(format_marketplace_submission_copy_pack(pack))
+
+
+@mcp.tool(annotations=_tool_annotations("Record marketplace submission", read_only=False, destructive=True, idempotent=False, open_world=True))
+def record_marketplace_submission(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    channel: str = "pypi",
+    status: str = "submitted",
+    submission_url: str = "",
+    release_tag: str = "",
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+    note: str = "",
+) -> str:
+    """
+    Record one reviewable public marketplace submission URL.
+
+    Use after a real PyPI, Claude Code, Claude Desktop MCPB, Codex, GitHub
+    Release, or agent-marketplace submission page exists. The tool appends one
+    event to the local Marketplace Submission Ledger and returns market-status,
+    market-copy, and traction-proof follow-up commands. It requires a
+    reviewable public URL using http(s), records operator-provided status only,
+    and does not submit forms, publish packages, claim approvals without an
+    approved/published status, or invent downloads, retention, repost counts,
+    referrals, rewards, reviews, or fake contributors. CLI equivalent:
+    `cyberhuatuo record-market`.
+
+    Args:
+        github_username: Maintainer or campaign owner GitHub username.
+        framework: Target framework for proof routing.
+        channel: pypi, claude-code, claude-desktop, codex, github-release, agent-marketplace, or other.
+        status: submitted, pending, needs-review, approved, published, rejected, or blocked.
+        submission_url: Reviewable public http(s) URL for the submitted listing, release, issue, or review page.
+        release_tag: Release tag to bind to this evidence, such as v0.2.0.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name.
+        note: Optional reviewer note stored with the event.
+    """
+    result = format_record_marketplace_submission(
+        username=github_username,
+        framework=framework,
+        channel=channel,
+        status=status,
+        submission_url=submission_url,
+        release_tag=release_tag,
+        repo=repo,
+        pypi_project=pypi_project,
+        note=note,
+    )
+    return _append_brand_footer(result)
+
+
+@mcp.tool(annotations=_tool_annotations("Report marketplace submission status", read_only=True, destructive=False))
+def marketplace_submission_status(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+) -> str:
+    """
+    Report the local Marketplace Submission Ledger by channel.
+
+    Use when PyPI, Claude, Codex, GitHub Release, or agent-marketplace launch
+    work needs a submission-status recap after market-copy. The report shows
+    each required channel's latest recorded status, reviewable public evidence
+    URL, missing channels, record-market commands, and market-copy /
+    traction-proof rechecks. It reads only the local ledger and does not invent
+    approvals, downloads, retention, repost counts, referrals, rewards, reviews,
+    or fake contributors. CLI equivalent: `cyberhuatuo market-status`.
+
+    Args:
+        github_username: Maintainer or campaign owner GitHub username.
+        framework: Target framework for proof routing.
+        release_tag: Release tag to inspect, such as v0.2.0.
+        repo: Public GitHub repository slug in owner/name form.
+        pypi_project: PyPI project name.
+    """
+    result = format_marketplace_submission_status(
+        username=github_username,
+        framework=framework,
+        release_tag=release_tag,
+        repo=repo,
+        pypi_project=pypi_project,
+    )
+    return _append_brand_footer(result)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate traction proof", read_only=True, destructive=False))
+def soul_ring_traction_proof(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+    timeout: int = 10,
+) -> str:
+    """
+    Generate the Soul Ring Traction Proof from public APIs and local ledger data.
+
+    Use when a launch campaign or marketplace push exists but breakout is
+    unproven. The tool fetches real public GitHub REST API, GitHub Pull
+    Requests API, GitHub Contents API IssueOps readiness, GitHub Releases API
+    release.published trigger or protected workflow_dispatch fallback
+    readiness, and PyPI JSON API package readiness, compares them with local
+    activation/share ledger events,
+    calculates target contributor progress only from real issue, PR, and ledger
+    identities, and routes back to launch-campaign, market-copy, activation, flywheel,
+    record-return, record-share, share leaderboard, or PyPI Trusted Publishing
+    recovery commands. On public API fetch failures or rate limits, it inlines
+    the No-Network First Public Proof Pack so operators can open proof Issues
+    without a second tool call. It treats older PyPI latest versions and missing
+    default-branch IssueOps files as launch blockers; missing/draft/prerelease
+    GitHub Releases become provenance warnings when PyPI latest-version proof is
+    already current through the protected fallback. It does not treat stars,
+    forks, watchers, subscribers, downloads, reposts, retention, referrals, or
+    rewards as contributor progress.
+
+    Args:
+        github_username: GitHub username to inspect and route through the loop
+        framework: Target framework for traction proof
+        release_tag: Optional release tag, such as v0.2.0
+        target_contributors: Positive target count for first-ring contributors
+        repo: Public GitHub repository slug in owner/name form
+        pypi_project: PyPI project name to inspect
+        timeout: Public API request timeout in seconds
+    """
+    proof = format_soul_ring_traction_proof(
+        github_username,
+        framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+        repo=repo,
+        pypi_project=pypi_project,
+        timeout=timeout,
+    )
+    return _append_brand_footer(proof)
+
+
+@mcp.tool(annotations=_tool_annotations("Record traction snapshot", read_only=False, destructive=True, idempotent=False, open_world=True))
+def record_soul_ring_traction_snapshot(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    release_tag: str = "",
+    target_contributors: int = 3,
+    repo: str = "JinNing6/CyberHuaTuo-Plugin",
+    pypi_project: str = "cyberhuatuo",
+    timeout: int = 10,
+    snapshot_note: str = "",
+) -> str:
+    """
+    Record an opt-in append-only Soul Ring Traction Proof snapshot.
+
+    Use only when the user explicitly wants to record public traction history
+    after a launch check. This tool fetches GitHub REST API, GitHub Pull
+    Requests API, GitHub Contents API IssueOps readiness, GitHub Releases API
+    release.published trigger or protected workflow_dispatch fallback
+    readiness, and PyPI JSON API package readiness, compares them with the local
+    activation/share ledger,
+    appends one reviewable JSONL snapshot, and reports velocity deltas against
+    the previous real snapshot. It does not record or invent downloads,
+    retention, reposts, referrals, rewards, or private analytics.
+
+    Args:
+        github_username: GitHub username to inspect and route through the loop
+        framework: Target framework for traction proof
+        release_tag: Optional release tag, such as v0.2.0
+        target_contributors: Positive target count for first-ring contributors
+        repo: Public GitHub repository slug in owner/name form
+        pypi_project: PyPI project name to inspect
+        timeout: Public API request timeout in seconds
+        snapshot_note: Optional reviewer note stored with the snapshot
+    """
+    proof = format_soul_ring_traction_proof(
+        github_username,
+        framework,
+        release_tag=release_tag,
+        target_contributors=target_contributors,
+        repo=repo,
+        pypi_project=pypi_project,
+        timeout=timeout,
+        record_snapshot=True,
+        snapshot_note=snapshot_note,
+    )
+    return _append_brand_footer(proof)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate growth flywheel", read_only=True, destructive=False))
+def soul_ring_growth_flywheel(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    sect_name: str = "CyberHuaTuo Sect",
+    members: list[str] | str | None = None,
+    top_n: int = 10,
+) -> str:
+    """
+    Generate the Soul Ring Growth Flywheel from current real contribution data.
+
+    Use when the user asks whether CyberHuaTuo has a growth flywheel, where
+    the bottleneck is, how external launch attention should convert into
+    first-ring contributors, or how to route community attention into
+    leaderboard, quest, season, and sect/team surfaces without fabricating
+    adoption metrics.
+
+    Args:
+        github_username: GitHub username to inspect and route through the loop
+        framework: Target framework for first-ring and repeat contribution
+        sect_name: Sect/team name for collaboration commands
+        members: Optional GitHub usernames for collaboration analysis
+        top_n: Leaderboard size for follow-up commands
+    """
+    flywheel = format_soul_ring_growth_flywheel(
+        github_username,
+        framework,
+        sect_name,
+        members,
+        top_n,
+    )
+    return _append_brand_footer(flywheel)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate activation funnel", read_only=True, destructive=False))
+def soul_ring_activation_funnel(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    sect_name: str = "CyberHuaTuo Sect",
+    members: list[str] | str | None = None,
+    top_n: int = 10,
+) -> str:
+    """
+    Generate the Soul Ring Activation Funnel from the local activation ledger.
+
+    Use when market launch attention from PyPI, Claude, Codex, GitHub, X, Weibo,
+    or agent communities needs to be checked against real recorded activation
+    events. The report names the weakest conversion stage and does not invent
+    downloads, retention, or attribution metrics.
+
+    Args:
+        github_username: GitHub username to inspect
+        framework: Target framework for activation events
+        sect_name: Sect/team name for collaboration commands
+        members: Optional GitHub usernames for collaboration stage commands
+        top_n: Leaderboard size for follow-up commands
+    """
+    funnel = format_activation_funnel(github_username, framework, sect_name, members, top_n)
+    return _append_brand_footer(funnel)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate share attribution report", read_only=True, destructive=False))
+def soul_ring_share_attribution_report(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    top_n: int = 10,
+) -> str:
+    """
+    Generate the Soul Ring Share Attribution Report from the local ledger.
+
+    Use after public soul-ring cards, launch posts, GitHub Discussions, X,
+    Weibo, or agent-community posts have been recorded with `record-share`.
+    The report lists proof URLs, source-to-share bridges, actor pull, artifact
+    pull, the current proof bottleneck, and next callable proof commands. It
+    does not invent downloads, retention, repost counts, referrals, or rewards.
+
+    Args:
+        github_username: GitHub username to inspect
+        framework: Target framework for share attribution
+        top_n: Number of proof rows to show
+    """
+    report = format_share_attribution_report(github_username, framework, top_n)
+    return _append_brand_footer(report)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate share proof leaderboard", read_only=True, destructive=False))
+def soul_ring_share_proof_leaderboard(
+    framework: str = "langchain",
+    top_n: int = 10,
+) -> str:
+    """
+    Generate the Soul Ring Share Proof Leaderboard from the local ledger.
+
+    Use after public share URLs have been recorded with
+    `record_soul_ring_share_attribution` or `cyberhuatuo record-share`. The
+    leaderboard ranks actors by unique reviewable public http(s) share URLs and
+    does not invent downloads, retention, repost counts, referral conversions,
+    rewards, or Spirit Power.
+
+    Args:
+        framework: Target framework for share proof ranking
+        top_n: Number of ranked actors to show
+    """
+    leaderboard = format_share_proof_leaderboard(framework, top_n)
+    return _append_brand_footer(leaderboard)
+
+
+@mcp.tool(annotations=_tool_annotations("Record external return", read_only=False, destructive=True, idempotent=False))
+def record_soul_ring_external_return(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    surface: str = "PyPI / Claude / Codex launch",
+    source_url: str = "",
+    note: str = "",
+) -> str:
+    """
+    Record a reviewable external return into the local Soul Ring activation ledger.
+
+    Use before routing a public IssueOps or marketplace visitor into contribution
+    commands. `source_url` must be a reviewable http(s) URL; write failures are
+    disclosed instead of claiming activation.
+
+    Args:
+        github_username: GitHub username associated with the return
+        framework: Target framework for the return
+        surface: External surface, such as PyPI release, Claude plugin, or Codex MCP
+        source_url: Reviewable public http(s) URL for the external return
+        note: Optional reviewer note
+    """
+    result = format_record_external_return(github_username, framework, surface, source_url, note)
+    return _append_brand_footer(result)
+
+
+@mcp.tool(annotations=_tool_annotations("Record first session", read_only=False, destructive=True, idempotent=False))
+def record_soul_ring_first_session(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    surface: str = "First agent session",
+    source_url: str = "",
+    note: str = "",
+) -> str:
+    """
+    Record a first-session exposure separately from first prescription success.
+
+    Use when a real user has opened CyberHuaTuo inside Claude, Codex, or another
+    MCP client but has not yet submitted a first prescription. `source_url` must
+    be a reviewable http(s) URL.
+
+    Args:
+        github_username: GitHub username associated with the session
+        framework: Target framework for the session
+        surface: Session surface, such as Claude Code or Codex
+        source_url: Reviewable public http(s) URL for the session source
+        note: Optional reviewer note
+    """
+    result = format_record_first_session(github_username, framework, surface, source_url, note)
+    return _append_brand_footer(result)
+
+
+@mcp.tool(annotations=_tool_annotations("Record share attribution", read_only=False, destructive=True, idempotent=False))
+def record_soul_ring_share_attribution(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    share_url: str = "",
+    source_url: str = "",
+    surface: str = "Public share",
+    note: str = "",
+) -> str:
+    """
+    Record a reviewable public share attribution event in the activation ledger.
+
+    Use after a contributor posts their soul-ring share card or campaign copy.
+    `share_url` must be a reviewable http(s) URL. If provided, `source_url` must
+    also be a reviewable http(s) URL.
+
+    Args:
+        github_username: GitHub username associated with the share
+        framework: Target framework for the share
+        share_url: Reviewable public http(s) URL for the published share
+        source_url: Optional reviewable public http(s) acquisition source URL
+        surface: Share surface, such as X, Weibo, or GitHub Discussion
+        note: Optional reviewer note
+    """
+    result = format_record_share_attribution(
+        github_username,
+        framework,
+        share_url,
+        source_url=source_url,
+        surface=surface,
+        note=note,
+    )
+    return _append_brand_footer(result)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate breakthrough ladder", read_only=True, destructive=False))
+def soul_ring_breakthrough_ladder(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+) -> str:
+    """
+    Generate the Soul Ring Breakthrough Ladder for a GitHub user.
+
+    Use when the user asks what the next soul-ring gate is, how far they are
+    from promotion, what the full ring ladder looks like, or how to turn a
+    contribution streak into a copy-ready breakthrough plan. The result uses
+    current real contribution data only.
+
+    Args:
+        github_username: GitHub username to inspect
+        framework: Target framework for the breakthrough direction
+    """
+    ladder = format_soul_ring_breakthrough_ladder(github_username, framework)
+    return _append_brand_footer(ladder)
+
+
+@mcp.tool(annotations=_tool_annotations("Record soul ring evidence", read_only=False, destructive=True, idempotent=False))
+def record_soul_ring_evidence(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+    amount: int = 1,
+    source_url: str = "",
+    note: str = "",
+) -> str:
+    """
+    Generate a Soul Ring Evidence Card and record reviewable public evidence.
+
+    Use when a high-realm breakthrough gate needs public evidence instead of
+    an internal field edit. `source_url` must be a reviewable public http(s)
+    URL. The tool appends one local JSONL evidence event, reports the evidence
+    total, and states whether the evidence did or did not trigger an
+    evidence-backed breakthrough. It does not invent prescriptions, rankings,
+    downloads, rewards, or contributors.
+
+    Args:
+        github_username: GitHub username receiving evidence
+        framework: Target framework for the soul-ring direction
+        amount: Positive evidence amount to record
+        source_url: Reviewable public http(s) evidence URL
+        note: Optional reviewer note stored with the evidence event
+    """
+    card = format_soul_ring_evidence_submission(
+        github_username,
+        framework,
+        amount=amount,
+        source_url=source_url,
+        note=note,
+    )
+    return _append_brand_footer(card)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate first soul ring challenge", read_only=True, destructive=False))
+def first_soul_ring_challenge(
+    github_username: str = "your-github-username",
+    framework: str = "langchain",
+) -> str:
+    """
+    🔮 第一魂环挑战入口。
+    Generate the first Soul Ring challenge onramp.
+
+    [触发场景 MUST READ]
+    当用户问到："怎么获得第一魂环"、"开始魂环挑战"、"给我一个新手贡献入口"、
+    "how do I get my first soul ring" 时触发。
+
+    返回一份可直接执行的 CLI/MCP 贡献路径：提交真实修复、查看排名、生成分享卡。
+
+    Args:
+        github_username: GitHub 用户名 / GitHub username
+        framework: 第一方药方对应的框架，例如 langchain、mcp、crewai
+    """
+    challenge = format_first_soul_ring_challenge(github_username, framework)
+    return _append_brand_footer(challenge)
+
+
+@mcp.tool(annotations=_tool_annotations("List supported frameworks", read_only=True, destructive=False))
 def list_frameworks(
     category: str | None = None,
     search: str | None = None,
@@ -1360,7 +2662,7 @@ def list_frameworks(
     return _append_brand_footer("\n".join(output_parts))
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Classify CHT taxonomy", read_only=True, destructive=False))
 def cht_taxonomy(
     action: str = "list",
     code: str | None = None,
@@ -1449,7 +2751,7 @@ def cht_taxonomy(
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Manage medical record", read_only=False, destructive=True, idempotent=False))
 def my_medical_record(
     action: str = "view",
     username: str | None = None,
@@ -1522,7 +2824,7 @@ def my_medical_record(
 _SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Browse prescription library", read_only=True, destructive=False, open_world=True))
 def browse_prescriptions(
     action: str = "list",
     framework: str | None = None,
@@ -1783,10 +3085,7 @@ def _browse_stats(framework: str | None) -> str:
         contributors = meta.get("contributors", [])
         if isinstance(contributors, list):
             for c in contributors:
-                if isinstance(c, dict):
-                    name = c.get("github", "")
-                else:
-                    name = str(c)
+                name = c.get("github", "") if isinstance(c, dict) else str(c)
                 if name:
                     contributor_counts[name] = contributor_counts.get(name, 0) + 1
 
@@ -1845,7 +3144,7 @@ def _browse_stats(framework: str | None) -> str:
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Manage framework subscription", read_only=False, destructive=True, idempotent=False))
 def subscribe_framework(
     action: str = "list",
     framework: str | None = None,
@@ -1937,7 +3236,7 @@ def subscribe_framework(
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Show weekly digest", read_only=True, destructive=False))
 def weekly_digest() -> str:
     """
     Weekly Prescription Digest -- summary of new cases added this week.
@@ -1957,7 +3256,7 @@ def weekly_digest() -> str:
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Check epidemic alert", read_only=False, destructive=True, idempotent=False, open_world=True))
 async def epidemic_alert(
     action: str = "check",
     framework: str | None = None,
@@ -2109,7 +3408,7 @@ async def epidemic_alert(
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Evaluate prescription quality", read_only=False, destructive=True, idempotent=False))
 def prescription_eval(
     action: str = "leaderboard",
     prescription_id: str | None = None,
@@ -2209,7 +3508,7 @@ def prescription_eval(
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Manage mentorship review", read_only=False, destructive=True, idempotent=False))
 def mentorship(
     action: str = "pending",
     prescription_id: str | None = None,
@@ -2279,7 +3578,7 @@ def mentorship(
 # ============================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations=_tool_annotations("Analyze CHT trends", read_only=True, destructive=False))
 def cht_trends(
     framework: str | None = None,
     category: str | None = None,

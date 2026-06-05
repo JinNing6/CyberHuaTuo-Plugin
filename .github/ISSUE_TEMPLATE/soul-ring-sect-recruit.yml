@@ -1,0 +1,94 @@
+name: Soul Ring Sect Recruitment
+description: Start public soul-ring sect recruitment from real GitHub users and current CyberHuaTuo member snapshots.
+title: "[Soul Ring Sect] "
+labels:
+  - soul-ring
+  - soul-ring-sect
+  - recruitment
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to start a public CyberHuaTuo Soul Ring Sect Recruitment event from real GitHub users.
+        Sect recruitment uses current real member snapshots only: no invented members, no invented sect history, no simulated adoption.
+
+        After opening the issue, publish the recruitment scroll and first sect actions with:
+
+        ```bash
+        cyberhuatuo sect-recruit <sect-name> <members...> --invitee <invitee> --framework <framework>
+        cyberhuatuo sect-hall <sect-name> <members...> --framework <framework>
+        cyberhuatuo sect-quest <sect-name> <members...> --framework <framework>
+        ```
+
+        The Soul Ring Sect Recruitment Scroll turns a team invite into a repeatable growth loop: current sect power, candidate snapshot or explicit placeholder warning, admission trial, join command, and copy-ready Discussion / PR Comment text.
+
+  - type: input
+    id: sect_name
+    attributes:
+      label: Sect name
+      description: A short public name for the sect, academy, clan, or team.
+      placeholder: Azure-Sect
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Pick the primary target for this sect's first recruitment quest.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai-sdk
+        - llamaindex
+        - nextjs
+        - pytorch
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: members
+    attributes:
+      label: Current member GitHub usernames
+      description: List real current sect members, separated by spaces, commas, or new lines.
+      placeholder: |
+        alice
+        bob
+    validations:
+      required: true
+
+  - type: input
+    id: invitee
+    attributes:
+      label: Invitee GitHub username
+      description: Use one real GitHub username, or new-member-github as an explicit placeholder before public posting.
+      placeholder: carol
+    validations:
+      required: true
+
+  - type: textarea
+    id: recruitment_goal
+    attributes:
+      label: Public recruitment goal
+      description: Explain what real contribution behavior this sect should create.
+      placeholder: |
+        Invite one AI-agent builder to join the sect, submit a real MCP/LangChain fix, and publish the current sect quest board.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data sect pledge
+      description: CyberHuaTuo sect recruitment surfaces are public growth artifacts.
+      options:
+        - label: All members and invitees are real GitHub usernames or explicit placeholders that must be replaced before posting.
+          required: true
+        - label: I understand the scroll, hall, and quest board use current real member snapshots only.
+          required: true
+        - label: Sect history, membership, adoption, promotions, and progress are not invented.
+          required: true
+    validations:
+      required: true

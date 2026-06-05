@@ -1,0 +1,85 @@
+name: Soul Ring Share Proof
+description: Record a public soul-ring share URL into the real activation ledger.
+title: "[Soul Ring Share Proof] <share surface or post title>"
+labels:
+  - soul-ring
+  - soul-ring-share-proof
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form after a real Soul Ring card, campaign post, launch post, GitHub Discussion, X, Weibo, Discord, or agent-community post is published.
+
+        It turns a public share into reviewable local attribution evidence:
+
+        ```bash
+        cyberhuatuo record-share --username <github-username> --framework <framework> --share-url <https-url> --source-url <https-url>
+        cyberhuatuo share-report --username <github-username> --framework <framework> --top-n 10
+        cyberhuatuo share-leaderboard --framework <framework> --top-n 10
+        cyberhuatuo activation --username <github-username> --framework <framework>
+        cyberhuatuo flywheel --username <github-username> --framework <framework>
+        ```
+
+        The share report and leaderboard use local JSONL ledger events. They do not invent downloads, retention, repost counts, referral conversions, rewards, Spirit Power, or adoption claims.
+  - type: input
+    id: github_username
+    attributes:
+      label: GitHub username
+      description: The contributor or maintainer whose public share should be recorded.
+      placeholder: your-github-username
+    validations:
+      required: true
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Choose the first-ring direction this share routes back into.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai
+        - autogen
+        - llamaindex
+        - pytorch
+        - other
+    validations:
+      required: true
+  - type: input
+    id: share_url
+    attributes:
+      label: Public share URL
+      description: Reviewable public http(s) URL for the published share.
+      placeholder: https://example.com/share
+    validations:
+      required: true
+  - type: input
+    id: source_url
+    attributes:
+      label: Optional source URL
+      description: Optional reviewable http(s) source that led to this share, such as a PyPI release, Claude listing, Codex setup post, GitHub issue, or launch discussion.
+      placeholder: https://example.com/source
+    validations:
+      required: false
+  - type: textarea
+    id: proof_context
+    attributes:
+      label: Proof context
+      description: Explain what was actually shared and which first-ring action it should pull users toward.
+      placeholder: "Example: Shared the LangChain First Soul Ring challenge card in a GitHub Discussion and linked it back to the launch issue."
+    validations:
+      required: true
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data pledge
+      description: CyberHuaTuo share attribution must be reviewable and local-ledger based.
+      options:
+        - label: The share URL is a reviewable public URL.
+          required: true
+        - label: The share context is real and not invented.
+          required: true
+        - label: I understand this workflow only comments callable commands and does not award points, rewards, downloads, retention, repost counts, or referral conversions.
+          required: true
+    validations:
+      required: true

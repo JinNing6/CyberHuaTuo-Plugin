@@ -1,0 +1,101 @@
+name: Soul Ring Growth Flywheel
+description: Start a public growth flywheel diagnosis from real external attention and current CyberHuaTuo contribution data.
+title: "[Soul Ring Growth] <surface or launch moment>"
+labels:
+  - soul-ring
+  - soul-ring-growth
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when external attention arrives from PyPI, Claude, Codex, GitHub Discussions, X, Weibo, Discord, a release post, or an agent community.
+
+        It turns attention into a public **Soul Ring Growth Flywheel** check:
+
+        ```bash
+        cyberhuatuo flywheel --username <github-username> --framework <framework>
+        cyberhuatuo leaderboard --top-n 10
+        cyberhuatuo quest <github-username> --framework <framework>
+        cyberhuatuo season --framework <framework> --top-n 10
+        cyberhuatuo sect-arena --sect CyberHuaTuo-Sect <github-username> --framework <framework>
+        ```
+
+        The flywheel uses current real contribution records. If downloads, retention, and attribution are not connected, downloads, retention, and attribution are disclosed as missing instead of invented. Add a campaign hook so the issue can turn the bottleneck into one public next action.
+  - type: input
+    id: github_username
+    attributes:
+      label: GitHub username
+      description: The GitHub username to route through the flywheel.
+      placeholder: your-github-username
+    validations:
+      required: true
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Choose the first-ring direction for this growth check.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai
+        - autogen
+        - llamaindex
+        - pytorch
+        - other
+    validations:
+      required: true
+  - type: dropdown
+    id: growth_surface
+    attributes:
+      label: Growth surface
+      description: Where did the attention or launch signal come from?
+      options:
+        - PyPI release
+        - Claude Desktop MCPB
+        - Claude Code plugin
+        - Codex plugin
+        - GitHub release or Discussion
+        - X / Weibo / Discord
+        - Agent community prompt
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: real_signal
+    attributes:
+      label: Real external signal
+      description: "Link or describe the actual post, issue, PR, release, install question, or user request. Do not estimate adoption."
+      placeholder: "Example: GitHub release URL, PyPI page URL, Claude MCPB install feedback, Codex setup question, or social post URL."
+    validations:
+      required: true
+  - type: textarea
+    id: bottleneck_guess
+    attributes:
+      label: Bottleneck guess
+      description: "What seems blocked right now: install, first prescription, repeat contribution, collaboration, or sharing?"
+      placeholder: "Example: People star the repo but do not submit First Soul Ring prescriptions."
+    validations:
+      required: true
+  - type: textarea
+    id: campaign_hook
+    attributes:
+      label: Campaign hook
+      description: "The public hook that should convert this bottleneck into a first-ring, repeat, season, or sect action."
+      placeholder: "Example: Turn every Claude MCPB install question into a First Soul Ring challenge post."
+    validations:
+      required: true
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data pledge
+      description: CyberHuaTuo growth surfaces are public operating artifacts.
+      options:
+        - label: This issue is based on a real external signal, not a fabricated launch story.
+          required: true
+        - label: No downloads, retention, or attribution metrics are invented.
+          required: true
+        - label: I understand the workflow will only comment callable commands and will not award points or run submitted code.
+          required: true
+    validations:
+      required: true

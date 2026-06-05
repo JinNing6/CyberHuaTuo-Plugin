@@ -1,0 +1,83 @@
+name: Soul Ring Mentor Pact
+description: Start a public soul-ring mentor pact from two real GitHub users and current CyberHuaTuo snapshots.
+title: "[Soul Ring Mentor] "
+labels:
+  - soul-ring
+  - soul-ring-mentor
+  - mentorship
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to start a public CyberHuaTuo Soul Ring Mentor Pact from a real mentor and a real apprentice.
+        The pact uses current real snapshots only: no invented seniority, no invented apprentice progress, no simulated adoption.
+
+        After opening the issue, publish the pact and first apprentice actions with:
+
+        ```bash
+        cyberhuatuo mentor <mentor-github> <apprentice-github> --framework <framework>
+        cyberhuatuo challenge --username <apprentice-github> --framework <framework>
+        cyberhuatuo ladder <apprentice-github> --framework <framework>
+        ```
+
+        The Soul Ring Mentor Pact turns one senior contributor into a first-ring onboarding guide: mentor readiness, apprentice breakthrough target, mentor review duty, and copy-ready Discussion / PR Comment text.
+
+  - type: input
+    id: mentor_username
+    attributes:
+      label: Mentor GitHub username
+      description: The real GitHub username of the contributor who will guide the apprentice.
+      placeholder: mentor-github
+    validations:
+      required: true
+
+  - type: input
+    id: apprentice_username
+    attributes:
+      label: Apprentice GitHub username
+      description: The real GitHub username of the newcomer who should earn the first ring.
+      placeholder: apprentice-github
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Pick the first target for the apprentice's real fix.
+      options:
+        - langchain
+        - mcp
+        - crewai
+        - openai-sdk
+        - llamaindex
+        - nextjs
+        - pytorch
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: mentorship_goal
+    attributes:
+      label: Public mentorship goal
+      description: Explain what real contribution behavior this pact should create.
+      placeholder: |
+        Mentor reviews one real MCP/LangChain fix and helps the apprentice publish a first soul-ring prescription.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: real_data_ack
+    attributes:
+      label: Real-data mentorship pledge
+      description: CyberHuaTuo mentor pacts are public onboarding artifacts.
+      options:
+        - label: The mentor and apprentice are real GitHub usernames.
+          required: true
+        - label: I understand the pact uses current real snapshots only.
+          required: true
+        - label: Mentor seniority, apprentice progress, review history, and adoption are not invented.
+          required: true
+    validations:
+      required: true

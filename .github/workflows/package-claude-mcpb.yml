@@ -1,0 +1,36 @@
+name: Package Claude MCPB
+
+"on":
+  pull_request:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  package-claude-mcpb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install MCPB CLI
+        run: npm install -g @anthropic-ai/mcpb
+
+      - name: Validate Claude Desktop extension
+        run: mcpb validate claude-desktop
+
+      - name: Pack Claude Desktop extension
+        run: |
+          mkdir -p dist
+          mcpb pack claude-desktop dist/cyberhuatuo-claude-desktop.mcpb
+
+      - name: Upload Claude Desktop extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyberhuatuo-claude-desktop-mcpb
+          path: dist/cyberhuatuo-claude-desktop.mcpb

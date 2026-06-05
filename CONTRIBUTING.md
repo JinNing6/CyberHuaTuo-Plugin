@@ -4,6 +4,10 @@
 
 Thank you for your interest in CyberHuaTuo! Every contribution is a prescription that heals the AI developer community.
 
+Start with the **First Soul Ring Prescription** form: `.github/ISSUE_TEMPLATE/soul-ring-prescription.yml`.
+That issue route is the public entry into the soul-ring loop: real fix -> accepted prescription -> ranking -> ladder -> share card.
+Maintainers accept a real first-ring issue by adding `accepted-prescription`; `.github/workflows/soul-ring-promote.yml` then opens the case PR and marks the issue with `soul-ring-promoted-pr`.
+
 ---
 
 ## 🤝 贡献方式 Ways to Contribute
@@ -16,7 +20,7 @@ This is the most valuable way to contribute. If you've solved an AI Agent framew
 
 **方式一：通过 GitHub Issue 提交**
 
-1. 点击 [💊 贡献药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=prescription.yml)
+1. 点击 [💊 贡献药方](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml)
 2. 填写 Issue 模板中的信息
 3. 维护者会将其转化为标准病例文件入库
 
@@ -24,15 +28,16 @@ This is the most valuable way to contribute. If you've solved an AI Agent framew
 
 1. Fork 本仓库
 2. 在 `cases/<framework>/<category>/` 目录下创建病例文件
-3. 运行本地校验：`python tools/validate.py`
-4. 提交 PR
+3. 安装开发门禁：`python -m pip install -e ".[dev]"`
+4. 运行本地校验：`python -m pytest` 和 `python -m ruff check .`
+5. 提交 PR
 
 ### 🛠️ 改进引擎 Improve the Engine
 
 帮助改进诊断引擎、搜索算法、前端 UI 等：
 
 1. Fork & Clone 本仓库
-2. 安装依赖：`pip install -r requirements.txt`
+2. 安装依赖：`python -m pip install -e ".[dev]"`
 3. 启动开发服务器：`python -m cyberhuatuo serve --reload`
 4. 修改代码并提交 PR
 
@@ -162,7 +167,8 @@ cases/
 - [ ] YAML front matter 包含所有必填字段
 - [ ] framework 和 severity、complexity 使用了合法的枚举值
 - [ ] id 全局唯一
-- [ ] 本地校验通过：`python tools/validate.py`
+- [ ] 本地依赖已安装：`python -m pip install -e ".[dev]"`
+- [ ] 本地校验通过：`python -m pytest` 和 `python -m ruff check .`
 - [ ] Markdown 正文包含：症状描述、错误信息、根因分析、药方 四个章节
 
 ---

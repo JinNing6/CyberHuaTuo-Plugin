@@ -1,0 +1,71 @@
+name: Soul Ring Issue Onboarding
+
+"on":
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  first-soul-ring-comment:
+    if: >-
+      github.event.issue.pull_request == null &&
+      (
+        contains(github.event.issue.labels.*.name, 'first-soul-ring') ||
+        startsWith(github.event.issue.title, '[Soul Ring Prescription]')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment with first soul ring next actions
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const username = issue.user.login;
+            const issueUrl = issue.html_url;
+            const safeTitle = issue.title
+              .replaceAll("`", "'")
+              .replaceAll('"', '\\"')
+              .replace(/\r?\n/g, " ");
+            const body = [
+              "## First Soul Ring path",
+              "",
+              `@${username}, thanks for opening a real CyberHuaTuo prescription issue.`,
+              "",
+              "Your next actions:",
+              "",
+              "Launch Closure Checklist before treating this issue as part of the public market loop:",
+              "```bash",
+              `cyberhuatuo proof-pack --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-copy --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo market-ready --remote --strict-remote --username ${username} --framework langchain --release-tag v0.2.0 --target-contributors 3`,
+              `cyberhuatuo record-return --username ${username} --framework langchain --surface "First Soul Ring Issue" --source-url ${issueUrl}`,
+              "```",
+              "",
+              "```bash",
+              `cyberhuatuo challenge --username ${username} --framework langchain`,
+              `cyberhuatuo ladder ${username} --framework langchain`,
+              `cyberhuatuo upload --title \"${safeTitle}\" --prescription \"<root cause and fix>\" --framework langchain --contributor ${username}`,
+              `cyberhuatuo ranking ${username}`,
+              `cyberhuatuo card ${username}`,
+              `cyberhuatuo campaign ${username} --framework langchain`,
+              "```",
+              "",
+              "The Soul Ring Breakthrough Ladder shows your current real direction count, the next gate, and the full threshold map before and after the accepted prescription.",
+              "",
+              "After the prescription is accepted, your public soul-ring card and campaign pack will use current real contribution data only.",
+              "",
+              "real-data pledge: the symptom, root cause, fix, and verification must be real, reproducible, and not invented.",
+              "",
+              "Repo: https://github.com/JinNing6/CyberHuaTuo-Plugin",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+            });

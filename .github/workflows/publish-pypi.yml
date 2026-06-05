@@ -1,0 +1,84 @@
+name: Publish PyPI
+
+"on":
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing v* tag to publish, e.g. v0.2.0"
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            tag="${{ inputs.release_tag }}"
+            if [[ ! "$tag" =~ ^v[0-9]+(\.[0-9]+){1,2}([a-zA-Z0-9._-]*)?$ ]]; then
+              echo "manual workflow_dispatch release_tag must start with v and look like v0.2.0" >&2
+              exit 1
+            fi
+          else
+            tag="${{ github.event.release.tag_name }}"
+            if [[ ! "$tag" =~ ^v[0-9]+(\.[0-9]+){1,2}([a-zA-Z0-9._-]*)?$ ]]; then
+              echo "release.published tag must start with v and look like v0.2.0" >&2
+              exit 1
+            fi
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify release tag is on main
+        shell: bash
+        run: |
+          git fetch --force origin main:refs/remotes/origin/main
+          git fetch --force origin "refs/tags/${{ steps.release.outputs.tag }}:refs/tags/${{ steps.release.outputs.tag }}"
+          tag_commit="$(git rev-list -n 1 "${{ steps.release.outputs.tag }}")"
+          if ! git merge-base --is-ancestor "$tag_commit" origin/main; then
+            echo "Release tag ${{ steps.release.outputs.tag }} is not reachable from origin/main" >&2
+            exit 1
+          fi
+      - name: Package version matches release tag
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib
+          import tomllib
+
+          tag = "${{ steps.release.outputs.tag }}"
+          project = tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          version = project["version"]
+          if tag != f"v{version}":
+              raise SystemExit(f"release tag {tag} does not match package version {version}")
+          PY
+      - name: Install package and dev quality gates
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Run lint
+        run: python -m ruff check .
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Audit launch assets
+        run: python -m cyberhuatuo launch-assets
+      - name: Build release artifacts
+        run: python -m build --sdist --wheel
+      - name: Check release boundary
+        run: python scripts/check_release_boundary.py
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
