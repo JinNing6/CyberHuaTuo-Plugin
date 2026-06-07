@@ -452,6 +452,22 @@ def cmd_badge(args):
     print(format_profile_badge_kit(args.username))
 
 
+def cmd_visual(args):
+    """Generate a chat-visible Soul Ring PNG/GIF visual artifact."""
+    from .soul_ring_visuals import format_soul_ring_visual_artifact
+
+    print(
+        format_soul_ring_visual_artifact(
+            github_username=args.username,
+            framework=args.framework,
+            output_dir=args.output_dir,
+            frames=args.frames,
+            width=args.width,
+            height=args.height,
+        )
+    )
+
+
 def cmd_quest(args):
     """🔮 生成追环任务板。"""
     from .achievements import format_soul_ring_quest_board
@@ -1314,6 +1330,16 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("badge", help="🔮 生成 GitHub Profile 魂环徽章包")
     p.add_argument("username", help="GitHub 用户名")
     p.set_defaults(func=cmd_badge)
+
+    # --- visual ---
+    p = subs.add_parser("visual", help="Generate a chat-visible Soul Ring PNG/GIF artifact")
+    p.add_argument("username", help="GitHub username")
+    p.add_argument("--framework", "-f", default="langchain", help="Target framework for the Soul Ring direction")
+    p.add_argument("--output-dir", default="", help="Directory for generated PNG/GIF artifacts")
+    p.add_argument("--frames", type=int, default=24, help="GIF frame count, clamped to 6..72")
+    p.add_argument("--width", type=int, default=640, help="Image width, clamped to 320..960")
+    p.add_argument("--height", type=int, default=360, help="Image height, clamped to 180..540")
+    p.set_defaults(func=cmd_visual)
 
     # --- quest ---
     p = subs.add_parser("quest", help="🔮 生成追环任务板")

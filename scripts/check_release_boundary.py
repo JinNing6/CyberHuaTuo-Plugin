@@ -36,6 +36,7 @@ REQUIRED_WHEEL_MEMBERS = (
     "cyberhuatuo/install.py",
     "cyberhuatuo/marketplace.py",
     "cyberhuatuo/mcp_server.py",
+    "cyberhuatuo/soul_ring_visuals.py",
     "cyberhuatuo/submissions.py",
     "cyberhuatuo/traction.py",
 )
@@ -88,12 +89,15 @@ REQUIRED_WHEEL_METADATA_SNIPPETS = (
     "cyberhuatuo record-market",
     "cyberhuatuo market-status",
     "cyberhuatuo launch-campaign",
+    "cyberhuatuo visual",
+    "soul_ring_visual_artifact",
     "cyberhuatuo evidence",
     "Soul Ring Evidence Card",
 )
 
 REQUIRED_SDIST_MEMBERS = (
     ".agents/plugins/marketplace.json",
+    ".agents/skills/cyberhuatuo-soul-ring-visual/SKILL.md",
     ".claude-plugin/marketplace.json",
     ".claude-plugin/plugin.json",
     ".codex-plugin/plugin.json",
@@ -130,11 +134,13 @@ REQUIRED_SDIST_MEMBERS = (
     "cyberhuatuo/activation.py",
     "cyberhuatuo/install.py",
     "cyberhuatuo/marketplace.py",
+    "cyberhuatuo/soul_ring_visuals.py",
     "cyberhuatuo/submissions.py",
     "cyberhuatuo/traction.py",
     "docs/MARKETPLACE_RELEASE.md",
     "docs/PRIVACY.md",
     "pyproject.toml",
+    "skills/cyberhuatuo-soul-ring-visual/SKILL.md",
 )
 
 REQUIRED_SDIST_TEXT_SNIPPETS = {
@@ -187,6 +193,8 @@ REQUIRED_SDIST_TEXT_SNIPPETS = {
         "contributor-counting rule",
         "cyberhuatuo market-ready --remote --strict-remote",
         "cyberhuatuo launch-campaign",
+        "cyberhuatuo visual",
+        "soul_ring_visual_artifact",
         "cyberhuatuo evidence",
         "Soul Ring Evidence Card",
     ),
@@ -206,6 +214,8 @@ REQUIRED_SDIST_TEXT_SNIPPETS = {
         "CyberHuaTuo Install Command",
         "Install Decision Surface",
         "cyberhuatuo first-invite",
+        "soul_ring_visual_artifact",
+        "cyberhuatuo visual",
         "cyberhuatuo market-copy",
         "cyberhuatuo record-market",
         "cyberhuatuo market-status",
@@ -550,16 +560,6 @@ def main() -> int:
 
     version = _read_project_version(Path("."))
     failed = False
-    for archive in archives:
-        violations = _find_forbidden(_iter_archive_names(archive))
-        if violations:
-            failed = True
-            print(f"[FAIL] {archive} contains forbidden release files:")
-            for item in violations:
-                print(f"  - {item}")
-        else:
-            print(f"[OK] {archive} has no forbidden research-only files.")
-
     current_archives = (
         _find_current_archive(archives, version, ".whl"),
         _find_current_archive(archives, version, ".tar.gz"),
@@ -569,6 +569,19 @@ def main() -> int:
         if archive is None:
             failed = True
             print(f"[FAIL] dist/ is missing the current {label} artifact for {PROJECT_NAME} {version}.")
+            continue
+
+        violations = _find_forbidden(_iter_archive_names(archive))
+        if violations:
+            failed = True
+            print(f"[FAIL] {archive} contains forbidden release files:")
+            for item in violations:
+                print(f"  - {item}")
+        else:
+            print(f"[OK] {archive} has no forbidden research-only files.")
+
+    for archive in current_archives:
+        if archive is None:
             continue
 
         contract_violations = _find_release_contract_violations(archive, version)

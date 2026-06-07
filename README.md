@@ -730,6 +730,7 @@ python -m cyberhuatuo --help
 | `leaderboard` | 🏆 全球封神榜 — top alchemists ranked |
 | `card <username>` | 📋 分享卡片 — cyberpunk cultivation archive |
 | `badge <username>` | 🔮 GitHub Profile badge kit — pasteable soul-ring badge |
+| `visual <username> --framework <framework> --output-dir <dir>` | Soul Ring Visual Artifact — writes a chat-visible animated GIF plus PNG fallback and returns Markdown image embeds for Codex, Claude, and other agent chats |
 | `quest <username> --framework <framework>` | 🔮 Soul Ring quest board — mine, upload, share |
 | `campaign <username> --framework <framework>` | 🔮 Soul Ring campaign pack — GitHub Profile, X/Weibo, PR comment & agent prompt |
 | `duel <challenger> <rival> --framework <framework>` | 🔮 Soul Ring duel card — invite a real GitHub user into a verified contribution race |
@@ -751,6 +752,10 @@ python -m cyberhuatuo --help
 | **🚀 Server / 服务** | |
 | `serve` | 🚀 启动 Web 诊断服务 |
 | `rebuild` | 🔄 重建向量索引 |
+
+## Soul Ring Visual Route
+
+Run `cyberhuatuo visual <username> --framework <framework>` in the CLI or call MCP `soul_ring_visual_artifact` to generate a Markdown-rendered GIF plus PNG fallback. The artifact uses current real contribution data and does not invent ranks, downloads, retention, referrals, or rewards.
 
 > 💡 **Tip**: Run `cyberhuatuo <command> --help` for detailed usage of any command.
 >
@@ -895,6 +900,8 @@ The release plan is tracked in [`docs/MARKETPLACE_RELEASE.md`](docs/MARKETPLACE_
 We support the open **Agent Skills** standard (`SKILL.md`). You can empower your own AI assistants (Cursor, Copilot, Claude Code) to automatically seek help from CyberHuaTuo when they get stuck.
 
 Simply copy the `skills/cyberhuatuo-rescue` directory into your project's `.cursor/rules` or `.agent/skills` folder. Your AI will learn to automatically diagnose errors and run security checkups using CyberHuaTuo's knowledge base.
+
+The plugin also ships `skills/cyberhuatuo-soul-ring-visual`: when a user asks about level, rank, badge, soul ring, cultivation status, visual display, animation, 等级, 魂环, 排名, 徽章, 卡片, 展示, or 动图, the agent should generate the real-data Markdown GIF plus PNG fallback via `soul_ring_visual_artifact` or `cyberhuatuo visual`.
 
 ---
 

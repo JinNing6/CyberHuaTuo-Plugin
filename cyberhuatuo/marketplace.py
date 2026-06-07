@@ -89,7 +89,9 @@ PUBLIC_GROWTH_RELEASE_BUNDLE_GROUPS = (
             ".claude-plugin/plugin.json",
             ".claude-plugin/marketplace.json",
             ".agents/plugins/marketplace.json",
+            ".agents/skills/cyberhuatuo-soul-ring-visual/SKILL.md",
             ".mcp.json",
+            "skills/cyberhuatuo-soul-ring-visual/SKILL.md",
             "claude-desktop/manifest.json",
             "claude-desktop/pyproject.toml",
             "claude-desktop/README.md",
@@ -109,6 +111,7 @@ PUBLIC_GROWTH_RELEASE_BUNDLE_GROUPS = (
             "cyberhuatuo/install.py",
             "cyberhuatuo/marketplace.py",
             "cyberhuatuo/mcp_server.py",
+            "cyberhuatuo/soul_ring_visuals.py",
             "cyberhuatuo/submissions.py",
             "cyberhuatuo/traction.py",
             "cyberhuatuo/__init__.py",
@@ -699,6 +702,8 @@ def _codex_local_check(root: Path) -> dict[str, Any]:
         ".agents/plugins/marketplace.json",
         ".mcp.json",
         "skills/cyberhuatuo-rescue/SKILL.md",
+        "skills/cyberhuatuo-soul-ring-visual/SKILL.md",
+        ".agents/skills/cyberhuatuo-soul-ring-visual/SKILL.md",
     ]
     file_check = _require_files(root, files, "Codex local release chain")
     if file_check["status"] == "fail":

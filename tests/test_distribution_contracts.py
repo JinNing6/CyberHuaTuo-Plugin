@@ -39,6 +39,7 @@ def test_codex_plugin_manifest_points_to_existing_skills_and_mcp_config():
     assert manifest["skills"] == "./skills/"
     assert manifest["mcpServers"] == "./.mcp.json"
     assert (ROOT / "skills" / "cyberhuatuo-rescue" / "SKILL.md").is_file()
+    assert (ROOT / "skills" / "cyberhuatuo-soul-ring-visual" / "SKILL.md").is_file()
     assert (ROOT / ".mcp.json").is_file()
 
 
@@ -74,6 +75,7 @@ def test_claude_plugin_manifest_points_to_existing_skills_and_mcp_config():
     assert manifest["mcpServers"] == "./.mcp.json"
     assert "claude-code" in manifest["keywords"]
     assert (ROOT / "skills" / "cyberhuatuo-rescue" / "SKILL.md").is_file()
+    assert (ROOT / "skills" / "cyberhuatuo-soul-ring-visual" / "SKILL.md").is_file()
     assert (ROOT / ".mcp.json").is_file()
 
 
@@ -94,6 +96,31 @@ def test_claude_code_marketplace_catalog_points_to_root_plugin():
     assert ".." not in plugin["source"]
     assert plugin["category"] == "Developer Tools"
     assert {"mcp", "claude-code", "debugging", "ai-agents", "soul-ring"} <= set(plugin["keywords"])
+
+
+def test_soul_ring_visual_skill_routes_level_questions_to_chat_visible_artifacts():
+    packaged_skill = ROOT / "skills" / "cyberhuatuo-soul-ring-visual" / "SKILL.md"
+    local_skill = ROOT / ".agents" / "skills" / "cyberhuatuo-soul-ring-visual" / "SKILL.md"
+
+    assert packaged_skill.is_file()
+    assert local_skill.is_file()
+    assert packaged_skill.read_text(encoding="utf-8") == local_skill.read_text(encoding="utf-8")
+
+    text = packaged_skill.read_text(encoding="utf-8")
+    assert "name: cyberhuatuo-soul-ring-visual" in text
+    assert "Use when" in text
+    for trigger in ("level", "rank", "badge", "visual", "等级", "魂环", "排名", "展示"):
+        assert trigger in text
+    for route in (
+        "soul_ring_visual_artifact",
+        "cyberhuatuo visual",
+        "Markdown GIF",
+        "PNG fallback",
+        "record-share",
+        "current real CyberHuaTuo contribution data",
+    ):
+        assert route in text
+    assert "does not invent ranks, downloads, retention, referrals, rewards, or fake contributors" in text
 
 
 def test_codex_marketplace_catalog_points_to_root_plugin():
@@ -1011,7 +1038,8 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
     assert "cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3" in text
 
 
-def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_gates_pass():
+def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_gates_pass(tmp_path, monkeypatch):
+    monkeypatch.setenv("CYBERHUATUO_ACTIVATION_LEDGER", str(tmp_path / "activation-events.jsonl"))
     content_prefix = "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/contents/"
 
     def fake_fetcher(url, _headers, _timeout):
@@ -1695,6 +1723,38 @@ def test_release_boundary_flags_research_only_archive_members():
     ]
 
     assert _find_forbidden(names) == names[1:]
+
+
+def test_release_boundary_checks_current_version_archives_only(tmp_path, monkeypatch, capsys):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    stale_wheel = dist / "cyberhuatuo-0.1.0-py3-none-any.whl"
+    stale_wheel.write_bytes(b"stale")
+    current_wheel = dist / "cyberhuatuo-0.2.0-py3-none-any.whl"
+    current_wheel.write_bytes(b"current")
+    current_sdist = dist / "cyberhuatuo-0.2.0.tar.gz"
+    current_sdist.write_bytes(b"current")
+
+    checked_archives: list[str] = []
+
+    def fake_iter_archive_names(path: Path) -> list[str]:
+        checked_archives.append(path.name)
+        if path == stale_wheel:
+            raise PermissionError("stale archive should not be opened")
+        return []
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(release_boundary, "_read_project_version", lambda _root: "0.2.0")
+    monkeypatch.setattr(release_boundary, "_iter_archive_names", fake_iter_archive_names)
+    monkeypatch.setattr(release_boundary, "_find_release_contract_violations", lambda _path, _version: [])
+
+    assert release_boundary.main() == 0
+
+    output = capsys.readouterr().out
+    assert checked_archives == [current_wheel.name, current_sdist.name]
+    assert "cyberhuatuo-0.1.0" not in output
+    assert "cyberhuatuo-0.2.0-py3-none-any.whl has no forbidden" in output
+    assert "cyberhuatuo-0.2.0.tar.gz includes marketplace release contract assets" in output
 
 
 def test_release_boundary_flags_missing_marketplace_wheel_contracts(tmp_path):

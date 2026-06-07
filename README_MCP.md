@@ -442,6 +442,10 @@ Use when a high-realm Soul Ring gate needs public evidence instead of an interna
 
 当用户问“生成我的魂环徽章”“怎么放到 GitHub Profile”“README 徽章”时调用。工具会返回可直接复制的 Shields.io Markdown 徽章，并附带真实贡献数、当前魂环、主修方向、`下一环` 目标和继续追环命令。对应 CLI：`cyberhuatuo badge <github_username>`。
 
+### `soul_ring_visual_artifact` -- generate chat-visible Soul Ring GIF/PNG
+
+Use when the user wants to see Soul Rings, breakthrough progress, cultivation status, or a shareable achievement moment directly inside Codex, Claude, or another agent chat. The tool writes a local animated GIF plus PNG fallback, returns Markdown image embeds, includes the current real contribution snapshot, candidate/PyPI/MCP install commands, and a `record-share` attribution command. This path is the default visual route because Markdown GIF rendering is more portable across agent clients than MCP `ui://` widgets. It does not invent ranks, downloads, retention, referrals, rewards, or fake contributors. Corresponding CLI: `cyberhuatuo visual <github_username> --framework <framework> --output-dir <dir>`.
+
 ### 🔮 `soul_ring_quest_board` — 生成追环任务板
 
 当用户问“下一环怎么追”“给我今天的魂环任务”“我要刷魂环”时调用。工具会基于真实贡献统计选择目标框架，返回当前魂环、`下一环` 目标、真实目标仓库的 issue 淘金命令、`upload_prescription` / CLI upload 路径，以及徽章和分享卡命令。对应 CLI：`cyberhuatuo quest <github_username> --framework <framework>`。

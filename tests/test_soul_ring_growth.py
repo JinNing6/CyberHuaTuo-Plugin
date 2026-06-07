@@ -1,11 +1,12 @@
 import json
 import os
+import struct
 import subprocess
 import sys
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from cyberhuatuo import achievements, activation, install, submissions, traction
+from cyberhuatuo import achievements, activation, install, soul_ring_visuals, submissions, traction
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIOUS_PYPI_VERSION = "0.1.0"
@@ -25,6 +26,109 @@ def _assert_candidate_install_precedes_registry(text: str) -> None:
     assert text.index(CANDIDATE_INSTALL_V020) < text.index(REGISTRY_INSTALL)
     assert "\nInstall: pip install cyberhuatuo" not in text
     assert "\npip install cyberhuatuo\n" not in text
+
+
+class _GifBitReader:
+    def __init__(self, payload: bytes) -> None:
+        self.payload = payload
+        self.bit_offset = 0
+
+    def read(self, bit_count: int) -> int:
+        value = 0
+        for bit in range(bit_count):
+            if self.bit_offset // 8 >= len(self.payload):
+                raise EOFError("GIF LZW payload ended before the end code")
+            value |= ((self.payload[self.bit_offset // 8] >> (self.bit_offset % 8)) & 1) << bit
+            self.bit_offset += 1
+        return value
+
+
+def _decode_gif_lzw(payload: bytes, min_code_size: int, expected_pixels: int) -> bytes:
+    clear_code = 1 << min_code_size
+    end_code = clear_code + 1
+    table = {index: bytes([index]) for index in range(clear_code)}
+    next_code = end_code + 1
+    code_size = min_code_size + 1
+    reader = _GifBitReader(payload)
+    decoded = bytearray()
+    previous: bytes | None = None
+
+    while True:
+        code = reader.read(code_size)
+        if code == clear_code:
+            table = {index: bytes([index]) for index in range(clear_code)}
+            next_code = end_code + 1
+            code_size = min_code_size + 1
+            previous = None
+            continue
+        if code == end_code:
+            break
+        if code in table:
+            entry = table[code]
+        elif previous is not None and code == next_code:
+            entry = previous + previous[:1]
+        else:
+            raise AssertionError(f"invalid GIF LZW code {code} at table index {next_code}")
+
+        decoded.extend(entry)
+        if previous is not None:
+            table[next_code] = previous + entry[:1]
+            next_code += 1
+            if next_code == (1 << code_size) and code_size < 12:
+                code_size += 1
+        previous = entry
+        if len(decoded) > expected_pixels:
+            raise AssertionError("GIF LZW decoded more pixels than the image contains")
+
+    return bytes(decoded)
+
+
+def _decode_first_gif_frame_pixels(path: Path) -> tuple[int, int, bytes]:
+    data = path.read_bytes()
+    assert data.startswith(b"GIF89a")
+    offset = 6
+    width, height = struct.unpack_from("<HH", data, offset)
+    packed = data[offset + 4]
+    offset += 7
+    if packed & 0x80:
+        offset += 3 * (2 ** ((packed & 0x07) + 1))
+
+    while offset < len(data):
+        marker = data[offset]
+        offset += 1
+        if marker == 0x21:
+            offset += 1
+            while True:
+                block_size = data[offset]
+                offset += 1
+                if block_size == 0:
+                    break
+                offset += block_size
+            continue
+        if marker == 0x2C:
+            left, top, frame_width, frame_height = struct.unpack_from("<HHHH", data, offset)
+            offset += 8
+            image_packed = data[offset]
+            offset += 1
+            assert (left, top, frame_width, frame_height) == (0, 0, width, height)
+            if image_packed & 0x80:
+                offset += 3 * (2 ** ((image_packed & 0x07) + 1))
+            min_code_size = data[offset]
+            offset += 1
+            chunks = bytearray()
+            while True:
+                block_size = data[offset]
+                offset += 1
+                if block_size == 0:
+                    break
+                chunks.extend(data[offset : offset + block_size])
+                offset += block_size
+            return width, height, _decode_gif_lzw(bytes(chunks), min_code_size, width * height)
+        if marker == 0x3B:
+            break
+        raise AssertionError(f"unexpected GIF block marker 0x{marker:02x}")
+
+    raise AssertionError("GIF did not contain an image frame")
 
 
 def test_remote_issueops_required_files_cover_full_public_acquisition_loop():
@@ -272,6 +376,226 @@ def test_share_card_includes_copy_ready_soul_ring_challenge(monkeypatch):
     assert "uvx --from cyberhuatuo cyberhuatuo-mcp" in card
     assert "cyberhuatuo record-share --username alice --framework langchain --share-url <https-url>" in card
     assert "#CyberHuaTuo" in card
+
+
+def test_soul_ring_visual_artifact_writes_chat_visible_png_and_gif(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        soul_ring_visuals,
+        "get_cultivation_profile",
+        lambda username: {
+            "github": username,
+            "contribution_count": 4,
+            "title_emoji": "*",
+            "title_cn": "One-Star",
+            "title_en": "One-Star Alchemist",
+            "global_rank": 1,
+            "global_total": 2,
+            "percentile": 100.0,
+            "is_rank_one": True,
+        },
+    )
+    progress = achievements.get_next_soul_ring_progress(4)
+    monkeypatch.setattr(
+        soul_ring_visuals,
+        "get_alchemy_profile",
+        lambda _username: {
+            "primary": {
+                "key": "agent",
+                "name_en": "Agent Formula",
+                "count": 4,
+                "rings": "**",
+                "ring_name": "Two Rings",
+                "ring_count": 2,
+                "next_ring": progress,
+            },
+            "directions": [
+                {
+                    "key": "agent",
+                    "name_en": "Agent Formula",
+                    "count": 4,
+                    "rings": "**",
+                    "ring_name": "Two Rings",
+                    "ring_count": 2,
+                    "next_ring": progress,
+                }
+            ],
+        },
+    )
+
+    artifact = soul_ring_visuals.create_soul_ring_visual_artifact(
+        "alice",
+        "langchain",
+        output_dir=tmp_path,
+        frames=6,
+        width=320,
+        height=180,
+    )
+
+    png = artifact.png_path.read_bytes()
+    gif = artifact.gif_path.read_bytes()
+    decoded_width, decoded_height, decoded_pixels = _decode_first_gif_frame_pixels(artifact.gif_path)
+    expected_frame = soul_ring_visuals.render_soul_ring_frame(
+        artifact.snapshot,
+        artifact.width,
+        artifact.height,
+        0,
+        artifact.frames,
+    )
+    assert artifact.snapshot.username == "alice"
+    assert artifact.snapshot.direction_prescriptions == 4
+    assert artifact.snapshot.ring_count == 2
+    assert png.startswith(b"\x89PNG\r\n\x1a\n")
+    assert gif.startswith(b"GIF89a")
+    assert gif.count(b"\x21\xf9\x04") == 6
+    assert gif.endswith(b";")
+    assert (decoded_width, decoded_height) == (artifact.width, artifact.height)
+    assert decoded_pixels == bytes(expected_frame.pixels)
+
+
+def test_soul_ring_visual_artifact_markdown_routes_to_share_loop(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        soul_ring_visuals,
+        "get_cultivation_profile",
+        lambda username: {
+            "github": username,
+            "contribution_count": 0,
+            "title_emoji": "*",
+            "title_cn": "Intern",
+            "title_en": "Intern Apprentice",
+            "global_rank": 0,
+            "global_total": 0,
+            "percentile": 0.0,
+            "is_rank_one": False,
+        },
+    )
+    monkeypatch.setattr(
+        soul_ring_visuals,
+        "get_alchemy_profile",
+        lambda _username: {"primary": None, "directions": []},
+    )
+
+    markdown = soul_ring_visuals.format_soul_ring_visual_artifact(
+        "newcomer",
+        "langchain",
+        output_dir=tmp_path,
+        frames=6,
+        width=320,
+        height=180,
+    )
+
+    assert "Soul Ring Visual Artifact" in markdown
+    assert "![CyberHuaTuo Soul Ring GIF](" in markdown
+    assert "![CyberHuaTuo Soul Ring PNG](" in markdown
+    assert "cyberhuatuo-soul-ring-newcomer-langchain.gif" in markdown
+    _assert_candidate_install_precedes_registry(markdown)
+    assert "uvx --from cyberhuatuo cyberhuatuo-mcp" in markdown
+    assert "cyberhuatuo record-share --username newcomer --framework langchain --share-url <https-url>" in markdown
+    assert "does not invent ranks, downloads, retention, referrals, or rewards" in markdown
+
+
+def test_soul_ring_visual_artifact_uses_ascii_fallback_for_non_ascii_ring_labels(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        soul_ring_visuals,
+        "get_cultivation_profile",
+        lambda username: {
+            "github": username,
+            "contribution_count": 1,
+            "title_emoji": "*",
+            "title_cn": "One-Star",
+            "title_en": "One-Star Alchemist",
+            "global_rank": 2,
+            "global_total": 2,
+            "percentile": 0.0,
+            "is_rank_one": False,
+        },
+    )
+    monkeypatch.setattr(
+        soul_ring_visuals,
+        "get_alchemy_profile",
+        lambda _username: {
+            "primary": {
+                "key": "craft",
+                "name_en": "Soul Craft",
+                "count": 1,
+                "rings": "*",
+                "ring_name": "\u4e00\u73af",
+                "ring_count": 1,
+                "next_ring": {
+                    "next_min_count": 2,
+                    "next_ring_name": "\u9ec4\u73af",
+                    "needed": 1,
+                },
+            },
+            "directions": [
+                {
+                    "key": "craft",
+                    "name_en": "Soul Craft",
+                    "count": 1,
+                    "rings": "*",
+                    "ring_name": "\u4e00\u73af",
+                    "ring_count": 1,
+                    "next_ring": {
+                        "next_min_count": 2,
+                        "next_ring_name": "\u9ec4\u73af",
+                        "needed": 1,
+                    },
+                }
+            ],
+        },
+    )
+
+    markdown = soul_ring_visuals.format_soul_ring_visual_artifact(
+        "alice",
+        "nextjs",
+        output_dir=tmp_path,
+        frames=6,
+        width=320,
+        height=180,
+    )
+
+    assert "Current ring: 1 / First Ring" in markdown
+    assert "Next ring: Yellow Ring; needed: 1" in markdown
+    assert "next ring Yellow Ring needs 1" in markdown
+
+
+def test_soul_ring_visual_cli_generates_markdown_and_assets(tmp_path):
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "cyberhuatuo",
+            "visual",
+            "alice",
+            "--framework",
+            "langchain",
+            "--output-dir",
+            str(tmp_path),
+            "--frames",
+            "6",
+            "--width",
+            "320",
+            "--height",
+            "180",
+        ],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    assert "Soul Ring Visual Artifact" in result.stdout
+    assert "![CyberHuaTuo Soul Ring GIF](" in result.stdout
+    assert (tmp_path / "cyberhuatuo-soul-ring-alice-langchain.png").is_file()
+    assert (tmp_path / "cyberhuatuo-soul-ring-alice-langchain.gif").is_file()
+
+
+def test_mcp_exposes_soul_ring_visual_artifact_tool():
+    mcp_server = (ROOT / "cyberhuatuo" / "mcp_server.py").read_text(encoding="utf-8")
+
+    assert "format_soul_ring_visual_artifact" in mcp_server
+    assert "def soul_ring_visual_artifact(" in mcp_server
+    assert "Generate a chat-visible Soul Ring PNG cover and animated GIF" in mcp_server
+    assert "MCP ui:// widgets are not consistently visible" in mcp_server
 
 
 def test_first_soul_ring_challenge_copy_puts_candidate_install_before_pypi():

@@ -130,6 +130,7 @@ from .social import (
     submit_feedback,
     submit_review,
 )
+from .soul_ring_visuals import format_soul_ring_visual_artifact
 from .submissions import (
     format_marketplace_submission_status,
     format_record_marketplace_submission,
@@ -1392,6 +1393,45 @@ def profile_badge_kit(
     """
     kit = format_profile_badge_kit(github_username)
     return _append_brand_footer(kit)
+
+
+@mcp.tool(annotations=_tool_annotations("Generate soul ring visual artifact", read_only=False, destructive=True, idempotent=False))
+def soul_ring_visual_artifact(
+    github_username: str,
+    framework: str = "langchain",
+    output_dir: str = "",
+    frames: int = 24,
+    width: int = 640,
+    height: int = 360,
+) -> str:
+    """
+    Generate a chat-visible Soul Ring PNG cover and animated GIF.
+
+    Use this when the user wants to show Soul Rings, breakthroughs, cultivation
+    status, or sect-style progress directly inside Codex, Claude, or another
+    agent chat. The primary path is Markdown-rendered local GIF/PNG because
+    MCP ui:// widgets are not consistently visible across clients.
+
+    The visual binds current real CyberHuaTuo contribution data only and does
+    not invent ranks, downloads, retention, referrals, or rewards.
+
+    Args:
+        github_username: GitHub username.
+        framework: Framework key used to choose the Soul Ring alchemy direction.
+        output_dir: Optional local directory for generated PNG/GIF files.
+        frames: GIF frame count, clamped to 6..72.
+        width: Image width, clamped to 320..960.
+        height: Image height, clamped to 180..540.
+    """
+    result = format_soul_ring_visual_artifact(
+        github_username=github_username,
+        framework=framework,
+        output_dir=output_dir or None,
+        frames=frames,
+        width=width,
+        height=height,
+    )
+    return _append_brand_footer(result)
 
 
 @mcp.tool(annotations=_tool_annotations("Generate soul ring quest board", read_only=True, destructive=False))
