@@ -6,7 +6,7 @@ name: Publish PyPI
   workflow_dispatch:
     inputs:
       release_tag:
-        description: "Existing v* tag to publish, e.g. v0.2.0"
+        description: "Existing v* tag to publish, e.g. v0.2.1"
         required: true
         type: string
 
@@ -25,13 +25,13 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             tag="${{ inputs.release_tag }}"
             if [[ ! "$tag" =~ ^v[0-9]+(\.[0-9]+){1,2}([a-zA-Z0-9._-]*)?$ ]]; then
-              echo "manual workflow_dispatch release_tag must start with v and look like v0.2.0" >&2
+              echo "manual workflow_dispatch release_tag must start with v and look like v0.2.1" >&2
               exit 1
             fi
           else
             tag="${{ github.event.release.tag_name }}"
             if [[ ! "$tag" =~ ^v[0-9]+(\.[0-9]+){1,2}([a-zA-Z0-9._-]*)?$ ]]; then
-              echo "release.published tag must start with v and look like v0.2.0" >&2
+              echo "release.published tag must start with v and look like v0.2.1" >&2
               exit 1
             fi
           fi

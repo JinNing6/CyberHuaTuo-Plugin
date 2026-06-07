@@ -86,7 +86,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CyberHuaTuo 赛博华佗",
     description="开源的 AI 问题诊断知识库",
-    version="0.2.0",
+    version="0.2.1",
     lifespan=lifespan,
 )
 

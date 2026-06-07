@@ -9,7 +9,7 @@
     {
       "name": "cyberhuatuo-plugin",
       "source": "./",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Diagnose AI-agent and coding framework failures, search reusable prescriptions, and join the First Soul Ring contribution ladder.",
       "category": "Developer Tools",
       "keywords": [

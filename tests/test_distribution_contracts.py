@@ -220,12 +220,12 @@ def test_pyproject_exposes_dev_quality_gate_extra():
 def test_current_install_command_surface_selects_registry_or_git_bridge_from_real_pypi_metadata():
     def current_fetcher(url, _headers, _timeout):
         assert url == "https://pypi.org/pypi/cyberhuatuo/json"
-        return {"info": {"version": "0.2.0"}, "releases": {"0.2.0": []}, "urls": []}
+        return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
 
     current_text = install.format_current_install_command(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=3,
         fetcher=current_fetcher,
     )
@@ -240,7 +240,7 @@ def test_current_install_command_surface_selects_registry_or_git_bridge_from_rea
     stale_text = install.format_current_install_command(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=3,
         fetcher=stale_fetcher,
     )
@@ -248,7 +248,7 @@ def test_current_install_command_surface_selects_registry_or_git_bridge_from_rea
     assert "Canonical PyPI install: `python -m pip install --upgrade cyberhuatuo`" in stale_text
     assert (
         'python -m pip install --upgrade "cyberhuatuo @ '
-        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0"'
+        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"'
     ) in stale_text
     assert "does not close the PyPI install loop" in stale_text
 
@@ -271,7 +271,7 @@ def test_candidate_install_smoke_gate_verifies_public_git_tag_install_and_cleans
         calls.append(command)
         joined = " ".join(command)
         if "import cyberhuatuo" in joined:
-            return subprocess.CompletedProcess(command, 0, stdout="0.2.0\n", stderr="")
+            return subprocess.CompletedProcess(command, 0, stdout="0.2.1\n", stderr="")
         if "--help" in command:
             return subprocess.CompletedProcess(
                 command,
@@ -298,7 +298,7 @@ def test_candidate_install_smoke_gate_verifies_public_git_tag_install_and_cleans
     report = install.build_candidate_install_smoke(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=5,
         repo="JinNing6/CyberHuaTuo-Plugin",
         pypi_project="cyberhuatuo",
@@ -314,7 +314,7 @@ def test_candidate_install_smoke_gate_verifies_public_git_tag_install_and_cleans
     assert report["cleanup"] == "removed"
     assert removed == [created_temp]
     assert any(command[:3] == ["python", "-m", "venv"] for command in calls)
-    assert any("cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0" in command for command in calls for command in command)
+    assert any("cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1" in command for command in calls for command in command)
     assert any("install-command" in command for command in calls for command in command)
     assert any("proof-pack" in command for command in calls for command in command)
     assert "Candidate Install Smoke Gate" in text
@@ -343,7 +343,7 @@ def test_candidate_install_smoke_gate_retains_temp_dir_on_failure(tmp_path):
     report = install.build_candidate_install_smoke(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         repo="JinNing6/CyberHuaTuo-Plugin",
         pypi_project="cyberhuatuo",
         python_executable="python",
@@ -678,7 +678,7 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     doc_path = ROOT / "docs" / "MARKETPLACE_RELEASE.md"
     release_launch_assets_command = (
         "cyberhuatuo launch-assets --username <maintainer-github> --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 3"
+        "--release-tag v0.2.1 --target-contributors 3"
     )
 
     assert doc_path.is_file()
@@ -771,7 +771,7 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     assert "Claude MCPB listing copy" in doc
     assert "Codex plugin listing copy" in doc
     assert "Protected Publish Fallback" in doc
-    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.0" in doc
+    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.1" in doc
     assert "gh run list --workflow publish-pypi.yml --limit 5" in doc
     assert "no `PYPI_TOKEN` fallback is allowed" in doc
     assert "External Contributor Path" in doc
@@ -975,12 +975,12 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/pulls?"):
             return []
-        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.0":
+        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.1":
             return {
-                "tag_name": "v0.2.0",
+                "tag_name": "v0.2.1",
                 "draft": False,
                 "prerelease": False,
-                "html_url": "https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/tag/v0.2.0",
+                "html_url": "https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/tag/v0.2.1",
                 "published_at": "2026-06-04T00:00:00Z",
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/issues?"):
@@ -996,7 +996,7 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
         ROOT,
         remote=True,
         strict_remote=True,
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         fetcher=fake_fetcher,
     )
     text = marketplace.format_marketplace_readiness(report)
@@ -1030,12 +1030,12 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
     assert "git add .github/ISSUE_TEMPLATE/soul-ring-prescription.yml" in text
     assert ".github/ISSUE_TEMPLATE/soul-ring-growth-flywheel.yml" in text
     assert "## Public Release Operator Runbook" in text
-    assert "GitHub Web Release: https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/new?tag=v0.2.0" in text
+    assert "GitHub Web Release: https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/new?tag=v0.2.1" in text
     assert "GitHub Actions workflow page: https://github.com/JinNing6/CyberHuaTuo-Plugin/actions/workflows/publish-pypi.yml" in text
-    assert "gh release create v0.2.0" in text
-    assert "dist/cyberhuatuo-0.2.0.tar.gz" in text
-    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.0" in text
-    assert "cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.0 --target-contributors 3" in text
+    assert "gh release create v0.2.1" in text
+    assert "dist/cyberhuatuo-0.2.1.tar.gz" in text
+    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.1" in text
+    assert "cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3" in text
 
 
 def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_gates_pass(tmp_path, monkeypatch):
@@ -1053,12 +1053,12 @@ def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/pulls?"):
             return []
-        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.0":
+        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.1":
             return {
-                "tag_name": "v0.2.0",
+                "tag_name": "v0.2.1",
                 "draft": False,
                 "prerelease": False,
-                "html_url": "https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/tag/v0.2.0",
+                "html_url": "https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/tag/v0.2.1",
                 "published_at": "2026-06-04T00:00:00Z",
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/issues?"):
@@ -1073,14 +1073,14 @@ def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_
             path = url.removeprefix(content_prefix)
             return {"type": "file", "path": path}
         if url == "https://pypi.org/pypi/cyberhuatuo/json":
-            return {"info": {"version": "0.2.0"}, "releases": {"0.2.0": []}, "urls": []}
+            return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
         raise AssertionError(url)
 
     report = marketplace.build_marketplace_readiness(
         ROOT,
         remote=True,
         strict_remote=True,
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=3,
         fetcher=fake_fetcher,
     )
@@ -1117,7 +1117,7 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_release_tag_is_mis
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/pulls?"):
             return []
-        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.0":
+        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.1":
             raise OSError("HTTP 404: Not Found")
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/issues?"):
             return []
@@ -1125,14 +1125,14 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_release_tag_is_mis
             path = url.removeprefix(content_prefix)
             return {"type": "file", "path": path}
         if url == "https://pypi.org/pypi/cyberhuatuo/json":
-            return {"info": {"version": "0.2.0"}, "releases": {"0.2.0": []}, "urls": []}
+            return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
         raise AssertionError(url)
 
     report = marketplace.build_marketplace_readiness(
         ROOT,
         remote=True,
         strict_remote=True,
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         fetcher=fake_fetcher,
     )
     text = marketplace.format_marketplace_readiness(report)
@@ -1163,7 +1163,7 @@ def test_first_public_proof_pack_is_no_network_and_cli_recordable():
         pypi_project="cyberhuatuo",
         username="alice",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=5,
     )
     text = marketplace.format_first_public_proof_pack(pack)
@@ -1176,7 +1176,7 @@ def test_first_public_proof_pack_is_no_network_and_cli_recordable():
     assert "does not invent traction" in text
     assert (
         "cyberhuatuo launch-assets --username alice --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 5"
+        "--release-tag v0.2.1 --target-contributors 5"
     ) in text
     assert "Prefilled Growth Flywheel Issue:" in text
     assert "template=soul-ring-growth-flywheel.yml" in text
@@ -1188,21 +1188,21 @@ def test_first_public_proof_pack_is_no_network_and_cli_recordable():
     assert "Created Share Proof Issue URL: <created Share Proof Issue URL after submission>" in text
     assert "Created Bounty Board Issue URL: <created Bounty Board Issue URL after submission>" in text
     assert "### Protected Publish Fallback" in text
-    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.0" in text
+    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.1" in text
     assert "gh run list --workflow publish-pypi.yml --limit 5" in text
     assert "No `PYPI_TOKEN` fallback is allowed." in text
     assert "### Git Tag Candidate Install Bridge" in text
     assert "Canonical PyPI install: `python -m pip install --upgrade cyberhuatuo`" in text
     assert (
         'python -m pip install --upgrade "cyberhuatuo @ '
-        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0"'
+        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"'
     ) in text
     assert "does not close the PyPI install loop" in text
     assert "Recheck PyPI latest-version proof before claiming public install readiness." in text
     assert "## Install Decision Surface" in text
     assert (
         "cyberhuatuo install-command --username alice --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 5 --repo JinNing6/CyberHuaTuo-Plugin "
+        "--release-tag v0.2.1 --target-contributors 5 --repo JinNing6/CyberHuaTuo-Plugin "
         "--pypi-project cyberhuatuo"
     ) in text
     assert "MCP install decision tool: `current_install_command`" in text
@@ -1224,24 +1224,24 @@ def test_first_public_proof_pack_is_no_network_and_cli_recordable():
     )
     assert (
         "cyberhuatuo market-ready --remote --strict-remote --username alice "
-        "--framework langchain --release-tag v0.2.0 --target-contributors 5"
+        "--framework langchain --release-tag v0.2.1 --target-contributors 5"
     ) in text
     assert (
         "cyberhuatuo market-copy --username alice --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 5"
+        "--release-tag v0.2.1 --target-contributors 5"
     ) in text
     assert (
         "cyberhuatuo bounty --username alice --framework auto --top-n 8 "
-        "--release-tag v0.2.0 --target-contributors 5"
+        "--release-tag v0.2.1 --target-contributors 5"
     ) in text
     assert (
         "cyberhuatuo first-invite --username alice --invitee <external-contributor-github-username> "
-        "--framework langchain --release-tag v0.2.0 --target-contributors 5 "
+        "--framework langchain --release-tag v0.2.1 --target-contributors 5 "
         "--source-url <created Growth Issue URL after submission>"
     ) in text
     assert (
         "cyberhuatuo traction-proof --username alice --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 5"
+        "--release-tag v0.2.1 --target-contributors 5"
     ) in text
     assert "Copy-ready public proof post" in text
     assert "No downloads, retention, repost counts, referrals, rewards, or fake contributors are claimed." in text
@@ -1254,7 +1254,7 @@ def test_first_contributor_invite_pack_targets_one_external_contributor_without_
         username="alice",
         invitee="bob",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=5,
         source_url="https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123",
     )
@@ -1275,13 +1275,13 @@ def test_first_contributor_invite_pack_targets_one_external_contributor_without_
         "--source-url https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123"
     ) in text
     assert "cyberhuatuo challenge --username bob --framework langchain" in text
-    assert "cyberhuatuo proof-pack --username alice --framework langchain --release-tag v0.2.0 --target-contributors 5" in text
-    assert "cyberhuatuo market-copy --username alice --framework langchain --release-tag v0.2.0 --target-contributors 5" in text
-    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.0 --target-contributors 5" in text
+    assert "cyberhuatuo proof-pack --username alice --framework langchain --release-tag v0.2.1 --target-contributors 5" in text
+    assert "cyberhuatuo market-copy --username alice --framework langchain --release-tag v0.2.1 --target-contributors 5" in text
+    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.1 --target-contributors 5" in text
     assert "## Install Decision Surface" in text
     assert (
         "cyberhuatuo install-command --username alice --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 5 --repo JinNing6/CyberHuaTuo-Plugin "
+        "--release-tag v0.2.1 --target-contributors 5 --repo JinNing6/CyberHuaTuo-Plugin "
         "--pypi-project cyberhuatuo"
     ) in text
     assert "MCP install decision tool: `current_install_command`" in text
@@ -1297,13 +1297,13 @@ def test_marketplace_submission_copy_pack_is_channel_specific_and_non_fabricatin
         pypi_project="cyberhuatuo",
         username="alice",
         framework="langchain",
-        release_tag="v0.2.0",
+        release_tag="v0.2.1",
         target_contributors=5,
     )
     text = marketplace.format_marketplace_submission_copy_pack(pack)
 
     assert pack["network"] == "not_fetched"
-    assert pack["version"] == "0.2.0"
+    assert pack["version"] == "0.2.1"
     assert "Marketplace Submission Copy Pack" in text
     assert "No public metrics are fetched" in text
     assert "does not invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors" in text
@@ -1316,7 +1316,7 @@ def test_marketplace_submission_copy_pack_is_channel_specific_and_non_fabricatin
     assert "## Install Decision Commands" in text
     assert (
         "cyberhuatuo install-command --username alice --framework langchain "
-        "--release-tag v0.2.0 --target-contributors 5 --repo JinNing6/CyberHuaTuo-Plugin "
+        "--release-tag v0.2.1 --target-contributors 5 --repo JinNing6/CyberHuaTuo-Plugin "
         "--pypi-project cyberhuatuo"
     ) in text
     assert "current_install_command" in text
@@ -1331,9 +1331,9 @@ def test_marketplace_submission_copy_pack_is_channel_specific_and_non_fabricatin
     assert ".agents/plugins/marketplace.json" in text
     assert "codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin" in text
     assert "## GitHub Release Post" in text
-    assert "GitHub Web Release: https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/new?tag=v0.2.0" in text
+    assert "GitHub Web Release: https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/new?tag=v0.2.1" in text
     assert "GitHub Actions workflow page: https://github.com/JinNing6/CyberHuaTuo-Plugin/actions/workflows/publish-pypi.yml" in text
-    assert "gh release create v0.2.0" in text
+    assert "gh release create v0.2.1" in text
     assert "## Submission Portals And Evidence URLs" in text
     assert "PyPI Trusted Publisher settings: https://pypi.org/manage/project/cyberhuatuo/settings/publishing/" in text
     assert "PyPI project page: https://pypi.org/project/cyberhuatuo/" in text
@@ -1351,7 +1351,7 @@ def test_marketplace_submission_copy_pack_is_channel_specific_and_non_fabricatin
     assert "cyberhuatuo record-market --username alice --framework langchain --channel claude-desktop --status submitted" in text
     assert "cyberhuatuo record-market --username alice --framework langchain --channel codex --status submitted" in text
     assert "cyberhuatuo record-market --username alice --framework langchain --channel github-release --status submitted" in text
-    assert "cyberhuatuo market-status --username alice --framework langchain --release-tag v0.2.0" in text
+    assert "cyberhuatuo market-status --username alice --framework langchain --release-tag v0.2.1" in text
     assert "Prefilled Bounty Board Issue:" in text
     assert "template=soul-ring-bounty-board.yml" in text
     assert "Created Bounty Board Issue URL: <created Bounty Board Issue URL after submission>" in text
@@ -1359,17 +1359,17 @@ def test_marketplace_submission_copy_pack_is_channel_specific_and_non_fabricatin
     assert "Canonical PyPI install: `python -m pip install --upgrade cyberhuatuo`" in text
     assert (
         'python -m pip install --upgrade "cyberhuatuo @ '
-        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0"'
+        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"'
     ) in text
     assert "does not close the PyPI install loop" in text
-    assert "cyberhuatuo bounty --username alice --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 5" in text
+    assert "cyberhuatuo bounty --username alice --framework auto --top-n 8 --release-tag v0.2.1 --target-contributors 5" in text
     assert "cyberhuatuo record-return --username alice --framework langchain" in text
     assert (
         "cyberhuatuo record-return --username alice --framework auto "
         '--surface "Bounty Board Issue" --source-url <created Bounty Board Issue URL after submission>'
     ) in text
     assert "cyberhuatuo record-share --username alice --framework langchain" in text
-    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.0 --target-contributors 5" in text
+    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.1 --target-contributors 5" in text
     assert "target 5 real first-ring contributors" in text
     assert "Only real public Issue authors, public Pull Request authors, and local ledger actors count" in text
     assert "Copy-ready maintainer announcement" in text
@@ -1396,7 +1396,7 @@ def test_cli_marketplace_submission_ledger_round_trip(tmp_path):
             "--submission-url",
             "https://pypi.org/project/cyberhuatuo/",
             "--release-tag",
-            "v0.2.0",
+            "v0.2.1",
         ],
         cwd=ROOT,
         env={**os.environ.copy(), **env},
@@ -1421,7 +1421,7 @@ def test_cli_marketplace_submission_ledger_round_trip(tmp_path):
             "--framework",
             "langchain",
             "--release-tag",
-            "v0.2.0",
+            "v0.2.1",
         ],
         cwd=ROOT,
         env={**os.environ.copy(), **env},
@@ -1550,7 +1550,7 @@ def test_marketplace_readiness_cli_and_script_expose_release_gate():
             "--framework",
             "langchain",
             "--release-tag",
-            "v0.2.0",
+            "v0.2.1",
             "--target-contributors",
             "5",
         ],
@@ -1581,15 +1581,15 @@ def test_marketplace_readiness_cli_and_script_expose_release_gate():
     assert "Git Tag Candidate Install Bridge" in proof_pack_result.stdout
     assert (
         'python -m pip install --upgrade "cyberhuatuo @ '
-        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0"'
+        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"'
     ) in proof_pack_result.stdout
     assert "does not close the PyPI install loop" in proof_pack_result.stdout
     assert "External Contributor Path" in proof_pack_result.stdout
     assert "cyberhuatuo challenge --username <external-contributor-github-username> --framework langchain" in proof_pack_result.stdout
     assert "Only real public Issue authors, public Pull Request authors, and local ledger actors" in proof_pack_result.stdout
     assert "cyberhuatuo market-ready --remote --strict-remote --username alice" in proof_pack_result.stdout
-    assert "cyberhuatuo market-copy --username alice --framework langchain --release-tag v0.2.0 --target-contributors 5" in proof_pack_result.stdout
-    assert "cyberhuatuo bounty --username alice --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 5" in proof_pack_result.stdout
+    assert "cyberhuatuo market-copy --username alice --framework langchain --release-tag v0.2.1 --target-contributors 5" in proof_pack_result.stdout
+    assert "cyberhuatuo bounty --username alice --framework auto --top-n 8 --release-tag v0.2.1 --target-contributors 5" in proof_pack_result.stdout
     assert "cyberhuatuo first-invite --username alice --invitee <external-contributor-github-username>" in proof_pack_result.stdout
 
     market_copy_result = subprocess.run(
@@ -1603,7 +1603,7 @@ def test_marketplace_readiness_cli_and_script_expose_release_gate():
             "--framework",
             "langchain",
             "--release-tag",
-            "v0.2.0",
+            "v0.2.1",
             "--target-contributors",
             "5",
         ],
@@ -1635,9 +1635,9 @@ def test_marketplace_readiness_cli_and_script_expose_release_gate():
     assert "Git Tag Candidate Install Bridge" in market_copy_result.stdout
     assert (
         'python -m pip install --upgrade "cyberhuatuo @ '
-        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.0"'
+        'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"'
     ) in market_copy_result.stdout
-    assert "cyberhuatuo bounty --username alice --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 5" in market_copy_result.stdout
+    assert "cyberhuatuo bounty --username alice --framework auto --top-n 8 --release-tag v0.2.1 --target-contributors 5" in market_copy_result.stdout
     assert "No public metrics are fetched" in market_copy_result.stdout
 
     first_invite_result = subprocess.run(
@@ -1653,7 +1653,7 @@ def test_marketplace_readiness_cli_and_script_expose_release_gate():
             "--framework",
             "langchain",
             "--release-tag",
-            "v0.2.0",
+            "v0.2.1",
             "--target-contributors",
             "5",
             "--source-url",
@@ -1671,7 +1671,7 @@ def test_marketplace_readiness_cli_and_script_expose_release_gate():
     assert "First Contributor Invite Pack" in first_invite_result.stdout
     assert "Target invitee: `bob`" in first_invite_result.stdout
     assert "cyberhuatuo challenge --username bob --framework langchain" in first_invite_result.stdout
-    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.0" in first_invite_result.stdout
+    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.1" in first_invite_result.stdout
 
 
 def test_mcp_exposes_marketplace_readiness_gate_tool():
@@ -1730,9 +1730,9 @@ def test_release_boundary_checks_current_version_archives_only(tmp_path, monkeyp
     dist.mkdir()
     stale_wheel = dist / "cyberhuatuo-0.1.0-py3-none-any.whl"
     stale_wheel.write_bytes(b"stale")
-    current_wheel = dist / "cyberhuatuo-0.2.0-py3-none-any.whl"
+    current_wheel = dist / "cyberhuatuo-0.2.1-py3-none-any.whl"
     current_wheel.write_bytes(b"current")
-    current_sdist = dist / "cyberhuatuo-0.2.0.tar.gz"
+    current_sdist = dist / "cyberhuatuo-0.2.1.tar.gz"
     current_sdist.write_bytes(b"current")
 
     checked_archives: list[str] = []
@@ -1744,7 +1744,7 @@ def test_release_boundary_checks_current_version_archives_only(tmp_path, monkeyp
         return []
 
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(release_boundary, "_read_project_version", lambda _root: "0.2.0")
+    monkeypatch.setattr(release_boundary, "_read_project_version", lambda _root: "0.2.1")
     monkeypatch.setattr(release_boundary, "_iter_archive_names", fake_iter_archive_names)
     monkeypatch.setattr(release_boundary, "_find_release_contract_violations", lambda _path, _version: [])
 
@@ -1753,21 +1753,21 @@ def test_release_boundary_checks_current_version_archives_only(tmp_path, monkeyp
     output = capsys.readouterr().out
     assert checked_archives == [current_wheel.name, current_sdist.name]
     assert "cyberhuatuo-0.1.0" not in output
-    assert "cyberhuatuo-0.2.0-py3-none-any.whl has no forbidden" in output
-    assert "cyberhuatuo-0.2.0.tar.gz includes marketplace release contract assets" in output
+    assert "cyberhuatuo-0.2.1-py3-none-any.whl has no forbidden" in output
+    assert "cyberhuatuo-0.2.1.tar.gz includes marketplace release contract assets" in output
 
 
 def test_release_boundary_flags_missing_marketplace_wheel_contracts(tmp_path):
-    wheel_path = tmp_path / "cyberhuatuo-0.2.0-py3-none-any.whl"
+    wheel_path = tmp_path / "cyberhuatuo-0.2.1-py3-none-any.whl"
     with zipfile.ZipFile(wheel_path, "w") as archive:
         archive.writestr("cyberhuatuo/cli.py", "")
         archive.writestr(
-            "cyberhuatuo-0.2.0.dist-info/entry_points.txt",
+            "cyberhuatuo-0.2.1.dist-info/entry_points.txt",
             "[console_scripts]\ncyberhuatuo = cyberhuatuo.cli:main\n",
         )
-        archive.writestr("cyberhuatuo-0.2.0.dist-info/METADATA", "Name: cyberhuatuo\nVersion: 0.2.0\n")
+        archive.writestr("cyberhuatuo-0.2.1.dist-info/METADATA", "Name: cyberhuatuo\nVersion: 0.2.1\n")
 
-    violations = release_boundary._find_release_contract_violations(wheel_path, "0.2.0")
+    violations = release_boundary._find_release_contract_violations(wheel_path, "0.2.1")
 
     assert "missing wheel member: cyberhuatuo/marketplace.py" in violations
     assert "missing wheel member: cyberhuatuo/install.py" in violations
@@ -1780,20 +1780,20 @@ def test_release_boundary_flags_missing_marketplace_wheel_contracts(tmp_path):
 
 
 def test_release_boundary_flags_missing_marketplace_sdist_contracts(tmp_path):
-    sdist_path = tmp_path / "cyberhuatuo-0.2.0.tar.gz"
+    sdist_path = tmp_path / "cyberhuatuo-0.2.1.tar.gz"
 
     def add_text(archive: tarfile.TarFile, name: str, text: str) -> None:
         payload = text.encode("utf-8")
-        info = tarfile.TarInfo(f"cyberhuatuo-0.2.0/{name}")
+        info = tarfile.TarInfo(f"cyberhuatuo-0.2.1/{name}")
         info.size = len(payload)
         archive.addfile(info, io.BytesIO(payload))
 
     with tarfile.open(sdist_path, "w:gz") as archive:
         add_text(archive, "README.md", "CyberHuaTuo\n")
-        add_text(archive, "pyproject.toml", "[project]\nname = 'cyberhuatuo'\nversion = '0.2.0'\n")
+        add_text(archive, "pyproject.toml", "[project]\nname = 'cyberhuatuo'\nversion = '0.2.1'\n")
         add_text(archive, ".github/workflows/ci.yml", "run: python -m pytest -q\n")
 
-    violations = release_boundary._find_release_contract_violations(sdist_path, "0.2.0")
+    violations = release_boundary._find_release_contract_violations(sdist_path, "0.2.1")
 
     assert "missing sdist member: .github/ISSUE_TEMPLATE/soul-ring-growth-flywheel.yml" in violations
     assert "missing sdist member: .github/ISSUE_TEMPLATE/soul-ring-bounty-board.yml" in violations

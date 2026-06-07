@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cyberhuatuo"
-version = "0.2.0"
+version = "0.2.1"
 description = "开源的 AI Agent 问题诊断知识库 / Open-source diagnostic intelligence for AI agents"
 readme = "README.md"
 license = "Apache-2.0"
