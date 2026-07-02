@@ -1,7 +1,7 @@
 {
   "name": "cyberhuatuo-plugin",
   "version": "0.2.1",
-  "description": "CyberHuaTuo diagnostic workflows for AI agent and coding framework failures.",
+  "description": "Paste AI-agent tracebacks and get root cause, exact fixes, verification steps, and reusable prescriptions.",
   "author": {
     "name": "CyberHuaTuo"
   },
@@ -19,8 +19,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "CyberHuaTuo Plugin",
-    "shortDescription": "Diagnose AI agent and coding framework failures.",
-    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for diagnosing AI agent, MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures using a curated public prescription knowledge base.",
+    "shortDescription": "Paste tracebacks and get exact AI-agent fixes.",
+    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for paste-a-traceback diagnosis across AI agent, MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures using a curated public prescription knowledge base.",
     "developerName": "CyberHuaTuo",
     "category": "Developer Tools",
     "capabilities": [
@@ -30,7 +30,7 @@
     ],
     "brandColor": "#00D09C",
     "defaultPrompt": [
-      "Diagnose this traceback with CyberHuaTuo.",
+      "Paste this traceback into CyberHuaTuo and return the root cause, exact fix, and verification command.",
       "Search CyberHuaTuo for this framework error.",
       "Run a security checkup on this agent code."
     ]

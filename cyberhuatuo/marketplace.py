@@ -2412,13 +2412,14 @@ def build_marketplace_submission_copy_pack(
         "contributor_counting_rule": contributor_rule,
         "pypi": {
             "short": (
-                "CyberHuaTuo turns AI-agent failures into reusable prescriptions, MCP tools, "
-                "and a First Soul Ring contribution loop."
+                "CyberHuaTuo lets developers paste AI-agent tracebacks and get root cause, "
+                "exact fixes, verification steps, and reusable prescriptions."
             ),
             "long": (
                 f"CyberHuaTuo {release} ships a Python CLI, shared MCP server, Codex plugin, "
-                "Claude Desktop MCPB package, and real-data soul-ring growth surfaces for "
-                f"{clean_framework} debugging workflows."
+                "and Claude Desktop MCPB package for paste-a-traceback diagnosis across "
+                f"{clean_framework} and other AI-agent debugging workflows. After a real cure, "
+                "fixes can still flow into real-data soul-ring growth surfaces."
             ),
             "project_urls": [
                 ("Homepage", repo_url),
@@ -2430,7 +2431,7 @@ def build_marketplace_submission_copy_pack(
             "commands": [install_command, mcp_command],
         },
         "claude": {
-            "short": "One-click Claude Desktop extension for CyberHuaTuo AI-agent diagnosis and soul-ring contribution routing.",
+            "short": "One-click Claude Desktop extension for paste-a-traceback CyberHuaTuo AI-agent diagnosis.",
             "install_note": (
                 "Install `dist/cyberhuatuo-claude-desktop.mcpb` in Claude Desktop after validating the bundle."
             ),
@@ -2442,13 +2443,13 @@ def build_marketplace_submission_copy_pack(
             "review_notes": [
                 "Tool annotations distinguish read-only reports from ledger-writing tools.",
                 "Privacy policy is linked from `claude-desktop/manifest.json`.",
-                "Working examples route diagnose, market-ready, proof-pack, and first-ring contribution flows.",
+                "Working examples lead with diagnose, then route market-ready, proof-pack, and first-ring contribution flows.",
             ],
         },
         "codex": {
             "short": (
-                "Codex plugin bundle for diagnosing AI-agent failures, using CyberHuaTuo MCP tools, "
-                "and following a team soul-ring contribution process."
+                "Codex plugin bundle for pasting AI-agent tracebacks, getting exact CyberHuaTuo fixes, "
+                "and optionally following a team soul-ring contribution process."
             ),
             "files": [".codex-plugin/plugin.json", ".agents/plugins/marketplace.json", ".mcp.json"],
             "install_commands": [
@@ -2456,15 +2457,17 @@ def build_marketplace_submission_copy_pack(
                 "codex mcp list",
             ],
             "usage_prompt": (
-                f"Use CyberHuaTuo to diagnose this {clean_framework} failure, then generate my First Soul Ring path."
+                f"Paste this {clean_framework} traceback into CyberHuaTuo, return the exact fix, "
+                "then generate my optional First Soul Ring path."
             ),
         },
         "github_release": {
             "command": release_command,
             "web_links": release_web_links,
             "post": (
-                f"CyberHuaTuo {release} is the public growth-loop release: PyPI install, Claude MCPB, "
-                "Codex plugin metadata, IssueOps proof routes, and First Soul Ring contributor activation."
+                f"CyberHuaTuo {release} is the public AI-agent error doctor release: PyPI install, "
+                "Claude MCPB, Codex plugin metadata, a paste-a-traceback diagnosis path, IssueOps proof routes, "
+                "and First Soul Ring contributor activation after real cures."
             ),
         },
         "submission_portals": submission_portals,
@@ -2479,7 +2482,8 @@ def build_marketplace_submission_copy_pack(
             "bounty_command": bounty_command,
             "traction_command": traction_command,
             "copy": (
-                f"CyberHuaTuo {release} public proof sprint: target {target} real first-ring contributors. "
+                f"CyberHuaTuo {release} public proof sprint: first show paste-a-traceback diagnosis, "
+                f"then target {target} real first-ring contributors. "
                 f"Start with `{install_decision_command}` or MCP `{install_decision['mcp_tool']}`, "
                 f"paste its Recommended Install, run `{mcp_command}` for agent clients, submit a real "
                 "First Soul Ring prescription or request the Bounty Board for claimable framework gaps, "
@@ -2501,6 +2505,8 @@ def build_marketplace_submission_copy_pack(
         },
         "maintainer_announcement": (
             f"CyberHuaTuo {release} is ready for PyPI, Claude Desktop MCPB, and Codex plugin submission copy. "
+            "Lead every channel with the error doctor promise: paste an AI-agent traceback, get root cause, "
+            "exact fix, and verification steps. "
             f"The first public loop is simple: `{install_decision_command}`, paste its Recommended Install, "
             "run the First Soul Ring challenge, publish a "
             f"real {clean_framework} prescription, request claimable gaps with `{bounty_command}`, "

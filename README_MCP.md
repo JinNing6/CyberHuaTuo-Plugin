@@ -1,7 +1,7 @@
 # 🩺 CyberHuaTuo MCP Server
 
-> 让所有 AI Coding 工具都能调用赛博华佗的「望闻问切」诊断能力
-> Make CyberHuaTuo available in every AI coding tool
+> Paste an Agent / MCP / LangChain / CrewAI traceback and get the root cause, exact fix, and verification steps inside any AI coding tool.
+> 粘贴 Agent / MCP / LangChain / CrewAI traceback，在任意 AI Coding 工具里得到病灶、药方和验证步骤。
 
 ## 什么是 MCP？
 

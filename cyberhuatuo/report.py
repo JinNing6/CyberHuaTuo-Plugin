@@ -11,6 +11,7 @@ Generates standardized, professional diagnosis reports with:
 from __future__ import annotations
 
 import hashlib
+import re
 import time
 from dataclasses import dataclass
 
@@ -112,6 +113,75 @@ _CONFIDENCE_DISPLAY = {
     "LOW": ("LOW", "exploratory / limited reference data"),
 }
 
+_LLM_UNAVAILABLE_MARKERS = (
+    "未配置 LLM API Key",
+    "LLM API Key",
+)
+
+
+def _is_llm_unavailable(diagnosis_text: str | None) -> bool:
+    """Return true when diagnosis fell back because no LLM key is configured."""
+    if not diagnosis_text:
+        return False
+    return any(marker in diagnosis_text for marker in _LLM_UNAVAILABLE_MARKERS)
+
+
+def _source_badge(source: str) -> str:
+    """Normalize legacy Chinese and newer English source labels."""
+    if source in {"permanent", "常驻"}:
+        return "Permanent"
+    if source in {"ephemeral", "瞬时"}:
+        return "Ephemeral"
+    return source or "Unknown"
+
+
+def _strip_frontmatter(content: str) -> str:
+    return re.sub(r"^---\s*\n.*?\n---\s*\n", "", content, flags=re.DOTALL).strip()
+
+
+def _extract_prescription_section(content: str, max_chars: int = 1800) -> str:
+    """Extract the practical prescription block from a matched case."""
+    body = _strip_frontmatter(content)
+    headings = list(re.finditer(r"^##\s+.*$", body, flags=re.MULTILINE))
+    if not headings:
+        return body[:max_chars].strip()
+
+    start = None
+    end = None
+    for idx, heading in enumerate(headings):
+        title = heading.group(0).lower()
+        if "药方" in title or "prescription" in title:
+            start = heading.start()
+            end = headings[idx + 1].start() if idx + 1 < len(headings) else len(body)
+            break
+
+    if start is None:
+        return body[:max_chars].strip()
+
+    section = body[start:end].strip()
+    next_prescription = re.search(r"^###\s+.*(?:药方\s*2|prescription\s*2)", section, flags=re.MULTILINE | re.IGNORECASE)
+    if next_prescription:
+        section = section[:next_prescription.start()].strip()
+
+    if len(section) > max_chars:
+        section = section[:max_chars].rstrip() + "\n\n..."
+    return section
+
+
+def _format_knowledge_base_cure(result: SearchResult) -> str:
+    prescription = _extract_prescription_section(result.content or "")
+    source = _source_badge(result.source)
+    lines = [
+        f"**Source Case**: {result.title} ({result.relevance:.0f}% relevance, {source})",
+    ]
+    if result.filepath:
+        lines.append(f"**Case File**: `{result.filepath}`")
+    if prescription:
+        lines.extend(["", prescription])
+    else:
+        lines.append("\nThe matched case did not include a dedicated prescription section.")
+    return "\n".join(lines)
+
 
 def format_standard_report(
     query: str,
@@ -197,6 +267,14 @@ def format_standard_report(
 
     if diagnosis_text:
         parts.append(f"{diagnosis_text}\n")
+        if _is_llm_unavailable(diagnosis_text) and results:
+            top_result = max(results, key=lambda r: r.relevance)
+            parts.append("## [PRESCRIBE] Knowledge-Base Cure\n")
+            parts.append(
+                "LLM diagnosis is unavailable, but the local prescription library "
+                "already matched a concrete cure:\n"
+            )
+            parts.append(_format_knowledge_base_cure(top_result) + "\n")
     elif results:
         # Use top result's content as diagnosis basis
         top_result = max(results, key=lambda r: r.relevance)
@@ -236,7 +314,7 @@ def format_standard_report(
         parts.append("| # | Case | Framework | Relevance | Severity | Source |")
         parts.append("|:-:|:-----|:---------:|:---------:|:--------:|:------:|")
         for i, r in enumerate(results[:5], 1):
-            source_badge = "Permanent" if r.source == "permanent" else "Ephemeral"
+            source_badge = _source_badge(r.source)
             title_short = r.title[:40] + ("..." if len(r.title) > 40 else "")
             parts.append(
                 f"| {i} | {title_short} | {r.framework} | "

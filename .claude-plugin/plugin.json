@@ -1,7 +1,7 @@
 {
   "name": "cyberhuatuo-plugin",
   "version": "0.2.1",
-  "description": "CyberHuaTuo diagnostic workflows, MCP tools, and agent skills for AI agent and coding framework failures.",
+  "description": "Paste AI-agent tracebacks and get root cause, exact fixes, verification steps, and reusable prescriptions through CyberHuaTuo MCP tools and agent skills.",
   "author": {
     "name": "CyberHuaTuo"
   },

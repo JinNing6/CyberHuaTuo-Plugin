@@ -16,6 +16,36 @@
   <em>不只是修 Bug —— 我们让你的 AI 百毒不侵。</em>
 </p>
 
+---
+
+## 🚨 急诊入口：先粘贴报错
+
+**AI Agent 报错急诊室** — 粘贴 MCP / LangChain / CrewAI / OpenAI SDK 的 traceback，赛博华佗直接给病灶、根因、可执行修复和验证步骤。
+
+```bash
+python -m cyberhuatuo diagnose "Traceback ... from langchain import ChatOpenAI ..." --framework langchain --top-k 1
+```
+
+**来自当前仓库 CLI 的真实录制：**
+
+<p align="center">
+  <img src="assets/cli_emergency_diagnosis_demo.gif" alt="赛博华佗急诊 CLI Demo：从 traceback 到 LangChain 精确修复" width="100%"/>
+</p>
+
+**这次急诊返回的药方：**
+
+```bash
+pip install langchain-openai
+```
+
+```python
+from langchain_openai import ChatOpenAI
+```
+
+这条急诊路径直接使用本地药方库；即使还没有配置 LLM API Key，也能先给出可复制的命中药方。配置模型 Key 后，可以继续使用更深度的 AI 望闻问切。
+
+---
+
 <p align="center">
   <a href="#-快速开始">
     <img src="assets/prescription_universe.svg" alt="赛博华佗全息八卦引擎" width="100%"/>

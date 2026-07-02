@@ -16,6 +16,36 @@
   <em>你的 AI 生病了？推门而入。别人诊断不了的，我们药到病除。</em>
 </p>
 
+---
+
+## 🚨 Emergency Room: Paste The Traceback First
+
+**AI Agent Error Doctor** — paste any MCP / LangChain / CrewAI / OpenAI SDK traceback and get the root cause, exact fix, and verification steps from the CyberHuaTuo prescription library.
+
+```bash
+python -m cyberhuatuo diagnose "Traceback ... from langchain import ChatOpenAI ..." --framework langchain --top-k 1
+```
+
+**Real CLI recording from this repository:**
+
+<p align="center">
+  <img src="assets/cli_emergency_diagnosis_demo.gif" alt="CyberHuaTuo emergency diagnosis CLI demo: traceback to exact LangChain fix" width="100%"/>
+</p>
+
+**The cure returned by the recorded run:**
+
+```bash
+pip install langchain-openai
+```
+
+```python
+from langchain_openai import ChatOpenAI
+```
+
+This first rescue path works from the local prescription library even before you add an LLM API key. Add a model key later for deeper AI diagnosis.
+
+---
+
 <p align="center">
   <a href="#-quick-start">
     <img src="assets/prescription_universe.svg" alt="CyberHuaTuo Holographic Bagua Engine" width="100%"/>

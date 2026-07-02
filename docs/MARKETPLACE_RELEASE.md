@@ -2,7 +2,7 @@
 
 Last verified against official docs: 2026-06-04.
 
-CyberHuaTuo should ship through three channels in this order: PyPI first, Claude second, Codex third. PyPI gives every agent a stable `uvx` install target. Claude and Codex then reuse the same MCP entrypoint and the same soul ring contribution loop.
+CyberHuaTuo should ship through three channels in this order: PyPI first, Claude second, Codex third. PyPI gives every agent a stable `uvx` install target. Claude and Codex then reuse the same MCP entrypoint for the first-touch promise: paste an AI-agent traceback, get root cause, exact fix, and verification steps. The soul ring contribution loop remains the second-layer growth path after a real cure exists.
 
 ## Current Channel Truth
 
@@ -67,10 +67,11 @@ CI and the PyPI Trusted Publishing workflow must run `python -m cyberhuatuo laun
 
 One sentence:
 
-> CyberHuaTuo is an MCP and agent-skill clinic for AI-agent failures, with a public soul ring contribution system that turns real fixes into ranked, shareable prescriptions.
+> CyberHuaTuo is an MCP and agent-skill error doctor: paste an AI-agent traceback, get root cause, exact fix, and verification steps; after the cure, real fixes can enter the public soul ring contribution system.
 
 Public promise:
 
+- First-touch value: paste a real MCP / LangChain / CrewAI / OpenAI SDK traceback and return a concrete root cause, copy-paste fix, and verification command.
 - Start with `cyberhuatuo install-command` or MCP `current_install_command`, then paste its Recommended Install; use `uvx --from cyberhuatuo cyberhuatuo-mcp` for MCP clients after registry proof is current.
 - Use the MCP tools from Codex, Claude, Cursor, VS Code, Gemini CLI, and other MCP clients.
 - Submit a real fix through the First Soul Ring issue route.
