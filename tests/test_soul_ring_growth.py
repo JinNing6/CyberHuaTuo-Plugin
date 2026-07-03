@@ -4,6 +4,7 @@ import struct
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import parse_qs, urlparse
 
 from cyberhuatuo import achievements, activation, install, soul_ring_visuals, submissions, traction
@@ -4645,6 +4646,68 @@ def test_upload_paths_surface_growth_settlement():
     assert "growth_settlement" in mcp_server
     assert "format_growth_settlement" in cli
     assert "growth_settlement" in cli
+
+
+def test_cli_upload_awaits_github_syncer(tmp_path, monkeypatch, capsys):
+    from cyberhuatuo import cli, contributor, github_sync
+    from cyberhuatuo import config as config_module
+
+    case_file = tmp_path / "case.md"
+    case_file.write_text("# case\n\nreal prescription", encoding="utf-8")
+    observed = {}
+
+    def fake_save_case_file(submission):
+        observed["submission"] = submission
+        return {
+            "case_id": "langchain-cli-upload-awaits-syncer",
+            "filepath": "cases/langchain/community/cli-upload-awaits-syncer.md",
+            "absolute_path": str(case_file),
+        }
+
+    class FakeGitHubSyncer:
+        async def sync_prescription(self, relative_path, content, contributor_github, prescription_meta=None):
+            observed["awaited"] = True
+            observed["relative_path"] = relative_path
+            observed["content"] = content
+            observed["contributor_github"] = contributor_github
+            observed["prescription_meta"] = prescription_meta
+            return {
+                "success": True,
+                "method": "issue",
+                "issue_url": "https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/99",
+            }
+
+    monkeypatch.setattr(config_module.config, "GITHUB_TOKEN", "ghp_test")
+    monkeypatch.setattr(contributor, "save_case_file", fake_save_case_file)
+    monkeypatch.setattr(github_sync, "GitHubSyncer", FakeGitHubSyncer)
+
+    cli.cmd_upload(
+        SimpleNamespace(
+            title="CLI upload awaits syncer",
+            prescription="Await the async GitHub syncer.",
+            framework="langchain",
+            symptom="CLI upload returned a coroutine instead of syncing.",
+            error_message="",
+            root_cause="async sync_prescription was not awaited",
+            severity="medium",
+            complexity="simple",
+            tags="cli,github",
+            title_en="CLI upload awaits syncer",
+            framework_version="",
+            language="python",
+            contributor="anonymous",
+            source_url="",
+        )
+    )
+
+    output = capsys.readouterr().out
+    assert observed["awaited"] is True
+    assert observed["relative_path"] == "cases/langchain/community/cli-upload-awaits-syncer.md"
+    assert observed["content"] == "# case\n\nreal prescription"
+    assert observed["contributor_github"] == "anonymous"
+    assert observed["prescription_meta"]["title"] == "CLI upload awaits syncer"
+    assert "已创建瞬时药方 Issue" in output
+    assert "issues/99" in output
 
 
 def test_mcp_exposes_first_soul_ring_challenge_tool():

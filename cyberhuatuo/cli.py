@@ -316,11 +316,13 @@ def cmd_upload(args):
         }
 
         syncer = GitHubSyncer()
-        sync_result = syncer.sync_prescription(
-            relative_path=result["filepath"],
-            content=full_content,
-            contributor_github=args.contributor or "anonymous",
-            prescription_meta=prescription_meta,
+        sync_result = _run_async(
+            syncer.sync_prescription(
+                relative_path=result["filepath"],
+                content=full_content,
+                contributor_github=args.contributor or "anonymous",
+                prescription_meta=prescription_meta,
+            )
         )
 
         if sync_result.get("success"):
