@@ -7,13 +7,13 @@
 <h1 align="center">🩺 赛博华佗 / CyberHuaTuo</h1>
 
 <p align="center">
-  <strong>开源 AI 诊所 — 治病 · 养生 · 强体。</strong><br>
-  <strong>The open-source AI clinic — Diagnose, Nourish, Fortify.</strong>
+  <strong>AI Agent 报错急诊室 — 粘贴 MCP / LangChain / CrewAI / OpenAI SDK traceback，直接给病灶、根因、可执行修复和验证步骤。</strong><br>
+  <strong>AI Agent Error Doctor — paste a traceback, get a runnable prescription.</strong>
 </p>
 
 <p align="center">
-  <em>你的 AI 病了？走进来，剩下的交给华佗。</em><br>
-  <em>不只是修 Bug —— 我们让你的 AI 百毒不侵。</em>
+  <em>先急诊救命，再进入赛博华佗世界观。</em><br>
+  <em>你的 AI 生病了？粘贴报错，先开药方。</em>
 </p>
 
 ---

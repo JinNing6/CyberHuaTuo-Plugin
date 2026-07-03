@@ -7,13 +7,13 @@
 <h1 align="center">🩺 CyberHuaTuo / 赛博华佗</h1>
 
 <p align="center">
-  <strong>The world's first open-source AI clinic — where 2,000 years of healing wisdom meets cyber alchemy.</strong><br>
-  <strong>全球首个开源 AI 诊所 — 两千年望闻问切，遇见赛博炼丹术。</strong>
+  <strong>AI Agent Error Doctor — paste any MCP / LangChain / CrewAI / OpenAI SDK traceback and get the root cause, exact fix, and verification steps.</strong><br>
+  <strong>AI Agent 报错急诊室 — 粘贴 traceback，直接给病灶、根因、可执行修复和验证步骤。</strong>
 </p>
 
 <p align="center">
-  <em>Your AI is sick? Walk in. We heal what others can't even diagnose.</em><br>
-  <em>你的 AI 生病了？推门而入。别人诊断不了的，我们药到病除。</em>
+  <em>The emergency room comes first. The cyber-alchemy universe opens after the cure.</em><br>
+  <em>先急诊救命，再进入赛博华佗世界观。</em>
 </p>
 
 ---
