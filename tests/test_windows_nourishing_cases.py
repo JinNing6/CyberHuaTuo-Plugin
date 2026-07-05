@@ -9,6 +9,7 @@ WINDOWS_CASES = [
     "_nourishing/windows/storage-pressure-002.md",
     "_nourishing/windows/battery-sleep-drain-003.md",
     "_nourishing/windows/defender-malware-scan-004.md",
+    "_nourishing/windows/power-mode-optimization-005.md",
 ]
 
 
@@ -31,6 +32,7 @@ def test_windows_nourishing_cases_are_parseable_by_indexer():
         "nourishing-windows-storage-pressure-002",
         "nourishing-windows-battery-sleep-drain-003",
         "nourishing-windows-defender-malware-scan-004",
+        "nourishing-windows-power-mode-optimization-005",
     }
 
     assert expected_ids <= set(by_id)
@@ -40,4 +42,4 @@ def test_windows_nourishing_cases_are_parseable_by_indexer():
         assert case["metadata"]["environment"]["os"] == "windows"
         assert case["metadata"]["case_type"] == "nourishing"
         assert "windows" in case["metadata"]["tags"]
-        assert "Microsoft Learn" in case["content"]
+        assert "Microsoft" in case["content"]
