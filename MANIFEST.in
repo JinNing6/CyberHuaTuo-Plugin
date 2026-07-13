@@ -9,8 +9,10 @@ include .github/pull_request_template.md
 include claude-desktop/.mcpbignore
 
 recursive-include .codex-plugin *.json
+recursive-include .codex *.toml
 recursive-include .claude-plugin *.json
 recursive-include .agents/plugins *.json
+recursive-include hooks *.json *.py
 recursive-include .github/ISSUE_TEMPLATE *.yml
 recursive-include .github/workflows *.yml
 recursive-include claude-desktop *.json *.toml *.py *.md

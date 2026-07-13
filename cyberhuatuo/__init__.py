@@ -6,5 +6,5 @@ CyberHuaTuo - 赛博华佗
 Diagnose. Prescribe. Cure.
 """
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 __author__ = "CyberHuaTuo Contributors"

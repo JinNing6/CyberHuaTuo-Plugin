@@ -1,6 +1,6 @@
 {
   "name": "cyberhuatuo",
-  "description": "CyberHuaTuo Claude Code plugin marketplace for paste-a-traceback AI-agent diagnosis, MCP tools, and reusable prescriptions.",
+  "description": "CyberHuaTuo Claude Code plugin marketplace: when an agent gets sick, let it ask HuaTuo, fix the error, and keep the cure.",
   "owner": {
     "name": "CyberHuaTuo Contributors",
     "url": "https://github.com/JinNing6/CyberHuaTuo-Plugin"
@@ -9,15 +9,16 @@
     {
       "name": "cyberhuatuo-plugin",
       "source": "./",
-      "version": "0.2.1",
-      "description": "Paste AI-agent tracebacks to get root cause, exact fixes, verification steps, reusable prescriptions, and an optional First Soul Ring contribution path after the cure.",
+      "version": "0.2.2",
+      "description": "When a coding agent gets sick, CyberHuaTuo lets it diagnose the traceback through MCP, apply the cure, then save or upload the solved case as a reusable prescription with an optional First Soul Ring contribution path. A bundled PreToolUse guard also reviews destructive shell actions before execution.",
       "category": "Developer Tools",
       "keywords": [
         "mcp",
         "claude-code",
         "debugging",
         "ai-agents",
-        "soul-ring"
+        "soul-ring",
+        "agent-safety"
       ]
     }
   ]

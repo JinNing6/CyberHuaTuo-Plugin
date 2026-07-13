@@ -1,6 +1,6 @@
 {
   "name": "cyberhuatuo",
-  "description": "CyberHuaTuo Codex plugin marketplace for paste-a-traceback AI-agent diagnosis, MCP tools, and reusable prescriptions.",
+  "description": "CyberHuaTuo Codex plugin marketplace: when an agent gets sick, let it ask HuaTuo, fix the error, and keep the cure.",
   "interface": {
     "displayName": "CyberHuaTuo Plugins"
   },
@@ -18,13 +18,14 @@
       "category": "Developer Tools",
       "interface": {
         "displayName": "CyberHuaTuo Plugin",
-        "shortDescription": "Paste AI-agent tracebacks and get root cause, exact fixes, and verification steps.",
-        "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for diagnosing AI-agent, MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures using a curated public prescription knowledge base. Real fixes can still flow into the First Soul Ring contribution loop after the error is cured.",
+        "shortDescription": "When your agent gets sick, let it ask HuaTuo and keep the cure as a prescription.",
+        "longDescription": "CyberHuaTuo bundles Codex skills and MCP tools for the moment a coding agent gets sick: diagnose the traceback, apply the cure, then save or upload the solved case as a reusable prescription. A reviewed PreToolUse guard also checks destructive shell actions before execution; it is a deterministic guardrail, not a sandbox or complete enforcement boundary.",
         "developerName": "CyberHuaTuo Contributors",
         "capabilities": [
           "MCP",
           "Skills",
-          "Diagnostics"
+          "Diagnostics",
+          "Safety"
         ]
       }
     }

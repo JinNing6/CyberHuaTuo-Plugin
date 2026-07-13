@@ -18,6 +18,8 @@ from scripts.check_release_boundary import _find_forbidden
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIOUS_PYPI_VERSION = "0.1.0"
+CURRENT_VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+CURRENT_TAG = f"v{CURRENT_VERSION}"
 LAUNCH_CLOSURE_ROWS = [
     "1. Remote acquisition routes",
     "2. PyPI Trusted Publisher",
@@ -220,12 +222,12 @@ def test_pyproject_exposes_dev_quality_gate_extra():
 def test_current_install_command_surface_selects_registry_or_git_bridge_from_real_pypi_metadata():
     def current_fetcher(url, _headers, _timeout):
         assert url == "https://pypi.org/pypi/cyberhuatuo/json"
-        return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
+        return {"info": {"version": CURRENT_VERSION}, "releases": {CURRENT_VERSION: []}, "urls": []}
 
     current_text = install.format_current_install_command(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         target_contributors=3,
         fetcher=current_fetcher,
     )
@@ -271,7 +273,7 @@ def test_candidate_install_smoke_gate_verifies_public_git_tag_install_and_cleans
         calls.append(command)
         joined = " ".join(command)
         if "import cyberhuatuo" in joined:
-            return subprocess.CompletedProcess(command, 0, stdout="0.2.1\n", stderr="")
+            return subprocess.CompletedProcess(command, 0, stdout=f"{CURRENT_VERSION}\n", stderr="")
         if "--help" in command:
             return subprocess.CompletedProcess(
                 command,
@@ -298,7 +300,7 @@ def test_candidate_install_smoke_gate_verifies_public_git_tag_install_and_cleans
     report = install.build_candidate_install_smoke(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         target_contributors=5,
         repo="JinNing6/CyberHuaTuo-Plugin",
         pypi_project="cyberhuatuo",
@@ -314,7 +316,11 @@ def test_candidate_install_smoke_gate_verifies_public_git_tag_install_and_cleans
     assert report["cleanup"] == "removed"
     assert removed == [created_temp]
     assert any(command[:3] == ["python", "-m", "venv"] for command in calls)
-    assert any("cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1" in command for command in calls for command in command)
+    assert any(
+        f"cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@{CURRENT_TAG}" in argument
+        for command in calls
+        for argument in command
+    )
     assert any("install-command" in command for command in calls for command in command)
     assert any("proof-pack" in command for command in calls for command in command)
     assert "Candidate Install Smoke Gate" in text
@@ -678,7 +684,7 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     doc_path = ROOT / "docs" / "MARKETPLACE_RELEASE.md"
     release_launch_assets_command = (
         "cyberhuatuo launch-assets --username <maintainer-github> --framework langchain "
-        "--release-tag v0.2.1 --target-contributors 3"
+        f"--release-tag {CURRENT_TAG} --target-contributors 3"
     )
 
     assert doc_path.is_file()
@@ -771,7 +777,7 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     assert "Claude MCPB listing copy" in doc
     assert "Codex plugin listing copy" in doc
     assert "Protected Publish Fallback" in doc
-    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.1" in doc
+    assert f"gh workflow run publish-pypi.yml -f release_tag={CURRENT_TAG}" in doc
     assert "gh run list --workflow publish-pypi.yml --limit 5" in doc
     assert "no `PYPI_TOKEN` fallback is allowed" in doc
     assert "External Contributor Path" in doc
@@ -975,12 +981,12 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/pulls?"):
             return []
-        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.1":
+        if url == f"https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/{CURRENT_TAG}":
             return {
-                "tag_name": "v0.2.1",
+                "tag_name": CURRENT_TAG,
                 "draft": False,
                 "prerelease": False,
-                "html_url": "https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/tag/v0.2.1",
+                "html_url": f"https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/tag/{CURRENT_TAG}",
                 "published_at": "2026-06-04T00:00:00Z",
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/issues?"):
@@ -996,7 +1002,7 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
         ROOT,
         remote=True,
         strict_remote=True,
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         fetcher=fake_fetcher,
     )
     text = marketplace.format_marketplace_readiness(report)
@@ -1030,12 +1036,12 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_pypi_lags_local_ve
     assert "git add .github/ISSUE_TEMPLATE/soul-ring-prescription.yml" in text
     assert ".github/ISSUE_TEMPLATE/soul-ring-growth-flywheel.yml" in text
     assert "## Public Release Operator Runbook" in text
-    assert "GitHub Web Release: https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/new?tag=v0.2.1" in text
+    assert f"GitHub Web Release: https://github.com/JinNing6/CyberHuaTuo-Plugin/releases/new?tag={CURRENT_TAG}" in text
     assert "GitHub Actions workflow page: https://github.com/JinNing6/CyberHuaTuo-Plugin/actions/workflows/publish-pypi.yml" in text
-    assert "gh release create v0.2.1" in text
-    assert "dist/cyberhuatuo-0.2.1.tar.gz" in text
-    assert "gh workflow run publish-pypi.yml -f release_tag=v0.2.1" in text
-    assert "cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3" in text
+    assert f"gh release create {CURRENT_TAG}" in text
+    assert f"dist/cyberhuatuo-{CURRENT_VERSION}.tar.gz" in text
+    assert f"gh workflow run publish-pypi.yml -f release_tag={CURRENT_TAG}" in text
+    assert f"cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag {CURRENT_TAG} --target-contributors 3" in text
 
 
 def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_gates_pass(tmp_path, monkeypatch):
@@ -1073,14 +1079,14 @@ def test_marketplace_readiness_gate_reports_closed_only_when_all_public_closure_
             path = url.removeprefix(content_prefix)
             return {"type": "file", "path": path}
         if url == "https://pypi.org/pypi/cyberhuatuo/json":
-            return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
+            return {"info": {"version": CURRENT_VERSION}, "releases": {CURRENT_VERSION: []}, "urls": []}
         raise AssertionError(url)
 
     report = marketplace.build_marketplace_readiness(
         ROOT,
         remote=True,
         strict_remote=True,
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         target_contributors=3,
         fetcher=fake_fetcher,
     )
@@ -1117,7 +1123,7 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_release_tag_is_mis
             }
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/pulls?"):
             return []
-        if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/v0.2.1":
+        if url == f"https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/{CURRENT_TAG}":
             raise OSError("HTTP 404: Not Found")
         if url.startswith("https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/issues?"):
             return []
@@ -1125,14 +1131,14 @@ def test_marketplace_readiness_gate_blocks_strict_remote_when_release_tag_is_mis
             path = url.removeprefix(content_prefix)
             return {"type": "file", "path": path}
         if url == "https://pypi.org/pypi/cyberhuatuo/json":
-            return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
+            return {"info": {"version": CURRENT_VERSION}, "releases": {CURRENT_VERSION: []}, "urls": []}
         raise AssertionError(url)
 
     report = marketplace.build_marketplace_readiness(
         ROOT,
         remote=True,
         strict_remote=True,
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         fetcher=fake_fetcher,
     )
     text = marketplace.format_marketplace_readiness(report)
@@ -2285,10 +2291,11 @@ def test_github_issue_template_config_turns_new_issue_into_soul_ring_mission_hal
     assert config["blank_issues_enabled"] is False
     contact_links = config["contact_links"]
     assert isinstance(contact_links, list)
-    assert len(contact_links) == 9
+    assert len(contact_links) == 10
 
     links_by_name = {link["name"]: link for link in contact_links}
     assert set(links_by_name) == {
+        "Agent Traceback Clinic",
         "Soul Ring Mission Hall",
         "Soul Ring Growth Flywheel",
         "Soul Ring Bounty Board",

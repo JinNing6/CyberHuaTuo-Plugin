@@ -1,7 +1,7 @@
 {
   "name": "cyberhuatuo-plugin",
-  "version": "0.2.1",
-  "description": "Paste AI-agent tracebacks and get root cause, exact fixes, verification steps, and reusable prescriptions.",
+  "version": "0.2.2",
+  "description": "When a coding agent gets sick, let it ask CyberHuaTuo, fix the error, and keep the cure.",
   "author": {
     "name": "CyberHuaTuo"
   },
@@ -13,26 +13,31 @@
     "codex",
     "skills",
     "debugging",
-    "ai-agents"
+    "ai-agents",
+    "agent-safety"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "CyberHuaTuo Plugin",
-    "shortDescription": "Paste tracebacks and get exact AI-agent fixes.",
-    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for paste-a-traceback diagnosis across AI agent, MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures using a curated public prescription knowledge base.",
+    "shortDescription": "When your agent gets sick, let it ask HuaTuo and keep the cure.",
+    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for the moment your coding agent gets sick across MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures. Agents can diagnose real tracebacks, apply the cure, then save or upload the solved case as a reusable prescription.",
     "developerName": "CyberHuaTuo",
     "category": "Developer Tools",
     "capabilities": [
       "MCP",
       "Skills",
-      "Diagnostics"
+      "Diagnostics",
+      "Safety"
     ],
     "brandColor": "#00D09C",
     "defaultPrompt": [
-      "Paste this traceback into CyberHuaTuo and return the root cause, exact fix, and verification command.",
+      "Ask CyberHuaTuo to diagnose this traceback, apply the cure, and return the verification command.",
       "Search CyberHuaTuo for this framework error.",
-      "Run a security checkup on this agent code."
+      "Save this solved issue as a CyberHuaTuo prescription.",
+      "Run a security checkup on this agent code.",
+      "Review this proposed shell command with the Agent Action Guard before execution."
     ]
   }
 }

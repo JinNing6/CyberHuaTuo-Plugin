@@ -10,6 +10,10 @@ WINDOWS_CASES = [
     "_nourishing/windows/battery-sleep-drain-003.md",
     "_nourishing/windows/defender-malware-scan-004.md",
     "_nourishing/windows/power-mode-optimization-005.md",
+    "_nourishing/windows/network-diagnosis-006.md",
+    "_nourishing/windows/dns-resolution-optimization-007.md",
+    "_nourishing/windows/packet-loss-route-jitter-008.md",
+    "_nourishing/windows/tcp-adapter-tuning-009.md",
 ]
 
 
@@ -33,6 +37,10 @@ def test_windows_nourishing_cases_are_parseable_by_indexer():
         "nourishing-windows-battery-sleep-drain-003",
         "nourishing-windows-defender-malware-scan-004",
         "nourishing-windows-power-mode-optimization-005",
+        "nourishing-windows-network-diagnosis-006",
+        "nourishing-windows-dns-resolution-optimization-007",
+        "nourishing-windows-packet-loss-route-jitter-008",
+        "nourishing-windows-tcp-adapter-tuning-009",
     }
 
     assert expected_ids <= set(by_id)
@@ -43,3 +51,45 @@ def test_windows_nourishing_cases_are_parseable_by_indexer():
         assert case["metadata"]["case_type"] == "nourishing"
         assert "windows" in case["metadata"]["tags"]
         assert "Microsoft" in case["content"]
+
+
+def test_windows_network_nourishing_cases_cover_diagnostic_keywords():
+    cases = scan_cases(ROOT / "cases")
+    by_id = {case["id"]: case for case in cases}
+
+    network_cases = {
+        "nourishing-windows-network-diagnosis-006": [
+            "ping",
+            "tracert",
+            "pathping",
+            "Test-NetConnection",
+            "后悔药",
+            "Export-Clixml",
+        ],
+        "nourishing-windows-dns-resolution-optimization-007": [
+            "DNS",
+            "Resolve-DnsName",
+            "ipconfig /flushdns",
+            "后悔药",
+            "Set-DnsClientServerAddress",
+        ],
+        "nourishing-windows-packet-loss-route-jitter-008": [
+            "丢包",
+            "延迟",
+            "pathping",
+            "tracert",
+            "后悔药",
+        ],
+        "nourishing-windows-tcp-adapter-tuning-009": [
+            "netsh",
+            "Get-NetAdapterAdvancedProperty",
+            "Get-NetAdapterPowerManagement",
+            "后悔药",
+            "Set-NetAdapterAdvancedProperty",
+        ],
+    }
+
+    for case_id, keywords in network_cases.items():
+        content = by_id[case_id]["content"]
+        for keyword in keywords:
+            assert keyword in content

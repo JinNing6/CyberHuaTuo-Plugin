@@ -1,0 +1,99 @@
+name: Agent Traceback Clinic
+description: Paste an Agent, MCP, LangChain, CrewAI, LlamaIndex, or OpenAI SDK traceback for diagnosis. No prescription required yet.
+title: "[Traceback Clinic] "
+labels:
+  - traceback-clinic
+  - triage
+  - needs-diagnosis
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when you have a real Agent / MCP / LangChain / CrewAI / LlamaIndex / OpenAI SDK error and want CyberHuaTuo to diagnose it.
+
+        This is the low-friction clinic intake path. You do **not** need to know the root cause or fix yet. If the diagnosis becomes reusable, it can later be refined into a First Soul Ring Prescription.
+
+        Please remove tokens, API keys, private URLs, private user data, and proprietary code before posting.
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework or tool
+      description: Pick the closest primary target.
+      options:
+        - mcp
+        - langchain
+        - crewai
+        - openai-sdk
+        - llamaindex
+        - autogen
+        - nextjs
+        - python
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Traceback or error output
+      description: Paste the real traceback, terminal output, exception, or failing log. Redact secrets first.
+      render: shell
+      placeholder: |
+        Traceback:
+        Error:
+        Command:
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include versions and runtime details that may affect the diagnosis.
+      placeholder: |
+        OS:
+        Python / Node version:
+        Package versions:
+        Install method:
+        Agent runtime:
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction or trigger
+      description: What command, prompt, code path, or workflow triggered the error?
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you already tried
+      description: Optional, but it helps avoid repeated guesses.
+      placeholder: |
+        I tried:
+        Result:
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: privacy_ack
+    attributes:
+      label: Public sharing and privacy
+      description: This repository is public.
+      options:
+        - label: I removed API keys, tokens, private URLs, private data, and proprietary code from the report.
+          required: true
+        - label: This is a real error or real broken behavior, not a fabricated example.
+          required: true
+        - label: I understand that a useful diagnosis may later be summarized into a public prescription case with sensitive details removed.
+          required: true
+    validations:
+      required: true

@@ -16,13 +16,19 @@ def test_readmes_keep_emergency_room_entry_before_worldbuilding():
     readme = (root / "README.md").read_text(encoding="utf-8")[:2500]
     readme_cn = (root / "README_CN.md").read_text(encoding="utf-8")[:2500]
 
-    assert "Emergency Room: Paste The Traceback First" in readme
-    assert "AI Agent Error Doctor" in readme
+    assert "Emergency Room: Cure First, Refine Later" in readme
+    assert "Your agent is sick" in readme
+    assert "agent-native" in readme
+    assert "save_prescription" in readme
+    assert "upload_prescription" in readme
     assert "assets/cli_emergency_diagnosis_demo.gif" in readme
     assert "pip install langchain-openai" in readme
 
-    assert "急诊入口：先粘贴报错" in readme_cn
-    assert "AI Agent 报错急诊室" in readme_cn
+    assert "急诊入口：先救活，再炼方" in readme_cn
+    assert "你的 Agent 生病了" in readme_cn
+    assert "更酷的入口" in readme_cn
+    assert "save_prescription" in readme_cn
+    assert "upload_prescription" in readme_cn
     assert "assets/cli_emergency_diagnosis_demo.gif" in readme_cn
     assert "pip install langchain-openai" in readme_cn
 
@@ -30,7 +36,7 @@ def test_readmes_keep_emergency_room_entry_before_worldbuilding():
     assert (root / "assets" / "cli_emergency_diagnosis_demo.cast").is_file()
 
 
-def test_public_marketplace_copy_leads_with_traceback_diagnosis():
+def test_public_marketplace_copy_leads_with_mcp_self_rescue():
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[1]
@@ -39,21 +45,29 @@ def test_public_marketplace_copy_leads_with_traceback_diagnosis():
     codex_plugin = json.loads((root / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
     claude_catalog = json.loads((root / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
 
+    assert "self-rescue" in project["description"]
+    assert "MCP" in project["description"]
     assert "tracebacks" in project["description"]
-    assert "root cause" in project["description"]
     assert "exact fixes" in project["description"]
+    assert "save/upload" in project["description"]
 
     codex_listing = codex_catalog["plugins"][0]["interface"]
-    assert "tracebacks" in codex_listing["shortDescription"]
-    assert "exact fixes" in codex_listing["shortDescription"]
-    assert "First Soul Ring" in codex_listing["longDescription"]
+    assert "agent gets sick" in codex_listing["shortDescription"]
+    assert "HuaTuo" in codex_listing["shortDescription"]
+    assert "coding agent gets sick" in codex_listing["longDescription"]
+    assert "reusable prescription" in codex_listing["longDescription"]
 
-    assert "Paste tracebacks" in codex_plugin["interface"]["shortDescription"]
-    assert "root cause" in codex_plugin["interface"]["defaultPrompt"][0]
+    assert "agent gets sick" in codex_plugin["interface"]["shortDescription"]
+    assert "keep the cure" in codex_plugin["interface"]["shortDescription"]
+    assert "diagnose" in codex_plugin["interface"]["defaultPrompt"][0]
+    assert "apply the cure" in codex_plugin["interface"]["defaultPrompt"][0]
+    assert "Save this solved issue" in codex_plugin["interface"]["defaultPrompt"][2]
 
     claude_listing = claude_catalog["plugins"][0]["description"]
-    assert "tracebacks" in claude_listing
-    assert "exact fixes" in claude_listing
+    assert "coding agent gets sick" in claude_listing
+    assert "traceback" in claude_listing
+    assert "apply the cure" in claude_listing
+    assert "save or upload" in claude_listing
     assert "First Soul Ring" in claude_listing
 
 

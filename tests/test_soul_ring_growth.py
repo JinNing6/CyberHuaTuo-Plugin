@@ -7,24 +7,28 @@ from pathlib import Path
 from types import SimpleNamespace
 from urllib.parse import parse_qs, urlparse
 
+import tomllib
+
 from cyberhuatuo import achievements, activation, install, soul_ring_visuals, submissions, traction
 
 ROOT = Path(__file__).resolve().parents[1]
 PREVIOUS_PYPI_VERSION = "0.1.0"
+CURRENT_VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+CURRENT_TAG = f"v{CURRENT_VERSION}"
 ISSUEOPS_CONTENT_PREFIX = "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/contents/"
 RELEASE_TAG_PREFIX = "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/releases/tags/"
 ISSUEOPS_CONTENT_PATHS = tuple(path for _label, path in traction.ISSUEOPS_REQUIRED_FILES)
-CANDIDATE_INSTALL_CURRENT = (
-    'python -m pip install --upgrade "cyberhuatuo @ '
-    'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"'
-)
 REGISTRY_INSTALL = "python -m pip install --upgrade cyberhuatuo"
 
 
-def _assert_candidate_install_precedes_registry(text: str) -> None:
-    assert CANDIDATE_INSTALL_CURRENT in text
+def _assert_candidate_install_precedes_registry(text: str, release_tag: str = CURRENT_TAG) -> None:
+    candidate_install = (
+        'python -m pip install --upgrade "cyberhuatuo @ '
+        f'git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@{release_tag}"'
+    )
+    assert candidate_install in text
     assert REGISTRY_INSTALL in text
-    assert text.index(CANDIDATE_INSTALL_CURRENT) < text.index(REGISTRY_INSTALL)
+    assert text.index(candidate_install) < text.index(REGISTRY_INSTALL)
     assert "\nInstall: pip install cyberhuatuo" not in text
     assert "\npip install cyberhuatuo\n" not in text
 
@@ -187,19 +191,19 @@ def _fake_ready_release(url: str, tag: str = "v0.2.1"):
 def test_current_install_command_uses_pypi_when_registry_is_current_and_routes_first_ring():
     def fake_fetcher(url, _headers, _timeout):
         assert url == "https://pypi.org/pypi/cyberhuatuo/json"
-        return {"info": {"version": "0.2.1"}, "releases": {"0.2.1": []}, "urls": []}
+        return {"info": {"version": CURRENT_VERSION}, "releases": {CURRENT_VERSION: []}, "urls": []}
 
     report = install.build_current_install_command(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         target_contributors=3,
         fetcher=fake_fetcher,
     )
     text = install.format_current_install_command(
         username="alice",
         framework="langchain",
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         target_contributors=3,
         fetcher=fake_fetcher,
     )
@@ -208,11 +212,11 @@ def test_current_install_command_uses_pypi_when_registry_is_current_and_routes_f
     assert report["recommended_install_command"] == "python -m pip install --upgrade cyberhuatuo"
     assert "CyberHuaTuo Install Command" in text
     assert "PyPI JSON API: pass" in text
-    assert "PyPI latest version: `0.2.1`" in text
+    assert f"PyPI latest version: `{CURRENT_VERSION}`" in text
     assert "Recommended install: `python -m pip install --upgrade cyberhuatuo`" in text
     assert "Git Tag Candidate Install Bridge" not in text
     assert "cyberhuatuo challenge --username alice --framework langchain" in text
-    assert "cyberhuatuo proof-pack --username alice --framework langchain --release-tag v0.2.1" in text
+    assert f"cyberhuatuo proof-pack --username alice --framework langchain --release-tag {CURRENT_TAG}" in text
     assert "current_install_command" in text
     assert "does not invent downloads" in text
 
@@ -989,7 +993,7 @@ def test_soul_ring_launch_scroll_turns_marketplaces_into_first_ring_funnel():
     assert "Soul Ring Launch Scroll" in launch
     assert "Launch Asset Formula: current repository release assets and public commands" in launch
     assert "PyPI: `cyberhuatuo`" in launch
-    _assert_candidate_install_precedes_registry(launch)
+    _assert_candidate_install_precedes_registry(launch, "v0.2.1")
     assert "uvx --from cyberhuatuo cyberhuatuo-mcp" in launch
     assert "Claude Code: `.claude-plugin/plugin.json`" in launch
     assert "Claude Desktop MCPB: `claude-desktop/manifest.json`" in launch
@@ -1076,7 +1080,7 @@ def test_soul_ring_launch_campaign_turns_cold_launch_into_targeted_public_loop(m
     assert "cyberhuatuo record-share --username alice --framework langchain --share-url <https-url>" in campaign
     assert "cyberhuatuo share-report --username alice --framework langchain --top-n 10" in campaign
     assert "cyberhuatuo share-leaderboard --framework langchain --top-n 10" in campaign
-    _assert_candidate_install_precedes_registry(campaign)
+    _assert_candidate_install_precedes_registry(campaign, "v0.2.1")
     assert "GitHub Discussion / Release Post" in campaign
     assert "X / Weibo" in campaign
     assert "Agent Prompt" in campaign
@@ -1136,7 +1140,7 @@ def test_soul_ring_traction_proof_compares_public_api_signals_with_local_ledger_
     )
 
     def fake_fetcher(url, _headers=None, _timeout=10):
-        release = _fake_ready_release(url)
+        release = _fake_ready_release(url, CURRENT_TAG)
         if release is not None:
             return release
         issueops_content = _fake_ready_issueops_content(url)
@@ -1155,12 +1159,12 @@ def test_soul_ring_traction_proof_compares_public_api_signals_with_local_ledger_
         if url == "https://pypi.org/pypi/cyberhuatuo/json":
             return {
                 "info": {
-                    "version": "0.2.1",
+                    "version": CURRENT_VERSION,
                     "project_urls": {"Homepage": "https://github.com/JinNing6/CyberHuaTuo-Plugin"},
                     "downloads": {"last_month": -1},
                 },
-                "releases": {"0.1.0": [{}], "0.2.1": [{}]},
-                "urls": [{"filename": "cyberhuatuo-0.2.1-py3-none-any.whl"}],
+                "releases": {"0.1.0": [{}], CURRENT_VERSION: [{}]},
+                "urls": [{"filename": f"cyberhuatuo-{CURRENT_VERSION}-py3-none-any.whl"}],
             }
         if url == "https://api.github.com/repos/JinNing6/CyberHuaTuo-Plugin/pulls?state=all&per_page=100":
             return [
@@ -1188,7 +1192,7 @@ def test_soul_ring_traction_proof_compares_public_api_signals_with_local_ledger_
     proof = traction.format_soul_ring_traction_proof(
         "alice",
         "langchain",
-        release_tag="v0.2.1",
+        release_tag=CURRENT_TAG,
         target_contributors=4,
         fetcher=fake_fetcher,
     )
@@ -1199,8 +1203,8 @@ def test_soul_ring_traction_proof_compares_public_api_signals_with_local_ledger_
     assert "PyPI JSON API: fetched" in proof
     assert "GitHub Release readiness: ready" in proof
     assert "Release Trigger Readiness" in proof
-    assert "Release proof: GitHub Release `v0.2.1` is published and can trigger the PyPI release workflow." in proof
-    assert "PyPI version: `0.2.1`" in proof
+    assert f"Release proof: GitHub Release `{CURRENT_TAG}` is published and can trigger the PyPI release workflow." in proof
+    assert f"PyPI version: `{CURRENT_VERSION}`" in proof
     assert "PyPI package readiness: ready" in proof
     assert "Remote IssueOps readiness: ready" in proof
     assert "Growth Flywheel Issue Form: ready" in proof
@@ -1213,8 +1217,8 @@ def test_soul_ring_traction_proof_compares_public_api_signals_with_local_ledger_
     assert "@alice, @bob, @carol, @dave" in proof
     assert "Stars/forks/watchers are attention signals, not contributor progress" in proof
     assert "Weakest external proof bridge: first-session proof missing after public attention" in proof
-    assert "cyberhuatuo traction-proof --username alice --framework langchain --release-tag v0.2.1 --target-contributors 4" in proof
-    assert "cyberhuatuo launch-campaign --username alice --framework langchain --release-tag v0.2.1 --target-contributors 4" in proof
+    assert f"cyberhuatuo traction-proof --username alice --framework langchain --release-tag {CURRENT_TAG} --target-contributors 4" in proof
+    assert f"cyberhuatuo launch-campaign --username alice --framework langchain --release-tag {CURRENT_TAG} --target-contributors 4" in proof
     assert "cyberhuatuo activation --username alice --framework langchain" in proof
     assert "cyberhuatuo flywheel --username alice --framework langchain" in proof
     assert "cyberhuatuo record-return --username alice --framework langchain" in proof
@@ -4130,21 +4134,21 @@ def test_cli_record_return_and_activation_funnel_use_real_ledger(tmp_path):
     assert "Next External Contributor Invite" in recorded.stdout
     assert (
         "cyberhuatuo first-invite --username alice --invitee external-contributor-github-username "
-        "--framework langchain --release-tag v0.2.1 --target-contributors 3 "
+        f"--framework langchain --release-tag {CURRENT_TAG} --target-contributors 3 "
         "--source-url https://example.com/pypi-post"
     ) in recorded.stdout
     assert (
         "cyberhuatuo proof-pack --username alice --framework langchain "
-        "--release-tag v0.2.1 --target-contributors 3"
+        f"--release-tag {CURRENT_TAG} --target-contributors 3"
     ) in recorded.stdout
     assert (
         'first_public_proof_pack(github_username="alice", framework="langchain", '
-        'release_tag="v0.2.1", target_contributors=3)'
+        f'release_tag="{CURRENT_TAG}", target_contributors=3)'
     ) in recorded.stdout
     assert (
         'first_contributor_invite(github_username="alice", '
         'invitee="external-contributor-github-username", framework="langchain", '
-        'release_tag="v0.2.1", target_contributors=3, source_url="https://example.com/pypi-post")'
+        f'release_tag="{CURRENT_TAG}", target_contributors=3, source_url="https://example.com/pypi-post")'
     ) in recorded.stdout
     assert ledger_path.is_file()
 
@@ -4215,13 +4219,13 @@ def test_cli_record_share_writes_share_attribution_event(tmp_path):
     assert "Next External Contributor Invite" in result.stdout
     assert (
         "cyberhuatuo first-invite --username alice --invitee external-contributor-github-username "
-        "--framework langchain --release-tag v0.2.1 --target-contributors 3 "
+        f"--framework langchain --release-tag {CURRENT_TAG} --target-contributors 3 "
         "--source-url https://example.com/share"
     ) in result.stdout
     assert (
         'first_contributor_invite(github_username="alice", '
         'invitee="external-contributor-github-username", framework="langchain", '
-        'release_tag="v0.2.1", target_contributors=3, source_url="https://example.com/share")'
+        f'release_tag="{CURRENT_TAG}", target_contributors=3, source_url="https://example.com/share")'
     ) in result.stdout
     event = json.loads(ledger_path.read_text(encoding="utf-8").splitlines()[0])
     assert event["event_type"] == "share_attribution"
@@ -4941,7 +4945,7 @@ def test_readmes_keep_first_ring_growth_loop_visible():
     readme_mcp = (ROOT / "README_MCP.md").read_text(encoding="utf-8")
     release_launch_assets_command = (
         "cyberhuatuo launch-assets --username your-github-username --framework langchain "
-        "--release-tag v0.2.1 --target-contributors 3"
+        f"--release-tag {CURRENT_TAG} --target-contributors 3"
     )
 
     assert "cyberhuatuo challenge" in readme

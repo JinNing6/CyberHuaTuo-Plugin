@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Agent Traceback Clinic
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=00-agent-traceback-clinic.yml
+    about: Paste a real Agent / MCP / LangChain traceback for diagnosis. No root cause or finished prescription required.
   - name: Soul Ring Mission Hall
     url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=soul-ring-prescription.yml
     about: Start the First Soul Ring Prescription path, then run cyberhuatuo challenge to claim the real-data contribution loop.

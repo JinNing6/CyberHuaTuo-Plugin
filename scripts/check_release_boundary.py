@@ -32,6 +32,8 @@ FORBIDDEN_NAMES = {
 REQUIRED_WHEEL_MEMBERS = (
     "cyberhuatuo/activation.py",
     "cyberhuatuo/achievements.py",
+    "cyberhuatuo/agent_guard.py",
+    "cyberhuatuo/agent_hook.py",
     "cyberhuatuo/cli.py",
     "cyberhuatuo/install.py",
     "cyberhuatuo/marketplace.py",
@@ -97,9 +99,11 @@ REQUIRED_WHEEL_METADATA_SNIPPETS = (
 
 REQUIRED_SDIST_MEMBERS = (
     ".agents/plugins/marketplace.json",
+    ".agents/skills/cyberhuatuo-agent-guard/SKILL.md",
     ".agents/skills/cyberhuatuo-soul-ring-visual/SKILL.md",
     ".claude-plugin/marketplace.json",
     ".claude-plugin/plugin.json",
+    ".codex/config.toml",
     ".codex-plugin/plugin.json",
     ".github/ISSUE_TEMPLATE/soul-ring-bounty-board.yml",
     ".github/ISSUE_TEMPLATE/soul-ring-growth-flywheel.yml",
@@ -131,7 +135,11 @@ REQUIRED_SDIST_MEMBERS = (
     "claude-desktop/manifest.json",
     "claude-desktop/pyproject.toml",
     "claude-desktop/src/server.py",
+    "docs/agent-action-guard.md",
+    "docs/agent-guard-quickstart.md",
     "cyberhuatuo/activation.py",
+    "cyberhuatuo/agent_guard.py",
+    "cyberhuatuo/agent_hook.py",
     "cyberhuatuo/install.py",
     "cyberhuatuo/marketplace.py",
     "cyberhuatuo/soul_ring_visuals.py",
@@ -139,7 +147,10 @@ REQUIRED_SDIST_MEMBERS = (
     "cyberhuatuo/traction.py",
     "docs/MARKETPLACE_RELEASE.md",
     "docs/PRIVACY.md",
+    "hooks/hooks.json",
+    "hooks/pre_tool_guard.py",
     "pyproject.toml",
+    "skills/cyberhuatuo-agent-guard/SKILL.md",
     "skills/cyberhuatuo-soul-ring-visual/SKILL.md",
 )
 
@@ -364,6 +375,21 @@ REQUIRED_SDIST_TEXT_SNIPPETS = {
         "Soul Ring Evidence Card",
         "claude plugin validate",
         "codex plugin marketplace add",
+    ),
+    "docs/agent-guard-quickstart.md": (
+        "cyberhuatuo guard --self-test",
+        "No command was executed.",
+        "SELF-TEST PASSED",
+        "agent_action_guard",
+    ),
+    "hooks/hooks.json": (
+        "PreToolUse",
+        "pre_tool_guard.py",
+    ),
+    "skills/cyberhuatuo-agent-guard/SKILL.md": (
+        "Decision Contract",
+        "Never reinterpret `ASK` as approval.",
+        "Never bypass `BLOCK`",
     ),
     "cyberhuatuo/marketplace.py": (
         "install_decision",

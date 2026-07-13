@@ -8,8 +8,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cyberhuatuo"
-version = "0.2.1"
-description = "Paste AI-agent tracebacks and get root cause, exact fixes, and reusable prescriptions"
+version = "0.2.2"
+description = "AI-agent self-rescue via MCP: diagnose tracebacks, apply exact fixes, and save/upload reusable prescriptions"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.10"
@@ -21,6 +21,7 @@ keywords = [
     "traceback",
     "error-diagnosis",
     "mcp",
+    "agent-safety",
     "soul-ring",
 ]
 classifiers = [
@@ -108,8 +109,8 @@ select = [
 ignore = [
     "E501",  # line too long (由 formatter 处理)
     "B008",  # do not perform function calls in argument defaults (FastAPI 需要)
-    "B905",  # zip without strict (Python 3.9 兼容)
-    "UP007", # Use X | Y for union types (Python 3.9 兼容)
+    "B905",  # zip without strict (Python 3.10 compatibility)
+    "UP007", # Use X | Y for union types (Python 3.10 compatibility)
 ]
 
 [tool.ruff.lint.per-file-ignores]

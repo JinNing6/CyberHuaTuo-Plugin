@@ -7,8 +7,8 @@
 <h1 align="center">🩺 赛博华佗 / CyberHuaTuo</h1>
 
 <p align="center">
-  <strong>AI Agent 报错急诊室 — 粘贴 MCP / LangChain / CrewAI / OpenAI SDK traceback，直接给病灶、根因、可执行修复和验证步骤。</strong><br>
-  <strong>AI Agent Error Doctor — paste a traceback, get a runnable prescription.</strong>
+  <strong>你的 Agent 生病了？别再从头搜。接入赛博华佗，先救活，再炼方。</strong><br>
+  <strong>Your agent is sick. Diagnose the traceback, apply the cure, and save the prescription.</strong>
 </p>
 
 <p align="center">
@@ -18,9 +18,15 @@
 
 ---
 
-## 🚨 急诊入口：先粘贴报错
+## 🚨 急诊入口：先救活，再炼方
 
-**AI Agent 报错急诊室** — 粘贴 MCP / LangChain / CrewAI / OpenAI SDK 的 traceback，赛博华佗直接给病灶、根因、可执行修复和验证步骤。
+你的 Agent 生病了。写着写着突然炸了，traceback 一大串，搜索半小时，每个答案都像对又像不对。
+
+这时候不是继续硬搜，而是请华佗进来问诊：先看病灶，再开药方，最后用验证命令确认这劫过了。
+
+更酷的入口是把赛博华佗 MCP 接进你的编码 Agent。Agent 遇到真实报错后，自己调用 `diagnose` 自救；修好后用 `save_prescription` 留下这张药方。愿意公开贡献时，再配置 `GITHUB_TOKEN`，用 `upload_prescription` 把这次坑传回药方库。
+
+还没接 MCP？先把病例放进 **[Agent Traceback Clinic](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=00-agent-traceback-clinic.yml)**。贴真实脱敏 traceback 就行，不需要你已经知道根因，也不需要先写好药方。
 
 ```bash
 python -m cyberhuatuo diagnose "Traceback ... from langchain import ChatOpenAI ..." --framework langchain --top-k 1
@@ -43,6 +49,50 @@ from langchain_openai import ChatOpenAI
 ```
 
 这条急诊路径直接使用本地药方库；即使还没有配置 LLM API Key，也能先给出可复制的命中药方。配置模型 Key 后，可以继续使用更深度的 AI 望闻问切。
+
+---
+
+## Agent 行医护栏：动用户磁盘之前，先问诊
+
+赛博华佗现在提供确定性的只读危险命令预检。插件为 Codex / Claude Code 支持的 shell 调用捆绑 `PreToolUse` hook，同时提供同一套 MCP 工具和 CLI：
+
+**60 秒上手（`0.2.2` 提供）：**
+
+```bash
+python -m pip install --upgrade "cyberhuatuo>=0.2.2"
+cyberhuatuo guard --self-test --workspace-root .
+```
+
+自检只审查三条内置命令文本，绝不执行命令。正确结果必须同时出现 `SELF-TEST PASSED`、一个 `ALLOW`、一个 `ASK` 和一个 `BLOCK`。
+
+Codex 用户先添加仓库市场，再打开 `/plugins` 安装 `cyberhuatuo-plugin`，新建会话，最后在 `/hooks` 检查并信任插件：
+
+```bash
+codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin
+```
+
+Claude Code 用户：
+
+```bash
+claude plugin marketplace add JinNing6/CyberHuaTuo-Plugin
+claude plugin install cyberhuatuo-plugin@cyberhuatuo
+```
+
+然后新建会话并检查 `/hooks`。完整验证与排错见[一屏式 Agent 行医护栏快速上手](docs/agent-guard-quickstart.md)。
+
+需要手动审查任意精确命令时：
+
+```bash
+cyberhuatuo guard "Remove-Item C:\\ -Recurse -Force" --workspace-root .
+```
+
+- `ALLOW`：未发现破坏性特征。
+- `ASK`：操作有破坏性，但范围被限制在声明的工作区；必须让用户确认精确目标。
+- `BLOCK`：命中整机、用户目录、系统目录、工作区外、动态变量、通配符或无法解析的范围。
+
+MCP Agent 调用 `agent_action_guard`。安装插件后，宿主会发现 `hooks/hooks.json`；真正依赖它之前，必须在 `/hooks` 中检查并信任。Codex 当前不支持 `permissionDecision: "ask"`，因此赛博华佗会把 `ASK` 转成 `deny`，避免 hook 报错后继续执行。
+
+它是执行前护栏，不是操作系统 sandbox。宿主没有触发 `PreToolUse` 的执行路径，它就看不到；永久删除也不承诺存在“后悔药”。完整边界见 [Agent 行医护栏设计](docs/agent-action-guard.md)。
 
 ---
 
@@ -353,7 +403,7 @@ python -m cyberhuatuo serve
 
 ### 环境要求
 
-- **Python 3.9+**
+- **Python 3.10+**
 - **（可选）** LLM API Key 用于 AI 诊断（OpenAI / Anthropic / DeepSeek / Gemini / Ollama）
 
 ### 方式一：一键启动
@@ -468,18 +518,18 @@ PORT=8000
 ```bash
 cyberhuatuo challenge --username your-github-username --framework langchain
 cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username
-cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.1
-cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3 --record-snapshot
-cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-python -m cyberhuatuo candidate-install-smoke --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3 --source-url https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123
+cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.2
+cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3 --record-snapshot
+cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+python -m cyberhuatuo candidate-install-smoke --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3 --source-url https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123
 cyberhuatuo market-ready --no-remote
-cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo proof-pack --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
+cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo proof-pack --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
 cyberhuatuo record-return --username your-github-username --framework langchain --surface "PyPI release" --source-url https://example.com/post
 cyberhuatuo activation --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10
 cyberhuatuo flywheel --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10
@@ -539,7 +589,7 @@ cyberhuatuo card your-github-username
 # GitHub PR settlement workflow: .github/workflows/soul-ring-pr.yml
 ```
 
-发布安装入口：`cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3` 会生成 **CyberHuaTuo Install Command**，先读取真实 **PyPI JSON API** 最新版本证明；只有 PyPI 当前版本等于本地包版本时才推荐 `python -m pip install --upgrade cyberhuatuo`，否则输出 **Git Tag Candidate Install Bridge** 并明确说明它 does not close the PyPI install loop。Claude / Codex 内对应 MCP 工具是 `current_install_command`，会继续路由到 `challenge`、`proof-pack`、`market-copy` 和 `traction-proof`，不虚构下载量、留存、转发、推荐、奖励、审批或假贡献者。
+发布安装入口：`cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3` 会生成 **CyberHuaTuo Install Command**，先读取真实 **PyPI JSON API** 最新版本证明；只有 PyPI 当前版本等于本地包版本时才推荐 `python -m pip install --upgrade cyberhuatuo`，否则输出 **Git Tag Candidate Install Bridge** 并明确说明它 does not close the PyPI install loop。Claude / Codex 内对应 MCP 工具是 `current_install_command`，会继续路由到 `challenge`、`proof-pack`、`market-copy` 和 `traction-proof`，不虚构下载量、留存、转发、推荐、奖励、审批或假贡献者。
 
 网页优先入口：在 GitHub 的 New issue 流程中选择 **First Soul Ring Prescription**，对应模板文件是 `.github/ISSUE_TEMPLATE/soul-ring-prescription.yml`。它会先要求填写真实 GitHub 用户名、框架、症状复现、根因、药方修复、验证证据和真实数据承诺，再进入魂环贡献闭环。`.github/workflows/soul-ring-issue.yml` 现在会先评论 `cyberhuatuo proof-pack`、`market-copy`、`market-ready --remote --strict-remote` 和 `record-return --surface "First Soul Ring Issue" --source-url <created Issue URL>`，再进入 `challenge` / `ladder` / `upload` 路径，让每个第一魂环 Issue 同时成为公开 launch proof 和 **Soul Ring Breakthrough Ladder**。
 
@@ -548,15 +598,15 @@ cyberhuatuo card your-github-username
 PR 结算入口：当真实修复已经准备好时，`.github/pull_request_template.md` 会把 Pull Request 转成 **Soul Ring PR Settlement**，要求填写贡献者、框架、关联 Issue、验证证据，并给出可复制的 `upload` / `ladder` / `ranking` / `card` / `campaign` 命令。
 
 `cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username` 会生成 **Soul Ring Mission Hall**：把 GitHub Issue、PR 结算、个人魂环、MCP 安装和宗门行动整合到一屏，并且只基于当前真实贡献数据。
-`cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3` 会生成 **Soul Ring Launch Campaign**：把 PyPI / Claude / Codex / GitHub / X / Weibo 首发曝光转成目标首环贡献者战役，包含当前真实 ranked contributors、Prefilled Growth Flywheel Issue、Prefilled Share Proof Issue、activation / flywheel / share-leaderboard 命令和可复制发布文案。它不会编造 downloads、retention、repost counts、referrals、rewards、Spirit Power、campaign-specific conversions 或 fake users。
-`cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3` 会生成 **Soul Ring Traction Proof**：读取 GitHub REST API、GitHub Pull Requests API、GitHub Contents API 默认分支 IssueOps forms/workflows readiness、GitHub Releases API release.published / protected workflow_dispatch fallback readiness、PyPI JSON API package readiness 和本地 activation/share ledger，把公开 Issue 作者、公开 PR 作者与 ledger actor 合并成 **Target contributor progress**。Public API fetch failures or rate limits inline the **No-Network First Public Proof Pack** so operators can open proof Issues and record created URLs without a second command. 它会检查 GitHub Release 是否为非 draft、非 prerelease 且能触发 `release.published` PyPI workflow；如果 PyPI latest-version proof 已经是当前版本，缺失 Release 会降级为 public provenance warning，因为 protected manual `workflow_dispatch` `release_tag` fallback 可以在不使用 `PYPI_TOKEN` 的情况下闭合 registry path。如果 registry install 仍会安装旧版本，就标记 install-loop launch blocker 并路由回 PyPI Trusted Publishing。PR 作者可以算真实贡献者身份，但 PR 必须作为独立 proof surface，不能混入 IssueOps issue counts。stars, forks, watchers 只能作为注意力信号，downloads are not used，不能把下载、转发、retention、referral conversions 或 rewards 折算成首环贡献者。
-`cyberhuatuo market-ready --no-remote` 会检查 PyPI、Claude、Codex、MCP、版本同步和本地 IssueOps 文件是否已经具备发布条件。`cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3` 会在 PyPI 和默认分支公开后，把旧 PyPI 版本或远端 IssueOps 缺失直接标记为市场发布阻塞。
+`cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3` 会生成 **Soul Ring Launch Campaign**：把 PyPI / Claude / Codex / GitHub / X / Weibo 首发曝光转成目标首环贡献者战役，包含当前真实 ranked contributors、Prefilled Growth Flywheel Issue、Prefilled Share Proof Issue、activation / flywheel / share-leaderboard 命令和可复制发布文案。它不会编造 downloads、retention、repost counts、referrals、rewards、Spirit Power、campaign-specific conversions 或 fake users。
+`cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3` 会生成 **Soul Ring Traction Proof**：读取 GitHub REST API、GitHub Pull Requests API、GitHub Contents API 默认分支 IssueOps forms/workflows readiness、GitHub Releases API release.published / protected workflow_dispatch fallback readiness、PyPI JSON API package readiness 和本地 activation/share ledger，把公开 Issue 作者、公开 PR 作者与 ledger actor 合并成 **Target contributor progress**。Public API fetch failures or rate limits inline the **No-Network First Public Proof Pack** so operators can open proof Issues and record created URLs without a second command. 它会检查 GitHub Release 是否为非 draft、非 prerelease 且能触发 `release.published` PyPI workflow；如果 PyPI latest-version proof 已经是当前版本，缺失 Release 会降级为 public provenance warning，因为 protected manual `workflow_dispatch` `release_tag` fallback 可以在不使用 `PYPI_TOKEN` 的情况下闭合 registry path。如果 registry install 仍会安装旧版本，就标记 install-loop launch blocker 并路由回 PyPI Trusted Publishing。PR 作者可以算真实贡献者身份，但 PR 必须作为独立 proof surface，不能混入 IssueOps issue counts。stars, forks, watchers 只能作为注意力信号，downloads are not used，不能把下载、转发、retention、referral conversions 或 rewards 折算成首环贡献者。
+`cyberhuatuo market-ready --no-remote` 会检查 PyPI、Claude、Codex、MCP、版本同步和本地 IssueOps 文件是否已经具备发布条件。`cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3` 会在 PyPI 和默认分支公开后，把旧 PyPI 版本或远端 IssueOps 缺失直接标记为市场发布阻塞。
 MCP tool `marketplace_readiness_gate` gives Claude/Codex the same preflight result and a **Launch Closure Checklist**: remote acquisition routes, PyPI Trusted Publisher, GitHub `release.published` trigger or protected `workflow_dispatch` fallback readiness, registry latest-version proof, first public proof, and recheck commands.
-It also prints a **First Public Proof Kit** with Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, Created Growth Issue URL, Created Share Proof Issue URL, a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.1`) plus **GitHub Web Release**, **GitHub Actions workflow page**, and PyPI Trusted Publisher settings links for release-auth/UI/API blockage, an Install Decision Surface through `cyberhuatuo install-command` / MCP `current_install_command`, ledger commands, an External Contributor Path with pasted Recommended Install, `market-copy` submission copy routing, recheck commands, and copy-ready public proof copy, so PyPI / Claude / Codex launch attention can be recorded only after a real created public proof URL exists. 内嵌的 **Public Release Operator Runbook** 会继续给出只读发布命令链：local gates、full-bundle staging、`git push origin HEAD:main`、**GitHub Web Release**、**GitHub Actions workflow page**、`gh release create v0.2.1 ... --verify-tag --notes-from-tag`、protected publish fallback、`cyberhuatuo market-copy`、PyPI recheck 和 traction proof。
-It also prints a **Local Launch Asset Audit**. `cyberhuatuo launch-assets` validates local Issue Forms, comment-only workflows, package metadata, plugin manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP entrypoints, then prints exact minimal `git add` commands, a **Full Public Growth Release Bundle**, and **Dirty Worktree Release Coverage** from read-only `git status --porcelain`. For release-specific default-branch handoff, run `cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3`; the Public Release Operator Runbook preserves the same release/user/target context. It does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction.
-`cyberhuatuo proof-pack` prints the **No-Network First Public Proof Pack** when GitHub/PyPI APIs are rate-limited or marketplace review is still pending. It includes Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, Created Growth Issue URL, Created Share Proof Issue URL, a **Protected Publish Fallback** block with `gh workflow run publish-pypi.yml -f release_tag=v0.2.1`, `gh run list --workflow publish-pypi.yml --limit 5`, **GitHub Web Release**, **GitHub Actions workflow page**, and PyPI Trusted Publisher settings links, an Install Decision Surface through `cyberhuatuo install-command` / MCP `current_install_command`, terminal record-return / record-share CLI commands, an **External Contributor Path** with pasted Recommended Install, first-session command, first contribution command, First Soul Ring Prescription Issue, Share Proof Issue URL, created-Issue proof rule, contributor-counting rule, recheck commands, and copy-ready public proof text. 这个 fallback 仍要求 PyPI Trusted Publisher 匹配当前 repository、workflow file 和 `pypi` environment；不允许退回 `PYPI_TOKEN`。It does not fetch public metrics, write ledger events, publish releases, upload to PyPI by itself, or invent traction.
+It also prints a **First Public Proof Kit** with Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, Created Growth Issue URL, Created Share Proof Issue URL, a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.2`) plus **GitHub Web Release**, **GitHub Actions workflow page**, and PyPI Trusted Publisher settings links for release-auth/UI/API blockage, an Install Decision Surface through `cyberhuatuo install-command` / MCP `current_install_command`, ledger commands, an External Contributor Path with pasted Recommended Install, `market-copy` submission copy routing, recheck commands, and copy-ready public proof copy, so PyPI / Claude / Codex launch attention can be recorded only after a real created public proof URL exists. 内嵌的 **Public Release Operator Runbook** 会继续给出只读发布命令链：local gates、full-bundle staging、`git push origin HEAD:main`、**GitHub Web Release**、**GitHub Actions workflow page**、`gh release create v0.2.2 ... --verify-tag --notes-from-tag`、protected publish fallback、`cyberhuatuo market-copy`、PyPI recheck 和 traction proof。
+It also prints a **Local Launch Asset Audit**. `cyberhuatuo launch-assets` validates local Issue Forms, comment-only workflows, package metadata, plugin manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP entrypoints, then prints exact minimal `git add` commands, a **Full Public Growth Release Bundle**, and **Dirty Worktree Release Coverage** from read-only `git status --porcelain`. For release-specific default-branch handoff, run `cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3`; the Public Release Operator Runbook preserves the same release/user/target context. It does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction.
+`cyberhuatuo proof-pack` prints the **No-Network First Public Proof Pack** when GitHub/PyPI APIs are rate-limited or marketplace review is still pending. It includes Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, Created Growth Issue URL, Created Share Proof Issue URL, a **Protected Publish Fallback** block with `gh workflow run publish-pypi.yml -f release_tag=v0.2.2`, `gh run list --workflow publish-pypi.yml --limit 5`, **GitHub Web Release**, **GitHub Actions workflow page**, and PyPI Trusted Publisher settings links, an Install Decision Surface through `cyberhuatuo install-command` / MCP `current_install_command`, terminal record-return / record-share CLI commands, an **External Contributor Path** with pasted Recommended Install, first-session command, first contribution command, First Soul Ring Prescription Issue, Share Proof Issue URL, created-Issue proof rule, contributor-counting rule, recheck commands, and copy-ready public proof text. 这个 fallback 仍要求 PyPI Trusted Publisher 匹配当前 repository、workflow file 和 `pypi` environment；不允许退回 `PYPI_TOKEN`。It does not fetch public metrics, write ledger events, publish releases, upload to PyPI by itself, or invent traction.
 
-`cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3 --source-url <created Growth Issue URL>` 会生成 **First Contributor Invite Pack**：把一次 PyPI / Claude / Codex / GitHub / X / Weibo 曝光转成对一个 first external contributor 的点名邀请，包含本地 Candidate Snapshot、First Soul Ring Prescription Issue URL、Share Proof Issue URL、`record-session` 命令、`challenge` 命令、proof-pack / market-copy / traction-proof 复查命令和可复制私信/评论文案。它不抓取 public metrics，不写 ledger，不创建 issue，不发布 release，不上传 PyPI，也 does not invent downloads、retention、repost counts、referrals、rewards、reviews 或 fake contributors。
+`cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3 --source-url <created Growth Issue URL>` 会生成 **First Contributor Invite Pack**：把一次 PyPI / Claude / Codex / GitHub / X / Weibo 曝光转成对一个 first external contributor 的点名邀请，包含本地 Candidate Snapshot、First Soul Ring Prescription Issue URL、Share Proof Issue URL、`record-session` 命令、`challenge` 命令、proof-pack / market-copy / traction-proof 复查命令和可复制私信/评论文案。它不抓取 public metrics，不写 ledger，不创建 issue，不发布 release，不上传 PyPI，也 does not invent downloads、retention、repost counts、referrals、rewards、reviews 或 fake contributors。
 
 `cyberhuatuo market-copy` / MCP tool `marketplace_submission_copy` prints the **Marketplace Submission Copy Pack** for PyPI / Claude / Codex submission forms: PyPI listing copy, Claude MCPB listing copy, Codex plugin listing copy, GitHub Release post with **GitHub Web Release** and **GitHub Actions workflow page** links, project URLs, install / validation commands, public proof CTA, and maintainer announcement. 它是市场提交文案，不是 traction evidence；it does not fetch public metrics, write ledger events, publish releases, upload to PyPI, submit marketplace forms, or invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors.
 `cyberhuatuo evidence your-github-username --framework langchain --amount 1 --source-url https://example.com/proof` prints a **Soul Ring Evidence Card** for high-realm gates. It requires reviewable public evidence, writes an append-only local JSONL event, reports evidence total and evidence-backed count, and keeps progress, ranks, rewards, downloads, and contributors not invented.
@@ -634,8 +684,8 @@ It also prints a **Local Launch Asset Audit**. `cyberhuatuo launch-assets` valid
 ### ⚡ 安装 — 一行搞定
 
 ```bash
-python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"
-python -m pip install --upgrade cyberhuatuo  # after PyPI latest matches v0.2.1
+python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.2"
+python -m pip install --upgrade cyberhuatuo  # after PyPI latest matches v0.2.2
 ```
 
 > Git tag candidate install 需要先通过 `python -m cyberhuatuo candidate-install-smoke`；PyPI 最新版本证明追平后，再使用 registry 命令。品牌矩阵别名只用于 registry-current 路径。

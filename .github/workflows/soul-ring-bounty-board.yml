@@ -61,10 +61,10 @@ jobs:
               .replace(/\s+/g, "-");
             const framework = allowedFrameworks.has(rawFramework) ? rawFramework : "auto";
 
-            const rawRelease = fieldValue("Release tag", "v0.2.1");
+            const rawRelease = fieldValue("Release tag", "v0.2.2");
             const releaseTag = /^v?[0-9][0-9A-Za-z._-]*$/.test(rawRelease)
               ? rawRelease
-              : "v0.2.1";
+              : "v0.2.2";
             const claimFramework = framework === "auto" ? "<first-framework-from-bounty-board>" : framework;
             const prescriptionUrl =
               `https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?template=soul-ring-prescription.yml&framework=${encodeURIComponent(claimFramework)}`;

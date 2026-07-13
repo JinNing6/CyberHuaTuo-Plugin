@@ -1,7 +1,7 @@
 # 🩺 CyberHuaTuo MCP Server
 
-> Paste an Agent / MCP / LangChain / CrewAI traceback and get the root cause, exact fix, and verification steps inside any AI coding tool.
-> 粘贴 Agent / MCP / LangChain / CrewAI traceback，在任意 AI Coding 工具里得到病灶、药方和验证步骤。
+> Your agent is sick. CyberHuaTuo reads the wound, gives the cure, and lets the agent save the solved case as the next prescription.
+> Agent 生病时，请华佗进来问诊：看病灶、开药方、验疗效，修好后把这次坑存成下一张药方。
 
 ## 什么是 MCP？
 
@@ -63,25 +63,25 @@ Marketplace release SOP lives in [`docs/MARKETPLACE_RELEASE.md`](docs/MARKETPLAC
 Marketplace readiness gate:
 
 ```bash
-cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
+cyberhuatuo install-command --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
 cyberhuatuo market-ready --no-remote
-cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo proof-pack --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-python -m cyberhuatuo candidate-install-smoke --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3 --source-url https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123
-cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-cyberhuatuo record-market --username your-github-username --framework langchain --channel pypi --status submitted --submission-url <reviewable public URL> --release-tag v0.2.1
-cyberhuatuo market-status --username your-github-username --framework langchain --release-tag v0.2.1
+cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo proof-pack --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+python -m cyberhuatuo candidate-install-smoke --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3 --source-url https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/123
+cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo market-copy --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+cyberhuatuo record-market --username your-github-username --framework langchain --channel pypi --status submitted --submission-url <reviewable public URL> --release-tag v0.2.2
+cyberhuatuo market-status --username your-github-username --framework langchain --release-tag v0.2.2
 python scripts/check_marketplace_release.py --no-remote
 
-cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
-python scripts/check_marketplace_release.py --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3
+cyberhuatuo market-ready --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
+python scripts/check_marketplace_release.py --remote --strict-remote --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3
 ```
 
 The same short install decision is available inside Claude/Codex through the MCP tool `current_install_command`. It returns a **CyberHuaTuo Install Command** by fetching real PyPI JSON API latest-version proof: if PyPI is current, it recommends canonical `python -m pip install --upgrade cyberhuatuo`; if PyPI is stale or unverified, it prints the bounded **Git Tag Candidate Install Bridge** plus `candidate-install-smoke`, states that the bridge does not close the PyPI install loop, then routes directly to `challenge`, `proof-pack`, `market-copy`, and `traction-proof`.
 
-The same preflight is available inside Claude/Codex through the MCP tool `marketplace_readiness_gate`. It first prints a **Flywheel Closure Verdict** with `closed`, `not closed`, or `unverified`, **Ready gates** / total gate counts, real evidence basis, blocking gates, and the non-fabrication rule. Its **Launch Closure Checklist** then orders the final public push gates: remote acquisition routes, PyPI Trusted Publisher, GitHub `release.published` trigger or protected `workflow_dispatch` fallback readiness, registry latest-version proof, first public proof, and recheck commands. It also prints a **First Public Proof Kit** with Prefilled Growth Flywheel Issue, Share Proof Issue, and Bounty Board Issue URLs, Created Growth Issue URL, Created Share Proof Issue URL, and Created Bounty Board Issue URL placeholders, a **Community Challenge Pack** with Prefilled Tournament Cup Issue, Prefilled Mentor Pact Issue, Prefilled Sect Recruitment Issue, Prefilled Season Board Issue, created-Issue placeholders, and commands for `tournament`, `mentor`, `sect-recruit`, and `season`, a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.1`) plus **GitHub Web Release**, **GitHub Actions workflow page**, PyPI Trusted Publisher settings links, a **Git Tag Candidate Install Bridge** plus **Candidate Install Smoke Gate** for stale PyPI recovery after the public tag exists, an **Install Decision Surface** that routes maintainers through `cyberhuatuo install-command` / MCP `current_install_command` before sending contributors to PyPI, Claude, Codex, or MCP marketplaces, Growth and Bounty `record-return` ledger commands, Share `record-share` attribution, an External Contributor Path, `cyberhuatuo bounty`, `market-copy` submission copy routing, recheck commands, and a copy-ready public proof post. The bridge keeps canonical `python -m pip install --upgrade cyberhuatuo` visible, may show `python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.1"`, must be verified with `python -m cyberhuatuo candidate-install-smoke`, and does not close the PyPI install loop. When the maintainer needs to target one external contributor from that exposure, `first_contributor_invite` / `cyberhuatuo first-invite` returns a **First Contributor Invite Pack** with a local candidate snapshot, an Install Decision Surface, First Soul Ring issue URLs, record-session and challenge commands, proof rechecks, and copy-ready direct invite text that tells the maintainer to paste the Recommended Install. It also prints a **Local Launch Asset Audit** and the standalone `cyberhuatuo launch-assets` command gives the same read-only audit with a **Full Public Growth Release Bundle**, a **Public Release Operator Runbook** with `git push origin HEAD:main`, **GitHub Web Release**, **GitHub Actions workflow page**, `gh release create ... --verify-tag --notes-from-tag`, protected publish fallback, `cyberhuatuo market-copy`, candidate install smoke, and **Dirty Worktree Release Coverage**. For release-specific handoff, use `cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.1 --target-contributors 3` so the runbook keeps the same target context. It may read `git status --porcelain`, but it does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction. When public APIs are rate-limited, `first_public_proof_pack` / `cyberhuatuo proof-pack` returns the **No-Network First Public Proof Pack** without fetching public metrics or inventing traction.
+The same preflight is available inside Claude/Codex through the MCP tool `marketplace_readiness_gate`. It first prints a **Flywheel Closure Verdict** with `closed`, `not closed`, or `unverified`, **Ready gates** / total gate counts, real evidence basis, blocking gates, and the non-fabrication rule. Its **Launch Closure Checklist** then orders the final public push gates: remote acquisition routes, PyPI Trusted Publisher, GitHub `release.published` trigger or protected `workflow_dispatch` fallback readiness, registry latest-version proof, first public proof, and recheck commands. It also prints a **First Public Proof Kit** with Prefilled Growth Flywheel Issue, Share Proof Issue, and Bounty Board Issue URLs, Created Growth Issue URL, Created Share Proof Issue URL, and Created Bounty Board Issue URL placeholders, a **Community Challenge Pack** with Prefilled Tournament Cup Issue, Prefilled Mentor Pact Issue, Prefilled Sect Recruitment Issue, Prefilled Season Board Issue, created-Issue placeholders, and commands for `tournament`, `mentor`, `sect-recruit`, and `season`, a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.2`) plus **GitHub Web Release**, **GitHub Actions workflow page**, PyPI Trusted Publisher settings links, a **Git Tag Candidate Install Bridge** plus **Candidate Install Smoke Gate** for stale PyPI recovery after the public tag exists, an **Install Decision Surface** that routes maintainers through `cyberhuatuo install-command` / MCP `current_install_command` before sending contributors to PyPI, Claude, Codex, or MCP marketplaces, Growth and Bounty `record-return` ledger commands, Share `record-share` attribution, an External Contributor Path, `cyberhuatuo bounty`, `market-copy` submission copy routing, recheck commands, and a copy-ready public proof post. The bridge keeps canonical `python -m pip install --upgrade cyberhuatuo` visible, may show `python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.2"`, must be verified with `python -m cyberhuatuo candidate-install-smoke`, and does not close the PyPI install loop. When the maintainer needs to target one external contributor from that exposure, `first_contributor_invite` / `cyberhuatuo first-invite` returns a **First Contributor Invite Pack** with a local candidate snapshot, an Install Decision Surface, First Soul Ring issue URLs, record-session and challenge commands, proof rechecks, and copy-ready direct invite text that tells the maintainer to paste the Recommended Install. It also prints a **Local Launch Asset Audit** and the standalone `cyberhuatuo launch-assets` command gives the same read-only audit with a **Full Public Growth Release Bundle**, a **Public Release Operator Runbook** with `git push origin HEAD:main`, **GitHub Web Release**, **GitHub Actions workflow page**, `gh release create ... --verify-tag --notes-from-tag`, protected publish fallback, `cyberhuatuo market-copy`, candidate install smoke, and **Dirty Worktree Release Coverage**. For release-specific handoff, use `cyberhuatuo launch-assets --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3` so the runbook keeps the same target context. It may read `git status --porcelain`, but it does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction. When public APIs are rate-limited, `first_public_proof_pack` / `cyberhuatuo proof-pack` returns the **No-Network First Public Proof Pack** without fetching public metrics or inventing traction.
 
 When the release operator needs an external-contributor target list, `soul_ring_bounty_board` / `cyberhuatuo bounty` returns a **Soul Ring Bounty Board** from real local framework coverage gap data. It ranks claimable First Soul Ring Prescription Issue routes, prints `challenge`, `first-invite`, `proof-pack`, `market-copy`, and `traction-proof` commands, and does not invent downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors.
 
@@ -234,6 +234,19 @@ pip install -r requirements.txt
 ---
 
 ## 可用工具 (Tools)
+
+### 🛡️ `agent_action_guard` — Agent 危险动作执行前问诊
+
+在永久/递归删除、破坏性 Git、磁盘格式化或擦除、数据库 `DROP` / `TRUNCATE`、镜像删除同步之前，审查原始命令并返回 `ALLOW` / `ASK` / `BLOCK`。工具只读，不执行、不改写、不批准命令。
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `command` | string | ✅ | Agent 准备执行的完整原始命令 |
+| `cwd` | string | ❌ | 解析相对路径所用工作目录 |
+| `workspace_root` | string | ❌ | 声明的工作区边界，默认使用 `cwd` |
+| `allowed_roots` | array | ❌ | 额外允许审查的根目录，不代表自动批准删除 |
+
+插件还捆绑 `hooks/hooks.json`，可在宿主实际触发 `PreToolUse` 时于命令执行前调用同一判定引擎。Codex 用户必须在 `/hooks` 中检查并信任该 hook；未被宿主 hook 覆盖的 `unified_exec` 等路径不在保护范围内。
 
 ### 🩺 `diagnose` — 望闻问切 AI 诊断
 

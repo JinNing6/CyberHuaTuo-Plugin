@@ -1,0 +1,7 @@
+[mcp_servers.cyberhuatuo]
+command = "uvx"
+args = [
+    "--from",
+    "cyberhuatuo",
+    "cyberhuatuo-mcp",
+]

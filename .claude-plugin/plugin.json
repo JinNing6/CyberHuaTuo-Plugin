@@ -1,7 +1,7 @@
 {
   "name": "cyberhuatuo-plugin",
-  "version": "0.2.1",
-  "description": "Paste AI-agent tracebacks and get root cause, exact fixes, verification steps, and reusable prescriptions through CyberHuaTuo MCP tools and agent skills.",
+  "version": "0.2.2",
+  "description": "When a coding agent gets sick, let it ask CyberHuaTuo, fix the error, and keep the cure through MCP tools and agent skills.",
   "author": {
     "name": "CyberHuaTuo"
   },
@@ -14,8 +14,10 @@
     "skills",
     "debugging",
     "ai-agents",
-    "soul-ring"
+    "soul-ring",
+    "agent-safety"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "hooks": "./hooks/hooks.json"
 }
