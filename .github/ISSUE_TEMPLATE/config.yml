@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Private Guard Security Report
+    url: https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new
+    about: Privately report a reliable Hook, parser, wrapper, protocol, redaction, or enforcement vulnerability.
   - name: Agent Traceback Clinic
     url: https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=00-agent-traceback-clinic.yml
     about: Paste a real Agent / MCP / LangChain traceback for diagnosis. No root cause or finished prescription required.

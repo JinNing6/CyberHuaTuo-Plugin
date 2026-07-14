@@ -3,6 +3,7 @@ include README_CN.md
 include README_MCP.md
 include LICENSE
 include NOTICE
+include SECURITY.md
 include .env.example
 include .mcp.json
 include .github/pull_request_template.md

@@ -9,6 +9,7 @@ import tarfile
 import zipfile
 from pathlib import Path
 
+import pytest
 import tomllib
 import yaml
 
@@ -2282,6 +2283,68 @@ def test_github_issue_form_guides_soul_ring_bounty_board_event():
     assert any("No downloads, retention, repost counts, referrals, rewards, reviews, or fake contributors are invented" in option["label"] for option in ack_options)
 
 
+@pytest.mark.parametrize(
+    ("filename", "name", "label", "required_fields"),
+    [
+        (
+            "guard-false-positive.yml",
+            "Guard False Positive",
+            "false-positive",
+            {"guard_report", "why_safe", "minimal_reproduction", "safety_ack"},
+        ),
+        (
+            "guard-false-negative.yml",
+            "Guard False Negative",
+            "false-negative",
+            {"guard_report", "destructive_effect", "minimal_reproduction", "routing_ack"},
+        ),
+        (
+            "guard-integration-gap.yml",
+            "Guard Integration Gap",
+            "integration-gap",
+            {"agent_host", "failed_stage", "guard_report", "observed_integration", "environment", "routing_ack"},
+        ),
+    ],
+)
+def test_guard_issue_forms_collect_real_redacted_cases(filename, name, label, required_fields):
+    form_path = ROOT / ".github" / "ISSUE_TEMPLATE" / filename
+
+    assert form_path.is_file()
+    form_text = form_path.read_text(encoding="utf-8")
+    form = yaml.safe_load(form_text)
+
+    assert form["name"] == name
+    assert "agent-guard" in form["labels"]
+    assert label in form["labels"]
+    assert "triage" in form["labels"]
+    fields = {item["id"]: item for item in form["body"] if item.get("id")}
+    assert required_fields <= set(fields)
+    for field_id in required_fields:
+        assert fields[field_id]["validations"]["required"] is True
+    assert "not a fabricated adoption case" in form_text
+    assert "did not execute a dangerous command solely" in form_text
+    assert "--report reports/guard-report.md" in form_text or filename == "guard-integration-gap.yml"
+
+    if filename != "guard-false-positive.yml":
+        assert "security/advisories/new" in form_text
+        assert "private vulnerability reporting" in form_text.lower() or "GitHub Security Advisories" in form_text
+
+
+def test_security_policy_routes_guard_bypasses_privately_and_misclassifications_publicly():
+    security = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    privacy = (ROOT / "docs" / "PRIVACY.md").read_text(encoding="utf-8")
+
+    assert "security/advisories/new" in security
+    assert "guard-false-positive.yml" in security
+    assert "guard-false-negative.yml" in security
+    assert "guard-integration-gap.yml" in security
+    assert "Do not execute a destructive command solely" in security
+    assert "performs no network request or automatic public upload" in security
+    assert "Agent Action Guard Reports" in privacy
+    assert "Only the redacted report is written" in privacy
+    assert "security/advisories/new" in privacy
+
+
 def test_github_issue_template_config_turns_new_issue_into_soul_ring_mission_hall():
     config_path = ROOT / ".github" / "ISSUE_TEMPLATE" / "config.yml"
 
@@ -2291,10 +2354,11 @@ def test_github_issue_template_config_turns_new_issue_into_soul_ring_mission_hal
     assert config["blank_issues_enabled"] is False
     contact_links = config["contact_links"]
     assert isinstance(contact_links, list)
-    assert len(contact_links) == 10
+    assert len(contact_links) == 11
 
     links_by_name = {link["name"]: link for link in contact_links}
     assert set(links_by_name) == {
+        "Private Guard Security Report",
         "Agent Traceback Clinic",
         "Soul Ring Mission Hall",
         "Soul Ring Growth Flywheel",
@@ -2306,6 +2370,12 @@ def test_github_issue_template_config_turns_new_issue_into_soul_ring_mission_hal
         "Install CyberHuaTuo MCP",
         "Sect Arena / Team Challenge",
     }
+
+    private_security = links_by_name["Private Guard Security Report"]
+    assert private_security["url"] == (
+        "https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new"
+    )
+    assert "Privately report" in private_security["about"]
 
     mission = links_by_name["Soul Ring Mission Hall"]
     assert mission["url"] == (

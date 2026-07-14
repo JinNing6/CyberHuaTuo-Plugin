@@ -1,11 +1,11 @@
 # Agent 行医护栏：60 秒快速上手
 
-适用版本：CyberHuaTuo `0.2.2+`，Python `3.10+`。
+适用版本：CyberHuaTuo `0.2.3+`，Python `3.10+`。
 
 ## 1. 安装并做零风险自检
 
 ```bash
-python -m pip install --upgrade "cyberhuatuo>=0.2.2"
+python -m pip install --upgrade "cyberhuatuo>=0.2.3"
 cyberhuatuo guard --self-test --workspace-root .
 ```
 
@@ -21,7 +21,7 @@ SELF-TEST PASSED
 
 自检只把三条字符串送进规则引擎，不会执行、改写或批准其中任何命令。
 
-如果 `0.2.2` 尚未发布到 PyPI，可在当前源码目录验证发布候选：
+在源码仓库中开发或验证候选版本时，使用仓库虚拟环境：
 
 ```powershell
 .\.venv\Scripts\python.exe -m cyberhuatuo guard --self-test --workspace-root .
@@ -65,7 +65,33 @@ cyberhuatuo guard "<Agent 提议的精确命令>" --cwd . --workspace-root .
 - `BLOCK` 返回码为 `3`，不得换一种语法绕过同一危险效果。
 - 自动化系统只想读取报告时，可加 `--json --exit-zero`。
 
-## 5. 三个常见问题
+## 5. 把真实判定变成脱敏病例
+
+`self-test` 只证明规则引擎 Ready。至少审查一条真实、未执行的命令，才算 Manual activation：
+
+```bash
+cyberhuatuo guard "<Agent 提议的精确命令>" --cwd . --workspace-root . --expected BLOCK --report reports/guard-report.md
+```
+
+报告流程固定为：
+
+1. 只在内存中判定原始命令，不执行命令。
+2. 脱敏 token、URL authority、主机/用户身份、工作区/主目录与绝对路径。
+3. 在终端展示完整脱敏预览。
+4. 用户确认后才写入；默认不覆盖已有文件，不联网、不上传。
+5. 私有项目名或业务词使用可重复的 `--redact <literal>` 补充处理。
+
+非交互环境必须在人工检查预览后显式增加 `--confirm-report`。如果报告含疑似私钥或已知 token 仍无法安全处理，CLI 会拒绝生成；操作失败返回 `4`，即使使用 `--exit-zero` 也不会伪装成功。
+
+普通误报、普通漏报和集成缺口分别使用：
+
+- [Guard False Positive](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=guard-false-positive.yml)
+- [Guard False Negative](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=guard-false-negative.yml)
+- [Guard Integration Gap](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=guard-integration-gap.yml)
+
+能稳定绕过 Hook、解析器、包装器、协议或执行控制的安全问题使用[私密漏洞报告](https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new)，不要先公开复现细节。
+
+## 6. 三个常见问题
 
 **找不到 `cyberhuatuo`**
 
@@ -87,9 +113,9 @@ python -m cyberhuatuo guard --self-test --workspace-root .
 
 用户完成上手的最低证据是：
 
-1. 本地自检显示 `SELF-TEST PASSED`。
-2. 插件在 `/plugins` 中启用。
-3. Hook 在 `/hooks` 中已检查并信任。
-4. `agent_action_guard` 对示例命令返回预期 `ASK`，且没有执行该命令。
+1. **Ready**：本地自检显示 `SELF-TEST PASSED`。
+2. **Manual activation**：CLI 或 MCP 审查一条真实、未执行的命令，并确认预期/实际判定。
+3. **Enforced activation**：插件在 `/plugins` 中启用，Hook 在 `/hooks` 中已检查并信任，宿主真实发出并执行 `PreToolUse` 决策。
+4. **Contribution**：脱敏病例经维护者复现并进入回归测试；只有此时才计入 WEC、署名、药方和魂环。
 
 官方宿主说明：[Codex Plugins](https://developers.openai.com/codex/plugins)、[Codex Hooks](https://developers.openai.com/codex/hooks)、[Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)。

@@ -1,6 +1,6 @@
 # CyberHuaTuo Agent Action Guard
 
-Updated: 2026-07-13
+Updated: 2026-07-14
 
 ## Decision
 
@@ -22,6 +22,24 @@ New users should begin with `cyberhuatuo guard --self-test --workspace-root .`. 
 - `BLOCK`: the action has machine, identity, system, outside-workspace, dynamic, wildcard, unresolved, disk, or database scope that cannot be bounded safely.
 
 Each result includes stable `CHT-*` rule IDs, reasons, targets, reversibility, and safer next steps. Codex `PreToolUse` does not currently support `ask`; the hook converts `ASK` to `deny`. Claude Code receives `ask` and can show an interactive approval.
+
+## Local Case Reports
+
+CyberHuaTuo `0.2.3+` can turn a real command review into a local redacted Markdown case without executing or uploading the command:
+
+```bash
+cyberhuatuo guard "<exact proposed command>" --workspace-root . --expected BLOCK --report reports/guard-report.md
+```
+
+- `--expected` accepts `ALLOW`, `ASK`, or `BLOCK`. A match exits `0`; a mismatch exits `1`.
+- The CLI emits the complete redacted preview before writing and requires confirmation.
+- Non-interactive writing requires explicit `--confirm-report`; implicit overwrite is refused unless `--overwrite-report` is also supplied.
+- `--redact <literal>` can be repeated for private project or business identifiers that deterministic patterns cannot identify.
+- Known credentials, URL authorities, host/user identity, workspace/home context, resolved absolute paths, reasons, and targets are redacted before serialization.
+- Private-key material and known secrets that remain after redaction fail closed with exit `4`. Operational report errors are never masked by `--exit-zero`.
+- The case fingerprint is derived from the canonical redacted command, expected/actual decisions, and rule IDs, never directly from the raw command.
+
+Public forms separate [false positives](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=guard-false-positive.yml), [ordinary false negatives](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=guard-false-negative.yml), and [integration gaps](https://github.com/JinNing6/CyberHuaTuo-Plugin/issues/new?template=guard-integration-gap.yml). Reliable Hook/parser/wrapper/protocol bypasses use [private vulnerability reporting](https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new).
 
 ## Current Coverage
 

@@ -9,7 +9,7 @@
     {
       "name": "cyberhuatuo-plugin",
       "source": "./",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "description": "When a coding agent gets sick, CyberHuaTuo lets it diagnose the traceback through MCP, apply the cure, then save or upload the solved case as a reusable prescription with an optional First Soul Ring contribution path. A bundled PreToolUse guard also reviews destructive shell actions before execution.",
       "category": "Developer Tools",
       "keywords": [

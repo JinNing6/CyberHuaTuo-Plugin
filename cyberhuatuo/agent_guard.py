@@ -403,7 +403,7 @@ def assess_command(
     )
 
 
-def format_guard_report(assessment: GuardAssessment) -> str:
+def format_guard_report(assessment: GuardAssessment, *, expected: str | None = None) -> str:
     """Format a compact report suitable for CLI and MCP surfaces."""
 
     icon = {"allow": "ALLOW", "ask": "ASK", "block": "BLOCK"}[assessment.decision]
@@ -417,6 +417,16 @@ def format_guard_report(assessment: GuardAssessment) -> str:
         f"- Workspace: `{assessment.workspace_root}`",
         "- This guard is read-only and does not execute, rewrite, or approve the proposed command.",
     ]
+    if expected is not None:
+        normalized_expected = expected.strip().lower()
+        if normalized_expected not in {"allow", "ask", "block"}:
+            raise ValueError("expected must be ALLOW, ASK, or BLOCK")
+        lines.extend(
+            [
+                f"- Expected: **{normalized_expected.upper()}**",
+                f"- Expected match: **{'yes' if assessment.decision == normalized_expected else 'no'}**",
+            ]
+        )
     if assessment.targets:
         lines.append(f"- Parsed targets: {', '.join(f'`{target}`' for target in assessment.targets)}")
     lines.extend(["", "## Reasons"])

@@ -1,0 +1,79 @@
+name: Guard False Positive
+description: Report a real redacted command that CyberHuaTuo ASKed or BLOCKed but should have allowed.
+title: "[Guard False Positive] "
+labels:
+  - agent-guard
+  - false-positive
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for an ordinary Guard false positive. **Do not execute a dangerous command to create a report.**
+
+        Generate a local, preview-first report when possible:
+
+        ```bash
+        cyberhuatuo guard "<exact proposed command>" --workspace-root . --expected ALLOW --report reports/guard-report.md
+        ```
+
+        The report is local and performs no upload. Review it again before pasting. Add `--redact <literal>` for private project or business identifiers.
+
+  - type: textarea
+    id: guard_report
+    attributes:
+      label: Redacted Guard report
+      description: Paste the generated report, or provide the same fields manually. Never paste the unreviewed raw output.
+      placeholder: |
+        Case fingerprint:
+        CyberHuaTuo version:
+        Agent host / OS / shell:
+        Redacted command:
+        Expected: ALLOW
+        Actual: ASK or BLOCK
+        Rule IDs:
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: why_safe
+    attributes:
+      label: Why the command should be allowed
+      description: Explain the bounded effect and why the matched rule is too broad.
+      placeholder: |
+        Intended effect:
+        Resolved target scope:
+        Why no destructive effect occurs:
+        Safer equivalent, if any:
+    validations:
+      required: true
+
+  - type: textarea
+    id: minimal_reproduction
+    attributes:
+      label: Minimal reproduction context
+      description: Include only the minimum host, Hook/CLI/MCP path, cwd/workspace relationship, and syntax needed to reproduce.
+      placeholder: |
+        Entry path: CLI / MCP / Hook
+        Host:
+        Hook trusted: yes / no / not applicable
+        Reproduction steps:
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety_ack
+    attributes:
+      label: Public report safety
+      description: This repository and Issue will be public.
+      options:
+        - label: I removed tokens, credentials, private URLs, usernames, hostnames, absolute paths, proprietary data, and private repository identifiers.
+          required: true
+        - label: This is a real observed Guard result, not a fabricated adoption case.
+          required: true
+        - label: I did not execute a dangerous command solely to create this report.
+          required: true
+        - label: I understand that acceptance and contributor credit occur only after reproduction and regression-test review.
+          required: true
+    validations:
+      required: true

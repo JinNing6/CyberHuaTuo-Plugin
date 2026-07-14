@@ -1,10 +1,10 @@
 [project]
 name = "cyberhuatuo-claude-desktop"
-version = "0.2.2"
+version = "0.2.3"
 description = "Claude Desktop MCPB wrapper for CyberHuaTuo."
 requires-python = ">=3.10"
 dependencies = [
-    "cyberhuatuo==0.2.2",
+    "cyberhuatuo==0.2.3",
 ]
 
 [tool.uv]

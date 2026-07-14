@@ -1,6 +1,6 @@
 # CyberHuaTuo Privacy Policy
 
-Last updated: 2026-06-03.
+Last updated: 2026-07-14.
 
 CyberHuaTuo is an open-source MCP server, Codex plugin, Claude plugin, and Claude Desktop extension for diagnosing AI-agent and framework failures.
 
@@ -18,6 +18,19 @@ Some tools write local runtime state in the user's CyberHuaTuo environment:
 - ChromaDB indexes and epidemic reports can be stored locally for search and monitoring.
 
 Local runtime files such as `.user_data/`, `.chroma_db/`, `.env`, and generated reports are excluded from the public repository by `.gitignore`.
+
+### Agent Action Guard Reports
+
+`cyberhuatuo guard --report` builds a local Markdown preview from the command text supplied by the user. Report generation:
+
+- Does not execute the reviewed command.
+- Performs no network request, telemetry, or automatic public upload.
+- Requires an expected `ALLOW`, `ASK`, or `BLOCK` decision.
+- Shows the redacted report before writing and requires interactive confirmation, or explicit `--confirm-report` in non-interactive use.
+- Refuses implicit overwrite and refuses to generate a public report when private-key material or a known unredacted token remains.
+- Redacts known credentials, URL authorities, host/user identity, workspace/home context, and absolute paths before serialization.
+
+Automated redaction cannot identify every private business term, repository name, or proprietary identifier. Users must review the preview and can repeat `--redact <literal>` before sharing. Only the redacted report is written; the raw Guard assessment is not persisted by this command.
 
 ## External Services
 
@@ -39,6 +52,10 @@ CyberHuaTuo tools only process inputs passed to the tool call and local/public d
 
 ## Contact
 
-Report privacy or security concerns through the GitHub issue tracker:
+Report exploitable Guard, Hook, parser, protocol, enforcement, secret-exposure, or redaction vulnerabilities privately:
+
+https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new
+
+Use the public issue tracker only for redacted, non-sensitive product bugs and ordinary misclassifications:
 
 https://github.com/JinNing6/CyberHuaTuo-Plugin/issues

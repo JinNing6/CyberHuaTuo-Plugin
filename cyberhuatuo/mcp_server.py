@@ -1862,7 +1862,7 @@ def soul_ring_bounty_board(
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework key, search term, or auto for all supported frameworks.
         top_n: Number of claimable framework gaps to show.
-        release_tag: Release tag to show, such as v0.2.2.
+        release_tag: Release tag to show, such as v0.2.3.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
     """
@@ -1894,7 +1894,7 @@ def soul_ring_launch_scroll(
     Args:
         github_username: GitHub username to route through the first-ring funnel
         framework: Target framework for the first real prescription
-        release_tag: Optional release tag, such as v0.2.2
+        release_tag: Optional release tag, such as v0.2.3
     """
     scroll = format_soul_ring_launch_scroll(github_username, framework, release_tag)
     return _append_brand_footer(scroll)
@@ -1924,7 +1924,7 @@ def soul_ring_launch_campaign(
     Args:
         github_username: GitHub username to own the campaign
         framework: Target framework for first-ring contributors
-        release_tag: Optional release tag, such as v0.2.2
+        release_tag: Optional release tag, such as v0.2.3
         target_contributors: Positive target count for first-ring contributors
         surface: Public launch surface, such as PyPI release or Claude MCPB
     """
@@ -1965,7 +1965,7 @@ def current_install_command(
     Args:
         github_username: Maintainer or external contributor GitHub username.
         framework: Target framework for first-ring routing.
-        release_tag: Release tag to show, such as v0.2.2.
+        release_tag: Release tag to show, such as v0.2.3.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name to inspect.
@@ -2031,7 +2031,7 @@ def marketplace_readiness_gate(
         strict_remote: Fail the remote launch gate when public checks are blocked.
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for first-ring contributor routing.
-        release_tag: GitHub Release tag to verify, such as v0.2.2.
+        release_tag: GitHub Release tag to verify, such as v0.2.3.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name to inspect.
@@ -2111,7 +2111,7 @@ def first_public_proof_pack(
     Args:
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for proof routing.
-        release_tag: Release tag to show, such as v0.2.2.
+        release_tag: Release tag to show, such as v0.2.3.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name for install commands.
@@ -2156,7 +2156,7 @@ def first_contributor_invite(
         github_username: Maintainer or campaign owner GitHub username.
         invitee: Target external contributor GitHub username.
         framework: Target framework for first-ring contribution routing.
-        release_tag: Release tag to show, such as v0.2.2.
+        release_tag: Release tag to show, such as v0.2.3.
         target_contributors: Positive target count for first-ring contributors.
         source_url: Created Growth Issue, release, Discussion, PR, or social URL.
         repo: Public GitHub repository slug in owner/name form.
@@ -2200,7 +2200,7 @@ def marketplace_submission_copy(
     Args:
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for submission copy and proof routing.
-        release_tag: Release tag to show, such as v0.2.2.
+        release_tag: Release tag to show, such as v0.2.3.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name for install commands.
@@ -2247,7 +2247,7 @@ def record_marketplace_submission(
         channel: pypi, claude-code, claude-desktop, codex, github-release, agent-marketplace, or other.
         status: submitted, pending, needs-review, approved, published, rejected, or blocked.
         submission_url: Reviewable public http(s) URL for the submitted listing, release, issue, or review page.
-        release_tag: Release tag to bind to this evidence, such as v0.2.2.
+        release_tag: Release tag to bind to this evidence, such as v0.2.3.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name.
         note: Optional reviewer note stored with the event.
@@ -2288,7 +2288,7 @@ def marketplace_submission_status(
     Args:
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for proof routing.
-        release_tag: Release tag to inspect, such as v0.2.2.
+        release_tag: Release tag to inspect, such as v0.2.3.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name.
     """
@@ -2336,7 +2336,7 @@ def soul_ring_traction_proof(
     Args:
         github_username: GitHub username to inspect and route through the loop
         framework: Target framework for traction proof
-        release_tag: Optional release tag, such as v0.2.2
+        release_tag: Optional release tag, such as v0.2.3
         target_contributors: Positive target count for first-ring contributors
         repo: Public GitHub repository slug in owner/name form
         pypi_project: PyPI project name to inspect
@@ -2381,7 +2381,7 @@ def record_soul_ring_traction_snapshot(
     Args:
         github_username: GitHub username to inspect and route through the loop
         framework: Target framework for traction proof
-        release_tag: Optional release tag, such as v0.2.2
+        release_tag: Optional release tag, such as v0.2.3
         target_contributors: Positive target count for first-ring contributors
         repo: Public GitHub repository slug in owner/name form
         pypi_project: PyPI project name to inspect

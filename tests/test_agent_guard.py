@@ -1,10 +1,20 @@
+import io
 import json
+import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
 
 from cyberhuatuo.agent_guard import assess_command, format_guard_report
 from cyberhuatuo.cli import _build_parser, cmd_guard
+from cyberhuatuo.guard_report import (
+    GuardReportError,
+    build_guard_case_report,
+    format_guard_case_report,
+    redact_guard_text,
+    write_guard_case_report,
+)
 
 
 @pytest.mark.parametrize(
@@ -119,6 +129,15 @@ def test_guard_result_is_serializable_and_explains_no_rollback(tmp_path):
     assert result.rule_ids[0].startswith("CHT-")
 
 
+def test_guard_report_formats_expected_decision(tmp_path):
+    result = assess_command("rm -rf ./cache", cwd=tmp_path, workspace_root=tmp_path)
+
+    report = format_guard_report(result, expected="ASK")
+
+    assert "Expected: **ASK**" in report
+    assert "Expected match: **yes**" in report
+
+
 def test_cli_exposes_guard_without_an_execute_mode():
     parser = _build_parser()
     args = parser.parse_args(["guard", "rm -rf ./cache", "--workspace-root", ".", "--json"])
@@ -127,6 +146,68 @@ def test_cli_exposes_guard_without_an_execute_mode():
     assert args.shell_command == "rm -rf ./cache"
     assert args.json is True
     assert not hasattr(args, "execute")
+
+
+def test_cli_expected_decision_uses_match_exit_contract(tmp_path, capsys):
+    parser = _build_parser()
+    matching = parser.parse_args([
+        "guard",
+        "rm -rf /",
+        "--workspace-root",
+        str(tmp_path),
+        "--expected",
+        "BLOCK",
+    ])
+    mismatch = parser.parse_args([
+        "guard",
+        "rm -rf /",
+        "--workspace-root",
+        str(tmp_path),
+        "--expected",
+        "ask",
+    ])
+
+    assert matching.expected == "block"
+    assert cmd_guard(matching) == 0
+    assert "Expected match: **yes**" in capsys.readouterr().out
+    assert cmd_guard(mismatch) == 1
+    assert "Expected match: **no**" in capsys.readouterr().out
+
+
+def test_cli_expected_json_is_machine_readable(tmp_path, capsys):
+    parser = _build_parser()
+    args = parser.parse_args([
+        "guard",
+        "rm -rf ./cache",
+        "--cwd",
+        str(tmp_path),
+        "--workspace-root",
+        str(tmp_path),
+        "--expected",
+        "ask",
+        "--json",
+    ])
+
+    assert cmd_guard(args) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["expected"] == "ask"
+    assert payload["matches_expected"] is True
+
+
+def test_cli_exit_zero_only_masks_decision_mismatch(tmp_path, capsys):
+    parser = _build_parser()
+    args = parser.parse_args([
+        "guard",
+        "rm -rf /",
+        "--workspace-root",
+        str(tmp_path),
+        "--expected",
+        "allow",
+        "--exit-zero",
+    ])
+
+    assert cmd_guard(args) == 0
+    assert "Expected match: **no**" in capsys.readouterr().out
 
 
 def test_guard_self_test_reviews_three_cases_without_execute_mode(tmp_path, capsys):
@@ -175,6 +256,178 @@ def test_guard_requires_a_command_or_self_test(capsys):
 
     assert cmd_guard(args) == 1
     assert "Provide a shell command or use --self-test." in capsys.readouterr().err
+
+
+def test_redacted_guard_report_contains_no_raw_secret_identity_or_path(tmp_path, capsys):
+    parser = _build_parser()
+    report_path = tmp_path / "reports" / "guard-report.md"
+    raw_token = "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+    command = rf'Remove-Item "C:\Users\Alice\SecretRepo" -Recurse -Force --token {raw_token}'
+    args = parser.parse_args([
+        "guard",
+        command,
+        "--workspace-root",
+        str(tmp_path / "PrivateWorkspace"),
+        "--expected",
+        "block",
+        "--report",
+        str(report_path),
+        "--confirm-report",
+        "--redact",
+        "SecretRepo",
+        "--agent-host",
+        "codex",
+        "--shell",
+        "PowerShell",
+        "--helpful",
+        "no",
+    ])
+
+    assert cmd_guard(args) == 0
+    output = capsys.readouterr().out
+    report = report_path.read_text(encoding="utf-8")
+
+    for private_value in (raw_token, "Alice", "SecretRepo", str(tmp_path)):
+        assert private_value not in output
+        assert private_value not in report
+    assert "<REDACTED_SECRET>" in report
+    assert "Command executed by this report: **no**" in report
+    assert "Agent host: `codex`" in report
+    assert "Expected: **BLOCK**" in report
+    assert "Actual: **BLOCK**" in report
+    assert "Case fingerprint: `CHT-GUARD-" in report
+    assert "Generated locally" in report
+    assert "No network request or public upload was performed." in output
+
+
+def test_guard_report_requires_expected_and_rejects_raw_json(tmp_path, capsys):
+    parser = _build_parser()
+    missing_expected = parser.parse_args([
+        "guard",
+        "git status --short",
+        "--report",
+        str(tmp_path / "missing.md"),
+    ])
+    raw_json = parser.parse_args([
+        "guard",
+        "git status --short",
+        "--expected",
+        "allow",
+        "--report",
+        str(tmp_path / "raw-json.md"),
+        "--json",
+    ])
+
+    assert cmd_guard(missing_expected) == 4
+    assert "--report requires --expected" in capsys.readouterr().err
+    assert cmd_guard(raw_json) == 4
+    assert "cannot be combined with --json" in capsys.readouterr().err
+
+
+def test_noninteractive_report_requires_explicit_confirmation(tmp_path, capsys, monkeypatch):
+    parser = _build_parser()
+    report_path = tmp_path / "guard-report.md"
+    args = parser.parse_args([
+        "guard",
+        "git status --short",
+        "--expected",
+        "allow",
+        "--report",
+        str(report_path),
+    ])
+    monkeypatch.setattr(sys, "stdin", io.StringIO())
+
+    assert cmd_guard(args) == 4
+    captured = capsys.readouterr()
+    assert "Guard report preview" in captured.out
+    assert "requires --confirm-report" in captured.err
+    assert not report_path.exists()
+
+
+def test_report_operational_error_is_not_masked_by_exit_zero(tmp_path, capsys):
+    parser = _build_parser()
+    report_path = tmp_path / "guard-report.md"
+    report_path.write_text("existing", encoding="utf-8")
+    args = parser.parse_args([
+        "guard",
+        "git status --short",
+        "--expected",
+        "allow",
+        "--report",
+        str(report_path),
+        "--confirm-report",
+        "--exit-zero",
+    ])
+
+    assert cmd_guard(args) == 4
+    assert report_path.read_text(encoding="utf-8") == "existing"
+    assert "Report already exists" in capsys.readouterr().err
+
+
+def test_report_overwrite_is_explicit_and_atomic(tmp_path):
+    path = tmp_path / "guard-report.md"
+    written = write_guard_case_report(path, "first\n")
+
+    assert written == path.resolve()
+    with pytest.raises(GuardReportError, match="already exists"):
+        write_guard_case_report(path, "second\n")
+    write_guard_case_report(path, "second\n", overwrite=True)
+    assert path.read_text(encoding="utf-8") == "second\n"
+
+
+def test_private_key_material_fails_closed(tmp_path, capsys):
+    parser = _build_parser()
+    report_path = tmp_path / "guard-report.md"
+    args = parser.parse_args([
+        "guard",
+        "echo -----BEGIN PRIVATE KEY-----",
+        "--expected",
+        "allow",
+        "--report",
+        str(report_path),
+        "--confirm-report",
+    ])
+
+    assert cmd_guard(args) == 4
+    assert "private-key block" in capsys.readouterr().err
+    assert not report_path.exists()
+
+
+def test_case_fingerprint_uses_redacted_canonical_case(tmp_path):
+    assessment = assess_command(
+        "rm -rf ./client-alpha/cache",
+        cwd=tmp_path,
+        workspace_root=tmp_path,
+    )
+    first = build_guard_case_report(
+        assessment,
+        expected="ask",
+        custom_redactions=("client-alpha",),
+        generated_at=datetime(2026, 7, 14, 0, 0, tzinfo=timezone.utc),
+    )
+    second = build_guard_case_report(
+        assessment,
+        expected="ASK",
+        custom_redactions=("client-alpha",),
+        generated_at=datetime(2026, 7, 15, 0, 0, tzinfo=timezone.utc),
+    )
+
+    assert first.case_fingerprint == second.case_fingerprint
+    assert "client-alpha" not in format_guard_case_report(first)
+
+
+def test_redaction_removes_url_authority_and_absolute_paths(tmp_path):
+    raw = "curl https://user:pass@internal.example/api?token=abc C:\\Company\\Private /srv/private/data"
+
+    redacted = redact_guard_text(raw, cwd=str(tmp_path), workspace_root=str(tmp_path))
+
+    assert "user:pass" not in redacted
+    assert "internal.example" not in redacted
+    assert "C:\\Company" not in redacted
+    assert "/srv/private" not in redacted
+    assert "token=abc" not in redacted
+    assert "https://<URL_HOST>" in redacted
+    assert "<ABSOLUTE_PATH>" in redacted
 
 
 def test_packaged_and_codex_guard_skills_match():

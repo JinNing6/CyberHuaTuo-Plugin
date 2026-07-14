@@ -1,0 +1,105 @@
+name: Guard Integration Gap
+description: Report when a supported Agent host does not invoke, display, or enforce the expected Guard decision.
+title: "[Guard Integration Gap] "
+labels:
+  - agent-guard
+  - integration-gap
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when CLI/MCP classification is correct but the Agent host Hook is missing, not invoked, not displayed, or not enforced.
+
+        If the gap is a reliable bypass that could enable unapproved destructive execution, report it privately through [GitHub Security Advisories](https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new), not here.
+
+        Do not execute a destructive command. Use a redacted command string and compare the manual Guard result with the host event path.
+
+  - type: dropdown
+    id: agent_host
+    attributes:
+      label: Agent host
+      description: Select the host where the integration gap occurred.
+      options:
+        - Codex desktop / Work
+        - Codex CLI
+        - Codex IDE extension
+        - Claude Code
+        - Claude Desktop
+        - MCP client
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: failed_stage
+    attributes:
+      label: Failed integration stage
+      options:
+        - Plugin or Hook installation
+        - Hook trust or activation
+        - PreToolUse event emission
+        - Guard process invocation
+        - Decision protocol parsing
+        - ASK / BLOCK enforcement
+        - Result display or explanation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: guard_report
+    attributes:
+      label: Redacted manual Guard report
+      description: Paste the previewed report for the same command string. Never paste raw private paths or credentials.
+      placeholder: |
+        Case fingerprint:
+        Redacted command:
+        Expected:
+        Actual manual CLI/MCP decision:
+        Rule IDs:
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed_integration
+    attributes:
+      label: Expected and observed host behavior
+      placeholder: |
+        Expected Hook event and decision:
+        Observed behavior:
+        Was /hooks reviewed and trusted?:
+        Did the host emit PreToolUse?:
+        Did the host enforce the returned decision?:
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Redacted environment and logs
+      description: Include CyberHuaTuo version, host version, OS, shell, installation method, and minimal redacted logs.
+      placeholder: |
+        CyberHuaTuo version:
+        Host version:
+        OS / shell:
+        Install method:
+        Redacted logs:
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: routing_ack
+    attributes:
+      label: Security routing and privacy
+      options:
+        - label: This report is safe to discuss publicly and does not disclose a reliable destructive-action bypass; otherwise I will use private vulnerability reporting.
+          required: true
+        - label: I removed tokens, credentials, private URLs, usernames, hostnames, absolute paths, proprietary data, and private repository identifiers.
+          required: true
+        - label: I did not execute a dangerous command solely to create this report.
+          required: true
+        - label: This is a real observed integration result, not a fabricated adoption case.
+          required: true
+    validations:
+      required: true

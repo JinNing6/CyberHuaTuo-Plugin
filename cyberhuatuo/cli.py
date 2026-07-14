@@ -215,6 +215,28 @@ def cmd_guard(args):
     """Review a proposed shell command without executing it."""
     from .agent_guard import assess_command, format_guard_report
 
+    report_only_options = (
+        args.confirm_report,
+        args.overwrite_report,
+        bool(args.redact),
+        args.agent_host != "manual-cli",
+        args.shell is not None,
+        args.helpful != "unsure",
+    )
+
+    if args.self_test and (args.expected or args.report or any(report_only_options)):
+        print("--self-test cannot be combined with expected-decision or report options.", file=sys.stderr)
+        return 4
+    if args.report and not args.expected:
+        print("--report requires --expected ALLOW, ASK, or BLOCK.", file=sys.stderr)
+        return 4
+    if args.report and args.json:
+        print("--report cannot be combined with --json; the report path emits a redacted Markdown preview.", file=sys.stderr)
+        return 4
+    if not args.report and any(report_only_options):
+        print("Report confirmation, overwrite, redaction, host, shell, and helpful options require --report.", file=sys.stderr)
+        return 4
+
     if args.self_test:
         import json
 
@@ -274,13 +296,72 @@ def cmd_guard(args):
         workspace_root=args.workspace_root,
         allowed_roots=args.allowed_root,
     )
-    if args.json:
-        print(assessment.to_json())
+    matches_expected = args.expected is None or assessment.decision == args.expected
+
+    if args.report:
+        from .guard_report import (
+            GuardReportError,
+            build_guard_case_report,
+            format_guard_case_report,
+            write_guard_case_report,
+        )
+
+        try:
+            case_report = build_guard_case_report(
+                assessment,
+                expected=args.expected,
+                agent_host=args.agent_host,
+                shell=args.shell,
+                helpful=args.helpful,
+                custom_redactions=args.redact or (),
+            )
+            report_text = format_guard_case_report(case_report)
+        except GuardReportError as exc:
+            print(f"Guard report refused: {exc}", file=sys.stderr)
+            return 4
+
+        print("Guard report preview (redacted; review every field before sharing):")
+        print("=" * 67)
+        print(report_text, end="")
+
+        if not args.confirm_report:
+            if not sys.stdin.isatty():
+                print(
+                    "Report not written: non-interactive output requires --confirm-report after preview review.",
+                    file=sys.stderr,
+                )
+                return 4
+            confirmed = input(f"Write this redacted report to {args.report!r}? [y/N] ").strip().lower()
+            if confirmed not in {"y", "yes"}:
+                print("Report not written.")
+                return 4
+
+        try:
+            write_guard_case_report(
+                args.report,
+                report_text,
+                overwrite=args.overwrite_report,
+            )
+        except (GuardReportError, OSError) as exc:
+            print(f"Guard report not written: {exc}", file=sys.stderr)
+            return 4
+        print("Redacted Guard report written locally.")
+        print("No network request or public upload was performed.")
+    elif args.json:
+        import json
+
+        payload = assessment.as_dict()
+        if args.expected is not None:
+            payload["expected"] = args.expected
+            payload["matches_expected"] = matches_expected
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
     else:
-        print(format_guard_report(assessment))
+        print(format_guard_report(assessment, expected=args.expected))
 
     if args.exit_zero:
         return 0
+    if args.expected is not None:
+        return 0 if matches_expected else 1
     return {"allow": 0, "ask": 2, "block": 3}[assessment.decision]
 
 
@@ -1286,11 +1367,11 @@ def _build_parser() -> argparse.ArgumentParser:
             "  cyberhuatuo frameworks --search langchain\n"
             "  cyberhuatuo challenge --username your-github-username --framework langchain\n"
             "  cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username\n"
-            "  cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.2 --target-contributors 3\n"
-            "  cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.2\n"
-            "  cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3\n"
-            "  cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3\n"
-            "  cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.2 --target-contributors 3 --source-url https://example.com/proof\n"
+            "  cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.3 --target-contributors 3\n"
+            "  cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.3\n"
+            "  cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.3 --target-contributors 3\n"
+            "  cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.3 --target-contributors 3\n"
+            "  cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.3 --target-contributors 3 --source-url https://example.com/proof\n"
             "  cyberhuatuo record-return --username your-github-username --framework langchain --surface \"PyPI release\" --source-url https://example.com/post\n"
             "  cyberhuatuo activation --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10\n"
             "  cyberhuatuo record-session --username your-github-username --framework langchain --surface \"First agent session\" --source-url https://example.com/post\n"
@@ -1357,6 +1438,38 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--json", action="store_true", help="Emit a machine-readable assessment")
     p.add_argument("--exit-zero", action="store_true", help="Report only; always exit with status 0")
+    p.add_argument(
+        "--expected",
+        type=str.lower,
+        choices=["allow", "ask", "block"],
+        help="Expected decision; exit 0 on match and 1 on mismatch unless --exit-zero is used",
+    )
+    p.add_argument("--report", default=None, help="Preview and write a local redacted Markdown case report")
+    p.add_argument(
+        "--confirm-report",
+        action="store_true",
+        help="Confirm report writing in non-interactive use after reviewing the emitted preview",
+    )
+    p.add_argument(
+        "--overwrite-report",
+        action="store_true",
+        help="Replace an existing report after explicit preview confirmation",
+    )
+    p.add_argument(
+        "--redact",
+        action="append",
+        default=None,
+        help="Additional literal private value to redact; repeat as needed",
+    )
+    p.add_argument("--agent-host", default="manual-cli", help="Agent host label recorded in a local report")
+    p.add_argument("--shell", default=None, help="Shell label recorded in a local report")
+    p.add_argument(
+        "--helpful",
+        type=str.lower,
+        choices=["yes", "no", "unsure"],
+        default="unsure",
+        help="Whether the Guard result was helpful, recorded only in a local report",
+    )
     p.add_argument(
         "--self-test",
         action="store_true",
@@ -1554,7 +1667,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="auto", help="Target framework, or auto for all supported frameworks")
     p.add_argument("--top-n", "-n", type=int, default=8, help="Number of claimable framework gaps to show")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.set_defaults(func=cmd_bounty)
@@ -1563,14 +1676,14 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("launch", help="Generate the Soul Ring marketplace launch scroll")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the first-ring funnel")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.set_defaults(func=cmd_launch)
 
     # --- launch campaign ---
     p = subs.add_parser("launch-campaign", help="Generate the Soul Ring cold-start launch campaign")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the launch campaign")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--surface", default="PyPI / Claude / Codex launch", help="Public launch surface")
     p.set_defaults(func=cmd_launch_campaign)
@@ -1579,7 +1692,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("traction-proof", help="Generate public Soul Ring traction proof")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the traction proof")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1592,7 +1705,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("install-command", help="Print the current safe public install command")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for first-ring routing")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1606,7 +1719,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for first-ring routing")
-    p.add_argument("--release-tag", default="", help="Release tag to install, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to install, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1621,7 +1734,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--strict-remote", action="store_true", help="Fail when public PyPI/GitHub readiness is blocked")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for traction proof context")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1635,7 +1748,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username for release recheck commands")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for proof routing")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1645,7 +1758,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("proof-pack", help="Generate the no-network First Public Proof Pack")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for proof routing")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1656,7 +1769,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--username", "-u", default="your-github-username", help="Maintainer GitHub username")
     p.add_argument("--invitee", default="external-contributor-github-username", help="Invitee GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the invite")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--source-url", default="", help="Created Growth Issue, release, Discussion, PR, or social URL")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
@@ -1667,7 +1780,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("market-copy", help="Generate PyPI, Claude, Codex, and release submission copy")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission copy")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1690,7 +1803,7 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Current public submission status",
     )
     p.add_argument("--submission-url", required=True, help="Reviewable public http(s) URL for the submission")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
     p.add_argument("--note", default="", help="Optional reviewer note")
@@ -1700,7 +1813,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("market-status", help="Report marketplace submission status from the local ledger")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission status")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.2")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
     p.set_defaults(func=cmd_market_status)

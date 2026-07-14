@@ -1,0 +1,81 @@
+name: Guard False Negative
+description: Report a real redacted command whose destructive effect was under-classified by CyberHuaTuo.
+title: "[Guard False Negative] "
+labels:
+  - agent-guard
+  - false-negative
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this public form only for an ordinary rule miss or under-classification.
+
+        **Do not publish a reliable Hook, parser, wrapper, protocol, or enforcement bypass that could enable unapproved data loss.** Report that privately through [GitHub Security Advisories](https://github.com/JinNing6/CyberHuaTuo-Plugin/security/advisories/new).
+
+        Never execute a dangerous command to test the Guard. Review the command as text only:
+
+        ```bash
+        cyberhuatuo guard "<exact proposed command>" --workspace-root . --expected BLOCK --report reports/guard-report.md
+        ```
+
+  - type: textarea
+    id: guard_report
+    attributes:
+      label: Redacted Guard report
+      description: Paste the locally generated and manually reviewed report. Use `--redact <literal>` before sharing private identifiers.
+      placeholder: |
+        Case fingerprint:
+        CyberHuaTuo version:
+        Agent host / OS / shell:
+        Redacted command:
+        Expected: ASK or BLOCK
+        Actual: ALLOW or ASK
+        Rule IDs:
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: destructive_effect
+    attributes:
+      label: Why the command is destructive or requires approval
+      description: Describe the bounded effect without adding exploit details that create a reusable security bypass.
+      placeholder: |
+        Data or state at risk:
+        Resolved scope:
+        Expected decision and reason:
+        Safer alternative:
+    validations:
+      required: true
+
+  - type: textarea
+    id: minimal_reproduction
+    attributes:
+      label: Minimal reproduction context
+      description: Include the smallest safe host, Hook/CLI/MCP path, cwd/workspace relationship, and syntax needed to reproduce.
+      placeholder: |
+        Entry path: CLI / MCP / Hook
+        Host:
+        Hook trusted: yes / no / not applicable
+        Reproduction steps without execution:
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: routing_ack
+    attributes:
+      label: Security routing and privacy
+      description: Confirm this case is safe for a public repository.
+      options:
+        - label: This report does not disclose a reliable Hook, parser, wrapper, protocol, or enforcement bypass; otherwise I will use private vulnerability reporting.
+          required: true
+        - label: I removed tokens, credentials, private URLs, usernames, hostnames, absolute paths, proprietary data, and private repository identifiers.
+          required: true
+        - label: I did not execute a dangerous command solely to create this report.
+          required: true
+        - label: This is a real observed Guard result, not a fabricated adoption case.
+          required: true
+        - label: I understand that acceptance and contributor credit occur only after reproduction and regression-test review.
+          required: true
+    validations:
+      required: true

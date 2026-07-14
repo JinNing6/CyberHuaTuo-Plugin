@@ -43,6 +43,18 @@ cyberhuatuo guard "<exact proposed shell command>" --cwd "<cwd>" --workspace-roo
 
 The review is read-only and does not execute, rewrite, approve, or intercept the command.
 
+## Case Report
+
+When a real decision differs from the expected result, generate a local redacted case without executing the reviewed command:
+
+```bash
+cyberhuatuo guard "<exact proposed shell command>" --cwd "<cwd>" --workspace-root "<workspace>" --expected BLOCK --report reports/guard-report.md
+```
+
+Review the complete preview before confirming the write. Repeat `--redact <literal>` for private project or business identifiers. The report performs no network request or automatic upload, refuses implicit overwrite, and fails closed when private-key material or a known unredacted secret remains.
+
+Use public Guard false-positive, ordinary false-negative, or integration-gap forms only for safely redacted details. Route reliable Hook, parser, wrapper, protocol, or enforcement bypasses through the repository's private vulnerability reporting page.
+
 ## Decision Contract
 
 - `ALLOW`: no destructive signature was detected. Continue only within the declared task and workspace.
