@@ -1,6 +1,6 @@
 {
   "name": "cyberhuatuo-plugin",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "When a coding agent gets sick, let it ask CyberHuaTuo, fix the error, and keep the cure.",
   "author": {
     "name": "CyberHuaTuo"
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "CyberHuaTuo Plugin",
     "shortDescription": "When your agent gets sick, let it ask HuaTuo and keep the cure.",
-    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for the moment your coding agent gets sick across MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures. Agents can diagnose real tracebacks, apply the cure, then save or upload the solved case as a reusable prescription.",
+    "longDescription": "CyberHuaTuo bundles a Codex skill and an MCP server for the moment your coding agent gets sick across MCP, LangChain, CrewAI, LlamaIndex, OpenAI SDK, and frontend framework failures. Agents request an offline Gold cure first, receive at most one clearly labeled Reviewed candidate when Gold does not match, then fall back to broader diagnosis; solved cases can be saved or uploaded as a reusable prescription in reviewable draft state.",
     "developerName": "CyberHuaTuo",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,7 +33,7 @@
     ],
     "brandColor": "#00D09C",
     "defaultPrompt": [
-      "Ask CyberHuaTuo to diagnose this traceback, apply the cure, and return the verification command.",
+      "Ask CyberHuaTuo for a Gold-first cure for this traceback. If it returns a Reviewed candidate, verify compatibility before proposing it; diagnose more broadly only when no candidate matches, then apply the cure only with appropriate approval and record the verification result.",
       "Search CyberHuaTuo for this framework error.",
       "Save this solved issue as a CyberHuaTuo prescription.",
       "Run a security checkup on this agent code.",

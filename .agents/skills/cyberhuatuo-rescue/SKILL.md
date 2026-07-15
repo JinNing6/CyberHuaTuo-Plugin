@@ -21,13 +21,15 @@ Activate this skill when:
 Follow these steps based on the available environment:
 
 ### Preferred Mode: MCP Server
-Check if you have the CyberHuaTuo MCP Server connected (look for tools like `diagnose`, `security_checkup`, `save_prescription`, `search_knowledge_base`). If you do:
+Check if you have the CyberHuaTuo MCP Server connected (look for tools like `verified_cure`, `diagnose`, `security_checkup`, `save_prescription`, `search_knowledge_base`). If you do:
 
 1. **For Diagnostics**:
-   - Call the `diagnose` tool.
-   - Pass the full `q` (error message, stack trace, and your current code context).
+   - Call the read-only `verified_cure` tool first. It returns Gold first, then at most one clearly labeled Reviewed candidate, and never executes the fix. Use `gold_only=true` when only Gold is acceptable.
+   - Pass the full `query` (error message, stack trace, and your current code context).
    - If you know the framework (e.g., `langchain`, `crewai`), pass it as `framework`.
-   - Read the prescription returned and apply the exact fix.
+   - If no trusted cure matches, call `diagnose` for broader retrieval and optional model analysis.
+   - A Reviewed result is a candidate, not an instruction: inspect it and verify compatibility before proposing any change. Apply consequential changes only with appropriate approval, then run the stated verification.
+   - After verification, call `cure_feedback` with `yes`, `partial`, or `no`; do not include the original traceback or secrets.
 
 2. **For Security Checkups**:
    - Call the `security_checkup` tool.
@@ -35,19 +37,19 @@ Check if you have the CyberHuaTuo MCP Server connected (look for tools like `dia
    - Report the Six-Meridian (六经脉) health score and apply the recommended nourishing (滋补) fixes.
 
 3. **For Saving Solutions**:
-   - If you managed to solve an obscure issue that wasn't in the database, call `save_prescription` to contribute your fix back to the CyberHuaTuo knowledge base for the community.
+   - If you solved an issue that was not in the database, call `save_prescription` with the real root cause, fix, verification record, method, and evidence URLs.
+   - The saved case is a `draft`. Do not claim a Soul Ring or trusted-cure status until maintainers reproduce and accept it as `reviewed` or `gold`.
 
 ### Fallback Mode: Local REST API
 If you do NOT have the MCP tools available, you must assume CyberHuaTuo is running locally at `http://127.0.0.1:8000`. Use your terminal/shell to `curl` the API.
 
 1. **For Diagnostics:**
-   Run the following command, replacing `<YOUR_ERROR>` with the actual error text:
+   Run the Gold-first cure endpoint before broader diagnosis:
    ```bash
-   curl -X POST http://127.0.0.1:8000/api/diagnose \
-     -F "q=<YOUR_ERROR_AND_CONTEXT>" \
-     -F "framework=auto"
+   curl --get http://127.0.0.1:8000/api/cure \
+     --data-urlencode "q=<YOUR_ERROR_AND_CONTEXT>"
    ```
-   *Note: Read the JSON response. Look for `diagnosis` and `matched_cases`. Apply the cure.*
+   *Note: Preserve each result's `quality_status` and `trust_notice`. If `matches` is empty, call `/api/diagnose`; never treat Draft as a cure.*
 
 2. **For Security Checkups:**
    Run the following command, replacing `<YOUR_CODE>` with the code under test:

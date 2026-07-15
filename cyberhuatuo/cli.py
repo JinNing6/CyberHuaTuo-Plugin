@@ -147,6 +147,7 @@ def cmd_search(args):
         query=args.query,
         framework=args.framework,
         severity=args.severity,
+        disease_category=args.category,
         top_k=args.top_k,
         include_content=True,
     )
@@ -171,11 +172,97 @@ def cmd_search(args):
     for i, r in enumerate(results, 1):
         src = "📜" if r.source == "常驻" else "⚡"
         print(f"{src} [{i}] {r.title}")
-        print(f"    框架: {r.framework} | 严重性: {r.severity} | 相关度: {r.relevance}%")
+        print(
+            f"    科室: {r.disease_category_label} | 框架: {r.framework} | "
+            f"严重性: {r.severity} | 相关度: {r.relevance}%"
+        )
         if r.content:
             preview = r.content[:300].replace("\n", " ")
             print(f"    摘要: {preview}...")
         print()
+
+
+def cmd_cure(args):
+    """Return a verified local cure without LLM or vector-index startup."""
+    query = sys.stdin.read().strip() if args.query == "-" else args.query.strip()
+    if not query:
+        print("请提供报错文本，或用 `-` 从标准输入读取。", file=sys.stderr)
+        return 2
+
+    from .cure import cure_result_json, find_cures, format_cure
+
+    matches = find_cures(
+        query,
+        framework=args.framework,
+        disease_category=args.category,
+        top_k=args.top_k,
+        min_relevance=args.min_relevance,
+        include_reviewed=args.include_reviewed,
+        include_drafts=args.include_drafts,
+        gold_only=args.gold_only,
+    )
+    if args.json:
+        print(cure_result_json(matches))
+    elif matches:
+        for index, match in enumerate(matches):
+            if index:
+                print("\n---\n")
+            print(format_cure(match))
+    else:
+        print("未找到达到当前质量门槛且足够相关的药方。")
+        if args.gold_only:
+            print("当前启用了 --gold-only；未返回 Reviewed 或 Draft。")
+        else:
+            print("已按 Gold 优先检索，并尝试一个高置信 Reviewed 候选；不会自动执行任何修复。")
+    return 0 if matches else 2
+
+
+def cmd_cure_feedback(args):
+    """Record privacy-first, case-bound feedback in the local evidence ledger."""
+    import json
+
+    from .cure_feedback import record_cure_feedback
+
+    try:
+        event = record_cure_feedback(
+            args.case_id,
+            args.outcome,
+            verification=args.verification,
+            verification_method=args.verification_method,
+            evidence_url=args.evidence_url,
+            contributor=args.contributor,
+        )
+    except ValueError as exc:
+        print(f"反馈未记录: {exc}", file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(event, ensure_ascii=False, indent=2))
+    else:
+        print(f"反馈已记录到本地证据台账: {event['event_id']}")
+        print(f"病例: {event['case_id']} | 结果: {event['outcome']} | 可审查证据: {event['reviewable']}")
+        print("未保存原始报错或 traceback，也未上传网络。")
+    return 0
+
+
+def cmd_quality_audit(args):
+    """Audit explicit prescription quality states."""
+    import json
+
+    from .case_quality import audit_knowledge_base
+    from .indexer import scan_cases
+
+    report = audit_knowledge_base(scan_cases())
+    if args.json:
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+    else:
+        counts = report["counts"]
+        print(f"病例总数: {report['total']}")
+        print(f"Gold: {counts['gold']} | Reviewed: {counts['reviewed']} | Draft: {counts['draft']}")
+        if report["invalid"]:
+            print("\n声明状态未达到质量门槛：")
+            for item in report["invalid"]:
+                print(f"- {item['case_id']}: {', '.join(item['violations'])}")
+    return 1 if report["invalid"] else 0
 
 
 def cmd_checkup(args):
@@ -410,6 +497,10 @@ def cmd_save(args):
         language=args.language,
         contributor_github=args.contributor or "anonymous",
         source_url=args.source_url or "",
+        verification=getattr(args, "verification", "") or "",
+        verification_method=getattr(args, "verification_method", "") or "",
+        evidence_urls=getattr(args, "evidence_url", None) or [],
+        safety=getattr(args, "safety", "") or "",
     )
 
     try:
@@ -417,6 +508,7 @@ def cmd_save(args):
         print("✅ 药方保存成功！")
         print(f"  病例 ID: {result['case_id']}")
         print(f"  保存路径: {result['filepath']}")
+        print("  质量状态: draft（审核通过前不进入默认治愈结果，也不计入魂环）")
     except Exception as e:
         print(f"❌ 保存失败: {e}")
         sys.exit(1)
@@ -453,11 +545,16 @@ def cmd_upload(args):
         language=args.language,
         contributor_github=args.contributor or "anonymous",
         source_url=args.source_url or "",
+        verification=getattr(args, "verification", "") or "",
+        verification_method=getattr(args, "verification_method", "") or "",
+        evidence_urls=getattr(args, "evidence_url", None) or [],
+        safety=getattr(args, "safety", "") or "",
     )
 
     try:
         result = save_case_file(submission)
         print(f"✅ 药方本地保存成功: {result['case_id']}")
+        print("🧪 质量状态: draft（公开提交后仍需复现审核）")
 
         # 同步到 GitHub
         from pathlib import Path
@@ -467,6 +564,17 @@ def cmd_upload(args):
         prescription_meta = {
             "title": args.title, "framework": args.framework,
             "prescription": args.prescription, "severity": args.severity,
+            "symptom": args.symptom or "",
+            "error_message": args.error_message or "",
+            "root_cause": args.root_cause or "",
+            "complexity": args.complexity,
+            "tags": tags,
+            "title_en": args.title_en or "",
+            "source_url": args.source_url or "",
+            "verification": getattr(args, "verification", "") or "",
+            "verification_method": getattr(args, "verification_method", "") or "",
+            "evidence_urls": getattr(args, "evidence_url", None) or [],
+            "safety": getattr(args, "safety", "") or "",
         }
 
         syncer = GitHubSyncer()
@@ -1082,6 +1190,15 @@ def cmd_frameworks(args):
             print(f"  • {fw.name} ({fw.key}) — {fw.description}")
 
 
+def cmd_departments(args):
+    """List stable prescription disease categories."""
+    from .case_taxonomy import DISEASE_CATEGORIES
+
+    _print_header("药方科室分类")
+    for category, label in DISEASE_CATEGORIES.items():
+        print(f"  {label}: {category}")
+
+
 def cmd_taxonomy(args):
     """🧬 CHT 编码系统"""
     from .taxonomy import (
@@ -1354,6 +1471,8 @@ def cmd_mine(args):
 
 def _build_parser() -> argparse.ArgumentParser:
     """构建 CLI 参数解析器"""
+    from .case_taxonomy import DISEASE_CATEGORY_KEYS
+
     parser = argparse.ArgumentParser(
         prog="cyberhuatuo",
         description="🩺 CyberHuaTuo 赛博华佗 — AI 问题诊断知识库 CLI",
@@ -1367,11 +1486,11 @@ def _build_parser() -> argparse.ArgumentParser:
             "  cyberhuatuo frameworks --search langchain\n"
             "  cyberhuatuo challenge --username your-github-username --framework langchain\n"
             "  cyberhuatuo mission --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username\n"
-            "  cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.3 --target-contributors 3\n"
-            "  cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.3\n"
-            "  cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.3 --target-contributors 3\n"
-            "  cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.3 --target-contributors 3\n"
-            "  cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.3 --target-contributors 3 --source-url https://example.com/proof\n"
+            "  cyberhuatuo bounty --username your-github-username --framework auto --top-n 8 --release-tag v0.2.4 --target-contributors 3\n"
+            "  cyberhuatuo launch --username your-github-username --framework langchain --release-tag v0.2.4\n"
+            "  cyberhuatuo launch-campaign --username your-github-username --framework langchain --release-tag v0.2.4 --target-contributors 3\n"
+            "  cyberhuatuo traction-proof --username your-github-username --framework langchain --release-tag v0.2.4 --target-contributors 3\n"
+            "  cyberhuatuo first-invite --username your-github-username --invitee external-contributor-github-username --framework langchain --release-tag v0.2.4 --target-contributors 3 --source-url https://example.com/proof\n"
             "  cyberhuatuo record-return --username your-github-username --framework langchain --surface \"PyPI release\" --source-url https://example.com/post\n"
             "  cyberhuatuo activation --username your-github-username --framework langchain --sect Azure-Sect --members your-github-username friend-github-username --top-n 10\n"
             "  cyberhuatuo record-session --username your-github-username --framework langchain --surface \"First agent session\" --source-url https://example.com/post\n"
@@ -1411,13 +1530,48 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--top-k", "-k", type=int, default=5, help="返回病例数量")
     p.set_defaults(func=cmd_diagnose)
 
+    # --- cure ---
+    p = subs.add_parser("cure", help="💊 无需 API Key，Gold 优先返回本地药方或 Reviewed 候选")
+    p.add_argument("query", help="报错文本；传入 - 可从标准输入读取")
+    p.add_argument("--framework", "-f", default=None, help="按框架过滤")
+    p.add_argument("--category", default=None, choices=DISEASE_CATEGORY_KEYS, help="按药方科室键过滤")
+    p.add_argument("--top-k", "-k", type=int, default=1, help="最多返回的药方数量")
+    p.add_argument("--min-relevance", type=float, default=45.0, help="最低错误签名匹配分数（0-100）")
+    p.add_argument(
+        "--include-reviewed",
+        action="store_true",
+        default=None,
+        help="兼容选项；现在 Gold 未命中时会自动返回一个高置信 Reviewed 候选",
+    )
+    p.add_argument("--include-drafts", action="store_true", help="同时显示未验证草稿；仅用于人工审阅")
+    p.add_argument("--gold-only", action="store_true", help="严格只返回 Gold 药方")
+    p.add_argument("--json", action="store_true", help="输出机器可读 JSON")
+    p.set_defaults(func=cmd_cure)
+
+    # --- cure-feedback ---
+    p = subs.add_parser("cure-feedback", help="🧾 本地记录药方是否治好；不保存原始报错")
+    p.add_argument("case_id", help="已存在的病例 ID")
+    p.add_argument("outcome", choices=["yes", "partial", "no"], help="治好、部分有效或无效")
+    p.add_argument("--verification", default="", help="验证结果摘要；不要粘贴密钥或完整敏感日志")
+    p.add_argument("--verification-method", default="", help="验证方式，例如 targeted-pytest")
+    p.add_argument("--evidence-url", default="", help="可公开复核的 HTTP(S) 证据 URL")
+    p.add_argument("--contributor", default="", help="可选 GitHub 用户名")
+    p.add_argument("--json", action="store_true", help="输出机器可读 JSON")
+    p.set_defaults(func=cmd_cure_feedback)
+
     # --- search ---
     p = subs.add_parser("search", help="🔍 搜索知识库")
     p.add_argument("query", help="搜索查询")
     p.add_argument("--framework", "-f", default=None, help="按框架过滤")
     p.add_argument("--severity", "-s", default=None, choices=["low", "medium", "high", "critical"])
+    p.add_argument("--category", default=None, choices=DISEASE_CATEGORY_KEYS, help="按药方科室键过滤")
     p.add_argument("--top-k", "-k", type=int, default=5)
     p.set_defaults(func=cmd_search)
+
+    # --- quality-audit ---
+    p = subs.add_parser("quality-audit", help="🧪 审计药方 draft/reviewed/gold 质量状态")
+    p.add_argument("--json", action="store_true", help="输出机器可读 JSON")
+    p.set_defaults(func=cmd_quality_audit)
 
     # --- checkup ---
     p = subs.add_parser("checkup", help="🛡️ AI Agent 安全体检")
@@ -1500,6 +1654,10 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--language", default="python")
     p.add_argument("--contributor", default="anonymous")
     p.add_argument("--source-url", default=None)
+    p.add_argument("--verification", default=None, help="真实验证命令、输出或复现记录")
+    p.add_argument("--verification-method", default=None, help="验证方式，例如 isolated-import-test")
+    p.add_argument("--evidence-url", action="append", default=None, help="可复核证据 URL；可重复提供")
+    p.add_argument("--safety", default=None, help="影响范围、失败信号与回退步骤")
     p.set_defaults(func=cmd_save)
 
     # --- upload ---
@@ -1518,6 +1676,10 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--language", default="python")
     p.add_argument("--contributor", default="anonymous")
     p.add_argument("--source-url", default=None)
+    p.add_argument("--verification", default=None, help="真实验证命令、输出或复现记录")
+    p.add_argument("--verification-method", default=None, help="验证方式，例如 isolated-import-test")
+    p.add_argument("--evidence-url", action="append", default=None, help="可复核证据 URL；可重复提供")
+    p.add_argument("--safety", default=None, help="影响范围、失败信号与回退步骤")
     p.set_defaults(func=cmd_upload)
 
     # --- ranking ---
@@ -1667,7 +1829,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="auto", help="Target framework, or auto for all supported frameworks")
     p.add_argument("--top-n", "-n", type=int, default=8, help="Number of claimable framework gaps to show")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.set_defaults(func=cmd_bounty)
@@ -1676,14 +1838,14 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("launch", help="Generate the Soul Ring marketplace launch scroll")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the first-ring funnel")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.set_defaults(func=cmd_launch)
 
     # --- launch campaign ---
     p = subs.add_parser("launch-campaign", help="Generate the Soul Ring cold-start launch campaign")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the launch campaign")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--surface", default="PyPI / Claude / Codex launch", help="Public launch surface")
     p.set_defaults(func=cmd_launch_campaign)
@@ -1692,7 +1854,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("traction-proof", help="Generate public Soul Ring traction proof")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the traction proof")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1705,7 +1867,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("install-command", help="Print the current safe public install command")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for first-ring routing")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1719,7 +1881,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for first-ring routing")
-    p.add_argument("--release-tag", default="", help="Release tag to install, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to install, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1734,7 +1896,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--strict-remote", action="store_true", help="Fail when public PyPI/GitHub readiness is blocked")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for traction proof context")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1748,7 +1910,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username for release recheck commands")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for proof routing")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1758,7 +1920,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("proof-pack", help="Generate the no-network First Public Proof Pack")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for proof routing")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1769,7 +1931,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--username", "-u", default="your-github-username", help="Maintainer GitHub username")
     p.add_argument("--invitee", default="external-contributor-github-username", help="Invitee GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for the invite")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--source-url", default="", help="Created Growth Issue, release, Discussion, PR, or social URL")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
@@ -1780,7 +1942,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("market-copy", help="Generate PyPI, Claude, Codex, and release submission copy")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission copy")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--target-contributors", type=int, default=3, help="Positive target count for first-ring contributors")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
@@ -1803,7 +1965,7 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Current public submission status",
     )
     p.add_argument("--submission-url", required=True, help="Reviewable public http(s) URL for the submission")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
     p.add_argument("--note", default="", help="Optional reviewer note")
@@ -1813,7 +1975,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p = subs.add_parser("market-status", help="Report marketplace submission status from the local ledger")
     p.add_argument("--username", "-u", default="your-github-username", help="GitHub username")
     p.add_argument("--framework", "-f", default="langchain", help="Target framework for submission status")
-    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.3")
+    p.add_argument("--release-tag", default="", help="Release tag to show, e.g. v0.2.4")
     p.add_argument("--repo", default="JinNing6/CyberHuaTuo-Plugin", help="GitHub repo slug, owner/name")
     p.add_argument("--pypi-project", default="cyberhuatuo", help="PyPI project name")
     p.set_defaults(func=cmd_market_status)
@@ -1903,6 +2065,10 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--category", "-c", default=None, choices=["agent", "foundation", "infrastructure"])
     p.add_argument("--search", "-s", default=None, help="关键词搜索")
     p.set_defaults(func=cmd_frameworks)
+
+    # --- departments ---
+    p = subs.add_parser("departments", help="🏥 药方科室分类列表")
+    p.set_defaults(func=cmd_departments)
 
     # --- taxonomy ---
     p = subs.add_parser("taxonomy", help="🧬 CHT 根因编码系统")

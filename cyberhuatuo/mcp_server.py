@@ -162,7 +162,7 @@ mcp = FastMCP(
     instructions=(
         "赛博华佗（CyberHuaTuo）— AI 技术问题诊断知识库 MCP Server。\n"
         "【触发场景 MUST READ】\n"
-        "1. 当用户遇到 BUG、报错（Traceback、Exception），或者你（AI）自己连续修复失败时，必须调用 `diagnose` 工具获取“望闻问切”的精准诊断与药方。\n"
+        "1. 当用户遇到 BUG、报错（Traceback、Exception）时，先调用只读的 `verified_cure`：优先取 Gold；若返回 Reviewed 候选，必须先验证再用；无候选时再调用 `diagnose`。\n"
         "2. 当需要查询特定框架的疑难杂症、已知案例或最佳实践时，调用 `search_knowledge_base`。\n"
         "3. 当用户要求“检查项目健康程度”、“代码体检”、“审计安全”时，调用 `security_checkup`。\n"
         "4. 获取最新官方框架文档片段时使用 `fetch_official_docs`。\n"
@@ -179,7 +179,6 @@ _force_rebuild = False  # 同步后需要强制重建索引
 
 # ===== 药方库自动同步器 =====
 _case_syncer = CaseSyncer()
-_case_syncer.start_background_sync()
 
 
 # ===== 品牌气质签名系统 =====
@@ -277,6 +276,90 @@ def _maybe_sync_cases() -> None:
 # ============================================================
 # 🔧 Tools — 六大诊断工具
 # ============================================================
+
+
+@mcp.tool(
+    annotations=_tool_annotations(
+        "Return a Gold-first local cure candidate",
+        read_only=True,
+        destructive=False,
+        open_world=False,
+    )
+)
+def verified_cure(
+    query: str,
+    framework: str | None = None,
+    disease_category: str | None = None,
+    include_reviewed: bool | None = None,
+    gold_only: bool = False,
+) -> str:
+    """Return an offline, evidence-backed cure without executing the fix.
+
+    Use this first for a traceback or exact error. It returns a Gold cure first;
+    when none matches, it may return exactly one clearly labeled high-confidence
+    Reviewed candidate. It loads no LLM or vector database and executes nothing.
+
+    Args:
+        query: Full traceback, error message, or concrete failure description.
+        framework: Optional framework filter, such as langchain or mcp.
+        disease_category: Optional stable department key, such as data-and-serialization.
+        include_reviewed: Compatibility option; Reviewed fallback is now automatic.
+        gold_only: Strictly return Gold and suppress Reviewed fallback.
+    """
+    from .cure import find_cures, format_cure
+
+    matches = find_cures(
+        query,
+        framework=framework,
+        disease_category=disease_category,
+        include_reviewed=include_reviewed,
+        gold_only=gold_only,
+    )
+    if not matches:
+        return _append_brand_footer(
+            "未找到达到当前质量门槛且足够相关的药方。已按 Gold 优先和 Reviewed 回退检索；"
+            "请继续调用 `diagnose` 获取更广泛的候选诊断。未执行任何修复。"
+        )
+    return _append_brand_footer(format_cure(matches[0]))
+
+
+@mcp.tool(
+    annotations=_tool_annotations(
+        "Record local cure feedback",
+        read_only=False,
+        destructive=False,
+        idempotent=False,
+        open_world=False,
+    )
+)
+def cure_feedback(
+    case_id: str,
+    outcome: str,
+    verification: str = "",
+    verification_method: str = "",
+    evidence_url: str = "",
+    contributor: str = "",
+) -> str:
+    """Record yes/partial/no feedback locally without storing the traceback or uploading it."""
+    import json
+
+    from .cure_feedback import record_cure_feedback
+
+    try:
+        event = record_cure_feedback(
+            case_id,
+            outcome,
+            verification=verification,
+            verification_method=verification_method,
+            evidence_url=evidence_url,
+            contributor=contributor,
+        )
+    except ValueError as exc:
+        return f"反馈未记录: {exc}"
+    return _append_brand_footer(
+        "本地反馈已记录；未保存原始报错，未上传网络。\n\n"
+        f"```json\n{json.dumps(event, ensure_ascii=False, indent=2)}\n```"
+    )
 
 
 @mcp.tool(annotations=_tool_annotations("Diagnose AI-agent failure", read_only=False, destructive=True, idempotent=False, open_world=True))
@@ -817,6 +900,10 @@ async def save_prescription(
     language: str = "python",
     contributor_github: str = "anonymous",
     source_url: str = "",
+    verification: str = "",
+    verification_method: str = "",
+    evidence_urls: list[str] = None,
+    safety: str = "",
 ) -> str:
     """
     📥 保存贡献的药方（病例）到知识库
@@ -849,10 +936,16 @@ async def save_prescription(
         language: 编程语言 / Programming language (e.g. python, typescript)
         contributor_github: 强烈建议提供！贡献者 GitHub 用户名。署名后，当别人使用你的药方时，就会知道是哪个好心人拯救了他们，同时也会为你积累修仙积分。 / Highly recommended! Contributor GitHub username so others know who saved them.
         source_url: 参考链接 / Reference URL
+        verification: 真实验证命令、输出或复现记录 / Reproducible verification record
+        verification_method: 验证方式 / Verification method
+        evidence_urls: 可复核证据 URL 列表 / Reviewable evidence URLs
+        safety: 影响范围、失败信号和回退步骤 / Impact boundary and rollback
     """
     try:
         if tags is None:
             tags = []
+        if evidence_urls is None:
+            evidence_urls = []
 
         submission = CaseSubmission(
             title=title,
@@ -869,6 +962,10 @@ async def save_prescription(
             language=language,
             contributor_github=contributor_github,
             source_url=source_url,
+            verification=verification,
+            verification_method=verification_method,
+            evidence_urls=evidence_urls,
+            safety=safety,
         )
 
         result = save_case_file(submission)
@@ -883,6 +980,7 @@ async def save_prescription(
             "✅ 药方保存成功！\n",
             f"- **病例 ID**: {result['case_id']}",
             f"- **保存路径**: {result['filepath']}",
+            "- **质量状态**: `draft`（复现审核通过前不进入默认治愈结果，也不计入魂环）",
         ]
 
         # GitHub 同步（双层架构：直推成功→常驻主任专家 / 直推失败→创建 Issue 临时医学实习生药方）
@@ -912,6 +1010,10 @@ async def save_prescription(
                     "severity": severity,
                     "complexity": complexity,
                     "tags": tags,
+                    "verification": verification,
+                    "verification_method": verification_method,
+                    "evidence_urls": evidence_urls,
+                    "safety": safety,
                 }
 
                 sync_result = await _run_sync(
@@ -991,6 +1093,10 @@ async def upload_prescription(
     language: str = "python",
     contributor_github: str = "anonymous",
     source_url: str = "",
+    verification: str = "",
+    verification_method: str = "",
+    evidence_urls: list[str] = None,
+    safety: str = "",
 ) -> str:
     """
     🌐 上传药方到 GitHub 知识库（必须配置 GITHUB_TOKEN）
@@ -1027,6 +1133,10 @@ async def upload_prescription(
         language: 编程语言 / Programming language (e.g. python, typescript)
         contributor_github: 强烈建议提供！贡献者 GitHub 用户名。署名后，当别人使用你的药方时，就会知道是哪个好心人拯救了他们，同时也会为你积累修仙积分。 / Highly recommended! Contributor GitHub username so others know who saved them.
         source_url: 参考链接 / Reference URL
+        verification: 真实验证命令、输出或复现记录 / Reproducible verification record
+        verification_method: 验证方式 / Verification method
+        evidence_urls: 可复核证据 URL 列表 / Reviewable evidence URLs
+        safety: 影响范围、失败信号和回退步骤 / Impact boundary and rollback
     """
     if not config.GITHUB_TOKEN:
         return (
@@ -1040,6 +1150,8 @@ async def upload_prescription(
     try:
         if tags is None:
             tags = []
+        if evidence_urls is None:
+            evidence_urls = []
 
         submission = CaseSubmission(
             title=title,
@@ -1056,6 +1168,10 @@ async def upload_prescription(
             language=language,
             contributor_github=contributor_github,
             source_url=source_url,
+            verification=verification,
+            verification_method=verification_method,
+            evidence_urls=evidence_urls,
+            safety=safety,
         )
 
         result = save_case_file(submission)
@@ -1083,6 +1199,10 @@ async def upload_prescription(
             "severity": severity,
             "complexity": complexity,
             "tags": tags,
+            "verification": verification,
+            "verification_method": verification_method,
+            "evidence_urls": evidence_urls,
+            "safety": safety,
         }
 
         syncer = GitHubSyncer()
@@ -1095,6 +1215,7 @@ async def upload_prescription(
             "# 🌐 药方上传结果\n",
             f"- **病例 ID**: {result['case_id']}",
             f"- **本地路径**: {result['filepath']}",
+            "- **质量状态**: `draft`（公开提交后仍需复现审核）",
         ]
 
         if sync_result["success"]:
@@ -1862,7 +1983,7 @@ def soul_ring_bounty_board(
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework key, search term, or auto for all supported frameworks.
         top_n: Number of claimable framework gaps to show.
-        release_tag: Release tag to show, such as v0.2.3.
+        release_tag: Release tag to show, such as v0.2.4.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
     """
@@ -1894,7 +2015,7 @@ def soul_ring_launch_scroll(
     Args:
         github_username: GitHub username to route through the first-ring funnel
         framework: Target framework for the first real prescription
-        release_tag: Optional release tag, such as v0.2.3
+        release_tag: Optional release tag, such as v0.2.4
     """
     scroll = format_soul_ring_launch_scroll(github_username, framework, release_tag)
     return _append_brand_footer(scroll)
@@ -1924,7 +2045,7 @@ def soul_ring_launch_campaign(
     Args:
         github_username: GitHub username to own the campaign
         framework: Target framework for first-ring contributors
-        release_tag: Optional release tag, such as v0.2.3
+        release_tag: Optional release tag, such as v0.2.4
         target_contributors: Positive target count for first-ring contributors
         surface: Public launch surface, such as PyPI release or Claude MCPB
     """
@@ -1965,7 +2086,7 @@ def current_install_command(
     Args:
         github_username: Maintainer or external contributor GitHub username.
         framework: Target framework for first-ring routing.
-        release_tag: Release tag to show, such as v0.2.3.
+        release_tag: Release tag to show, such as v0.2.4.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name to inspect.
@@ -2031,7 +2152,7 @@ def marketplace_readiness_gate(
         strict_remote: Fail the remote launch gate when public checks are blocked.
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for first-ring contributor routing.
-        release_tag: GitHub Release tag to verify, such as v0.2.3.
+        release_tag: GitHub Release tag to verify, such as v0.2.4.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name to inspect.
@@ -2111,7 +2232,7 @@ def first_public_proof_pack(
     Args:
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for proof routing.
-        release_tag: Release tag to show, such as v0.2.3.
+        release_tag: Release tag to show, such as v0.2.4.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name for install commands.
@@ -2156,7 +2277,7 @@ def first_contributor_invite(
         github_username: Maintainer or campaign owner GitHub username.
         invitee: Target external contributor GitHub username.
         framework: Target framework for first-ring contribution routing.
-        release_tag: Release tag to show, such as v0.2.3.
+        release_tag: Release tag to show, such as v0.2.4.
         target_contributors: Positive target count for first-ring contributors.
         source_url: Created Growth Issue, release, Discussion, PR, or social URL.
         repo: Public GitHub repository slug in owner/name form.
@@ -2200,7 +2321,7 @@ def marketplace_submission_copy(
     Args:
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for submission copy and proof routing.
-        release_tag: Release tag to show, such as v0.2.3.
+        release_tag: Release tag to show, such as v0.2.4.
         target_contributors: Positive target count for first-ring contributors.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name for install commands.
@@ -2247,7 +2368,7 @@ def record_marketplace_submission(
         channel: pypi, claude-code, claude-desktop, codex, github-release, agent-marketplace, or other.
         status: submitted, pending, needs-review, approved, published, rejected, or blocked.
         submission_url: Reviewable public http(s) URL for the submitted listing, release, issue, or review page.
-        release_tag: Release tag to bind to this evidence, such as v0.2.3.
+        release_tag: Release tag to bind to this evidence, such as v0.2.4.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name.
         note: Optional reviewer note stored with the event.
@@ -2288,7 +2409,7 @@ def marketplace_submission_status(
     Args:
         github_username: Maintainer or campaign owner GitHub username.
         framework: Target framework for proof routing.
-        release_tag: Release tag to inspect, such as v0.2.3.
+        release_tag: Release tag to inspect, such as v0.2.4.
         repo: Public GitHub repository slug in owner/name form.
         pypi_project: PyPI project name.
     """
@@ -2336,7 +2457,7 @@ def soul_ring_traction_proof(
     Args:
         github_username: GitHub username to inspect and route through the loop
         framework: Target framework for traction proof
-        release_tag: Optional release tag, such as v0.2.3
+        release_tag: Optional release tag, such as v0.2.4
         target_contributors: Positive target count for first-ring contributors
         repo: Public GitHub repository slug in owner/name form
         pypi_project: PyPI project name to inspect
@@ -2381,7 +2502,7 @@ def record_soul_ring_traction_snapshot(
     Args:
         github_username: GitHub username to inspect and route through the loop
         framework: Target framework for traction proof
-        release_tag: Optional release tag, such as v0.2.3
+        release_tag: Optional release tag, such as v0.2.4
         target_contributors: Positive target count for first-ring contributors
         repo: Public GitHub repository slug in owner/name form
         pypi_project: PyPI project name to inspect
@@ -3890,6 +4011,8 @@ def _format_search_results(query: str, results: list[SearchResult]) -> str:
 
 def main():
     """启动 CyberHuaTuo MCP Server"""
+    _case_syncer.start_background_sync()
+
     # 播放赛博华佗启动动画
     try:
         cases = scan_cases()

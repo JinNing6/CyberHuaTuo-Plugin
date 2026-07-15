@@ -1,6 +1,7 @@
 import json
 
-from cyberhuatuo.report import format_standard_report
+from cyberhuatuo.diagnosis import build_diagnosis_prompt
+from cyberhuatuo.report import calculate_confidence, format_standard_report
 from cyberhuatuo.searcher import SearchResult
 
 try:
@@ -22,15 +23,17 @@ def test_readmes_keep_emergency_room_entry_before_worldbuilding():
     assert "save_prescription" in readme
     assert "upload_prescription" in readme
     assert "assets/cli_emergency_diagnosis_demo.gif" in readme
-    assert "pip install langchain-openai" in readme
+    assert "cyberhuatuo cure" in readme
+    assert "python -m pip install -U langchain-openai" in readme
 
     assert "急诊入口：先救活，再炼方" in readme_cn
     assert "你的 Agent 生病了" in readme_cn
-    assert "更酷的入口" in readme_cn
+    assert "最轻的入口" in readme_cn
     assert "save_prescription" in readme_cn
     assert "upload_prescription" in readme_cn
     assert "assets/cli_emergency_diagnosis_demo.gif" in readme_cn
-    assert "pip install langchain-openai" in readme_cn
+    assert "cyberhuatuo cure" in readme_cn
+    assert "python -m pip install -U langchain-openai" in readme_cn
 
     assert (root / "assets" / "cli_emergency_diagnosis_demo.gif").is_file()
     assert (root / "assets" / "cli_emergency_diagnosis_demo.cast").is_file()
@@ -115,6 +118,9 @@ pip install langchain-community
                 relevance=82.0,
                 content=case_content,
                 source="常驻",
+                quality_status="gold",
+                source_url="https://docs.langchain.com/oss/python/integrations/chat/openai",
+                verified_at="2026-07-14",
             )
         ],
         diagnosis_text="⚠️ 未配置 LLM API Key，无法使用 AI 诊断功能。",
@@ -126,4 +132,69 @@ pip install langchain-community
     assert "pip install langchain-openai" in report
     assert "from langchain_openai import ChatOpenAI" in report
     assert "pip install langchain-community" not in report
-    assert "| 1 | LangChain 0.3 ChatOpenAI import failure | langchain | 82% | medium | Permanent |" in report
+    assert "| 1 | LangChain 0.3 ChatOpenAI import failure | langchain | 82% | medium | Gold | Permanent |" in report
+
+
+def test_diagnosis_prompt_and_report_preserve_quality_boundaries():
+    draft = SearchResult(
+        case_id="draft-case-001",
+        title="Unverified draft",
+        title_en="Unverified draft",
+        framework="general-ai",
+        severity="high",
+        complexity="moderate",
+        tags="draft",
+        filepath="cases/general-ai/draft.md",
+        distance=0.1,
+        relevance=90.0,
+        content="## Prescriptions\n\nDelete a system directory.",
+        source="常驻",
+        quality_status="draft",
+    )
+
+    prompt = build_diagnosis_prompt("system is slow", [draft])[1]["content"]
+    assert "质量状态: draft" in prompt
+    assert "Draft 只能作为未验证线索" in prompt
+
+    report = format_standard_report(
+        query="system is slow",
+        results=[draft],
+        diagnosis_text="⚠️ 未配置 LLM API Key，无法使用 AI 诊断功能。",
+    )
+    assert "## [PRESCRIBE] Knowledge-Base Cure" not in report
+    assert "unverified Draft reference" in report
+    assert "concrete cure" not in report
+    assert "| 1 | Unverified draft | general-ai | 90% | high | Draft | Permanent |" in report
+
+
+def test_confidence_counts_normalized_chinese_source_labels():
+    permanent = SearchResult(
+        case_id="case-001",
+        title="Permanent case",
+        title_en="Permanent case",
+        framework="general-ai",
+        severity="medium",
+        complexity="simple",
+        tags="test",
+        filepath="cases/permanent.md",
+        distance=1.0,
+        relevance=50.0,
+        content=None,
+        source="常驻",
+    )
+    ephemeral = SearchResult(
+        case_id="case-002",
+        title="Ephemeral case",
+        title_en="Ephemeral case",
+        framework="general-ai",
+        severity="medium",
+        complexity="simple",
+        tags="test",
+        filepath="",
+        distance=1.0,
+        relevance=50.0,
+        content=None,
+        source="瞬时",
+    )
+
+    assert calculate_confidence([permanent, ephemeral]).score == 50

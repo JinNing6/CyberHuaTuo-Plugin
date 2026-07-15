@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cyberhuatuo"
-version = "0.2.3"
+version = "0.2.4"
 description = "AI-agent self-rescue via MCP: diagnose tracebacks, apply exact fixes, and save/upload reusable prescriptions"
 readme = "README.md"
 license = "Apache-2.0"

@@ -21,12 +21,12 @@ CyberHuaTuo should ship through three channels in this order: PyPI first, Claude
 Before any public push, run the local release gate:
 
 ```bash
-cyberhuatuo install-command --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
+cyberhuatuo install-command --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
 cyberhuatuo market-ready --no-remote
-cyberhuatuo launch-assets --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
-cyberhuatuo proof-pack --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
-python -m cyberhuatuo candidate-install-smoke --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
-cyberhuatuo first-invite --username <maintainer-github> --invitee <external-contributor-github> --framework langchain --release-tag v0.2.3 --target-contributors 3 --source-url <created Growth Issue URL>
+cyberhuatuo launch-assets --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
+cyberhuatuo proof-pack --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
+python -m cyberhuatuo candidate-install-smoke --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
+cyberhuatuo first-invite --username <maintainer-github> --invitee <external-contributor-github> --framework langchain --release-tag v0.2.4 --target-contributors 3 --source-url <created Growth Issue URL>
 python scripts/check_marketplace_release.py --no-remote
 ```
 
@@ -37,8 +37,8 @@ This checks the PyPI Trusted Publishing workflow, Claude Code plugin catalog, Cl
 After the default branch and PyPI release are public, run the strict remote gate:
 
 ```bash
-cyberhuatuo market-ready --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
-python scripts/check_marketplace_release.py --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
+cyberhuatuo market-ready --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
+python scripts/check_marketplace_release.py --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
 ```
 
 Strict remote mode fails if GitHub Contents API cannot see the default-branch IssueOps files or if PyPI still serves an older version than the local growth tools. GitHub Release proof is the preferred public provenance for the `release.published` path; if PyPI latest-version proof is already current, a missing Release becomes a provenance warning because the protected manual `workflow_dispatch` `release_tag` fallback can close the registry path without `PYPI_TOKEN`. This keeps PyPI, Claude, and Codex launch claims tied to real install and acquisition-loop evidence instead of marketplace copy.
@@ -47,7 +47,7 @@ When GitHub public API rate limits block remote verification, set `GITHUB_TOKEN`
 
 The same preflight is exposed to Claude/Codex as the MCP tool `marketplace_readiness_gate`. Every run must first include a **Flywheel Closure Verdict**: exactly `closed`, `not closed`, or `unverified`, with **Ready gates** / total gate counts, real evidence basis, blocking gates, and the non-fabrication rule. Every run must also include a **Launch Closure Checklist** in this order: remote acquisition routes, PyPI Trusted Publisher, GitHub `release.published` trigger or protected fallback readiness, registry latest-version proof, first public proof, and recheck commands. Do not claim the market push is complete until the verdict is `closed` and every row is verified from real public state or explicitly closed by the protected PyPI fallback.
 
-Every preflight must also print a **First Public Proof Kit**. It includes the Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, and Prefilled Bounty Board Issue form URLs, but those `issues/new?...` URLs are entrypoints only. After submission, copy the created public URL into `Created Growth Issue URL`, `Created Share Proof Issue URL`, or `Created Bounty Board Issue URL`, then run the kit's Growth and Bounty `cyberhuatuo record-return` ledger commands plus the Share `cyberhuatuo record-share` attribution command. The kit also includes a **Community Challenge Pack** with Prefilled Tournament Cup Issue, Prefilled Mentor Pact Issue, Prefilled Sect Recruitment Issue, Prefilled Season Board Issue, created-Issue placeholders, and public `tournament`, `mentor`, `sect-recruit`, and `season` commands so first proof can become a public event loop. It also includes a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.3`) plus **GitHub Web Release**, **GitHub Actions workflow page**, PyPI Trusted Publisher settings links, and a **Git Tag Candidate Install Bridge** for stale PyPI recovery after the public `v*` tag exists. The bridge keeps `python -m pip install --upgrade cyberhuatuo` visible, may print `python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.3"`, must be verified with `python -m cyberhuatuo candidate-install-smoke`, does not close the PyPI install loop, and requires rechecking PyPI latest-version proof before claiming public install readiness. The kit also includes an **Install Decision Surface** using `cyberhuatuo install-command` / MCP `current_install_command` before any PyPI, Claude, Codex, or MCP marketplace invite, plus an **External Contributor Path** with pasted Recommended Install, first-session command, first contribution command, First Soul Ring Prescription Issue, Share Proof Issue URL, created-Issue proof rule, contributor-counting rule, `cyberhuatuo market-copy` submission copy routing, recheck commands, and a **Copy-ready public proof post** that explicitly avoids downloads, retention, repost counts, referrals, rewards, and fake contributors.
+Every preflight must also print a **First Public Proof Kit**. It includes the Prefilled Growth Flywheel Issue, Prefilled Share Proof Issue, and Prefilled Bounty Board Issue form URLs, but those `issues/new?...` URLs are entrypoints only. After submission, copy the created public URL into `Created Growth Issue URL`, `Created Share Proof Issue URL`, or `Created Bounty Board Issue URL`, then run the kit's Growth and Bounty `cyberhuatuo record-return` ledger commands plus the Share `cyberhuatuo record-share` attribution command. The kit also includes a **Community Challenge Pack** with Prefilled Tournament Cup Issue, Prefilled Mentor Pact Issue, Prefilled Sect Recruitment Issue, Prefilled Season Board Issue, created-Issue placeholders, and public `tournament`, `mentor`, `sect-recruit`, and `season` commands so first proof can become a public event loop. It also includes a **Protected Publish Fallback** command (`gh workflow run publish-pypi.yml -f release_tag=v0.2.4`) plus **GitHub Web Release**, **GitHub Actions workflow page**, PyPI Trusted Publisher settings links, and a **Git Tag Candidate Install Bridge** for stale PyPI recovery after the public `v*` tag exists. The bridge keeps `python -m pip install --upgrade cyberhuatuo` visible, may print `python -m pip install --upgrade "cyberhuatuo @ git+https://github.com/JinNing6/CyberHuaTuo-Plugin.git@v0.2.4"`, must be verified with `python -m cyberhuatuo candidate-install-smoke`, does not close the PyPI install loop, and requires rechecking PyPI latest-version proof before claiming public install readiness. The kit also includes an **Install Decision Surface** using `cyberhuatuo install-command` / MCP `current_install_command` before any PyPI, Claude, Codex, or MCP marketplace invite, plus an **External Contributor Path** with pasted Recommended Install, first-session command, first contribution command, First Soul Ring Prescription Issue, Share Proof Issue URL, created-Issue proof rule, contributor-counting rule, `cyberhuatuo market-copy` submission copy routing, recheck commands, and a **Copy-ready public proof post** that explicitly avoids downloads, retention, repost counts, referrals, rewards, and fake contributors.
 
 When GitHub/PyPI public APIs are rate-limited or marketplace review is still pending, run `cyberhuatuo proof-pack` or the MCP tool `first_public_proof_pack` to generate the **No-Network First Public Proof Pack**. It prints the same Growth/Share/Bounty issue-form entrypoints, Created Growth Issue URL, Created Share Proof Issue URL, and Created Bounty Board Issue URL placeholders, a **Community Challenge Pack** with Tournament/Mentor/Sect/Season issue-form entrypoints and copy-ready public event commands, a Protected Publish Fallback block with `gh workflow run publish-pypi.yml -f release_tag=<tag>`, `gh run list --workflow publish-pypi.yml --limit 5`, **GitHub Web Release**, **GitHub Actions workflow page**, PyPI Trusted Publisher settings links, a Git Tag Candidate Install Bridge, Candidate Install Smoke Gate, Install Decision Surface, terminal Growth and Bounty `record-return` CLI ledger commands, Share `record-share` attribution, External Contributor Path with pasted Recommended Install, recheck commands, and copy-ready proof text without fetching public metrics, writing ledger events, creating issues, publishing releases, uploading to PyPI by itself, closing the PyPI install loop, or inventing traction. The fallback still requires the PyPI Trusted Publisher to match this repository, workflow file, and `pypi` environment; no `PYPI_TOKEN` fallback is allowed.
 
@@ -55,11 +55,11 @@ When a market pulse needs to target one real external developer, run `cyberhuatu
 
 When the release artifacts are ready but the PyPI / Claude / Codex forms need final text, run `cyberhuatuo market-copy` or the MCP tool `marketplace_submission_copy` to generate the **Marketplace Submission Copy Pack**. It returns **PyPI listing copy**, **Claude MCPB listing copy**, **Codex plugin listing copy**, a GitHub Release post with **GitHub Web Release** and **GitHub Actions workflow page** links, project URLs, install and validation commands, a **Submission Portals And Evidence URLs** section with PyPI Trusted Publisher settings, Claude Code plugin submit, Claude Connectors Directory submission guide, and Codex plugin evidence, public proof CTA commands with Created Bounty Board Issue URL and Bounty `record-return`, the **Community Challenge Pack** for Tournament, Mentor Pact, Sect Recruitment, and Season Board routes, a Git Tag Candidate Install Bridge plus Candidate Install Smoke Gate for stale PyPI recovery, a **Marketplace Submission Ledger** block with `cyberhuatuo record-market` / `cyberhuatuo market-status`, and a copy-ready maintainer announcement. Submission portal anchors: PyPI Trusted Publisher settings: https://pypi.org/manage/project/cyberhuatuo/settings/publishing/; Claude Code plugin submit: https://claude.ai/settings/plugins/submit; Claude Connectors Directory submission guide: https://claude.com/docs/connectors/building/submission; Codex plugin evidence: `codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin`. This is submission copy, not traction evidence: it does not fetch public metrics, write ledger events, publish releases, upload to PyPI, submit marketplace forms, invent downloads, retention, repost counts, referrals, rewards, reviews, fake contributors, or close the PyPI install loop.
 
-After each real PyPI, Claude Code, Claude Desktop MCPB, Codex, GitHub Release, or agent-marketplace submission exists, run `cyberhuatuo record-market --username <maintainer-github> --framework langchain --channel <channel> --status submitted --submission-url <reviewable public URL> --release-tag v0.2.3` or the MCP tool `record_marketplace_submission`. Then run `cyberhuatuo market-status --username <maintainer-github> --framework langchain --release-tag v0.2.3` or the MCP tool `marketplace_submission_status`. The **Marketplace Submission Ledger** records reviewable public URL evidence only; it does not invent downloads, retention, repost counts, referrals, rewards, reviews, approvals, or fake contributors.
+After each real PyPI, Claude Code, Claude Desktop MCPB, Codex, GitHub Release, or agent-marketplace submission exists, run `cyberhuatuo record-market --username <maintainer-github> --framework langchain --channel <channel> --status submitted --submission-url <reviewable public URL> --release-tag v0.2.4` or the MCP tool `record_marketplace_submission`. Then run `cyberhuatuo market-status --username <maintainer-github> --framework langchain --release-tag v0.2.4` or the MCP tool `marketplace_submission_status`. The **Marketplace Submission Ledger** records reviewable public URL evidence only; it does not invent downloads, retention, repost counts, referrals, rewards, reviews, approvals, or fake contributors.
 
 Every preflight and `cyberhuatuo launch-assets` audit also prints a **Public Release Operator Runbook**. It is read-only and gives the exact non-mutating command checklist that release operators should review: local gates, full-bundle staging, `git push origin HEAD:main`, tag creation, **GitHub Web Release**, **GitHub Actions workflow page**, preferred `gh release create <tag> ... --verify-tag --notes-from-tag`, protected `gh workflow run publish-pypi.yml -f release_tag=<tag>` fallback, `cyberhuatuo market-copy`, PyPI/latest-version recheck, candidate install smoke, and traction proof recheck. `workflow_dispatch` requires `.github/workflows/publish-pypi.yml` to be present on the default branch, so the default-branch handoff remains a hard launch boundary before manual fallback can work.
 
-Every preflight must also print a **Local Launch Asset Audit**. Run `cyberhuatuo launch-assets --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3` directly when the remote default branch is missing IssueOps files or before opening a release PR, so the Public Release Operator Runbook keeps the same release/user/target context. The bare `cyberhuatuo launch-assets` command remains valid for source-default CI and local smoke checks. The audit validates local Issue Forms, comment-only workflows, package metadata, plugin manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP entrypoints, then prints exact minimal `git add` commands plus a **Full Public Growth Release Bundle** for docs, package metadata, Issue Forms, workflows, public growth modules, scripts, and tests. Its **Dirty Worktree Release Coverage** uses read-only `git status --porcelain` to show which changed files are covered by the full release bundle and which need separate review. It is read-only and does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction.
+Every preflight must also print a **Local Launch Asset Audit**. Run `cyberhuatuo launch-assets --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3` directly when the remote default branch is missing IssueOps files or before opening a release PR, so the Public Release Operator Runbook keeps the same release/user/target context. The bare `cyberhuatuo launch-assets` command remains valid for source-default CI and local smoke checks. The audit validates local Issue Forms, comment-only workflows, package metadata, plugin manifests, Trusted Publishing workflow, Claude MCPB assets, and shared MCP entrypoints, then prints exact minimal `git add` commands plus a **Full Public Growth Release Bundle** for docs, package metadata, Issue Forms, workflows, public growth modules, scripts, and tests. Its **Dirty Worktree Release Coverage** uses read-only `git status --porcelain` to show which changed files are covered by the full release bundle and which need separate review. It is read-only and does not stage files, publish releases, upload to PyPI, mutate remotes, or claim traction.
 
 CI and the PyPI Trusted Publishing workflow must run `python -m cyberhuatuo launch-assets` after lint/tests and before `python -m build --sdist --wheel`. The release boundary script then inspects the current version's wheel and sdist, not only the source tree: the wheel must contain the public growth modules, console-script entry points, PyPI metadata, and README-derived launch commands; the sdist must contain the IssueOps forms/workflows, plugin manifests, Claude Desktop MCPB metadata, privacy/release docs, and CI/publish workflow steps.
 
@@ -133,8 +133,8 @@ Release process:
    ```
 
 4. Inspect that both wheel and sdist exclude forbidden paths: `data/`, `paper/`, `paper_usenix/`, `reports/`, and `cyberhuatuo/sandbox/`.
-5. Create the GitHub release `v0.2.3` and let `release.published` trigger `Publish PyPI`.
-6. If release publication is blocked by UI/API access but the tag already exists and is reachable from `origin/main`, use the **GitHub Actions workflow page** for `.github/workflows/publish-pypi.yml` and click **Run workflow** with `release_tag=v0.2.3`, or run `gh workflow run publish-pypi.yml -f release_tag=v0.2.3`, then inspect it with `gh run list --workflow publish-pypi.yml --limit 5`. If GitHub CLI is unavailable, use the **GitHub Web Release** form URL with the `tag` query parameter to publish the release in the browser. This is a protected fallback, not a token upload: it still checks tag format, tag reachability from `origin/main`, package version equality, launch-assets/lint/tests/build/release-boundary, and OIDC Trusted Publishing without `PYPI_TOKEN`.
+5. Create the GitHub release `v0.2.4` and let `release.published` trigger `Publish PyPI`.
+6. If release publication is blocked by UI/API access but the tag already exists and is reachable from `origin/main`, use the **GitHub Actions workflow page** for `.github/workflows/publish-pypi.yml` and click **Run workflow** with `release_tag=v0.2.4`, or run `gh workflow run publish-pypi.yml -f release_tag=v0.2.4`, then inspect it with `gh run list --workflow publish-pypi.yml --limit 5`. If GitHub CLI is unavailable, use the **GitHub Web Release** form URL with the `tag` query parameter to publish the release in the browser. This is a protected fallback, not a token upload: it still checks tag format, tag reachability from `origin/main`, package version equality, launch-assets/lint/tests/build/release-boundary, and OIDC Trusted Publishing without `PYPI_TOKEN`.
 7. The `Publish PyPI` workflow builds, checks, and publishes without `PYPI_TOKEN`.
 8. Verify from a clean virtual environment:
 
@@ -146,8 +146,8 @@ Release process:
 9. Verify the strict public marketplace gate:
 
    ```bash
-   python scripts/check_marketplace_release.py --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
-   cyberhuatuo market-ready --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
+   python scripts/check_marketplace_release.py --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
+   cyberhuatuo market-ready --remote --strict-remote --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
    ```
 10. Record the PyPI page as a real launch-return source:
 
@@ -157,28 +157,28 @@ Release process:
 11. Start the public cold-start campaign with an explicit target count:
 
    ```bash
-   cyberhuatuo launch-campaign --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3 --surface "PyPI release"
+   cyberhuatuo launch-campaign --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3 --surface "PyPI release"
    ```
 
    The output must include **Campaign Recap And Next Sprint**: observed real contributors, shortfall, disclosed next-target rule, copy-ready recap, next `growth_campaign` / `cyberhuatuo launch-campaign` command, and `cyberhuatuo traction-proof --record-snapshot`. Do not count stars, downloads, reposts, or private claims as reached contributors.
 12. Check public traction proof before claiming breakout:
 
    ```bash
-   cyberhuatuo record-market --username <maintainer-github> --framework langchain --channel pypi --status submitted --submission-url <reviewable public URL> --release-tag v0.2.3
-   cyberhuatuo market-status --username <maintainer-github> --framework langchain --release-tag v0.2.3
+   cyberhuatuo record-market --username <maintainer-github> --framework langchain --channel pypi --status submitted --submission-url <reviewable public URL> --release-tag v0.2.4
+   cyberhuatuo market-status --username <maintainer-github> --framework langchain --release-tag v0.2.4
    ```
 
    The Marketplace Submission Ledger must contain only reviewable public URL evidence. It is valid to record `submitted`, `pending`, or `needs-review` while marketplace review is ongoing, but do not claim a channel is live unless the recorded status is `approved` or `published`.
 
    ```bash
-   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
+   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
    ```
 
    This report reads GitHub REST API, GitHub Pull Requests API, GitHub Contents API, GitHub Releases API, PyPI JSON API, and the local activation/share ledger. It checks release trigger readiness by verifying that the requested GitHub Release tag is visible, non-draft, non-prerelease, and able to trigger `.github/workflows/publish-pypi.yml` on `release.published`; if PyPI JSON already serves the current local version, a missing GitHub Release is reported as a public provenance warning because the protected manual `workflow_dispatch` `release_tag` fallback can also close the registry path. It checks PyPI package readiness by comparing PyPI JSON API `info.version` with the local package version; if the registry install would deliver an older build, treat it as an install-loop launch blocker and publish through PyPI Trusted Publishing before claiming breakout. It also checks remote IssueOps readiness through GitHub Contents API on the repository default branch; missing Growth Flywheel, Share Proof, or Launch Campaign forms/workflows are public launch blockers, and `issues/new?...` URLs remain form entrypoints rather than proof URLs until a created public Issue/PR/Discussion URL exists. Target contributor progress comes from real public issue authors, public PR authors, and local ledger actors only. PR authors count as contributor identities, but PRs stay separate from IssueOps issue counts. stars, forks, watchers, subscribers, and downloads are not used as contributor progress; downloads are not used because PyPI JSON API `downloads` is deprecated and not a proof source.
 12. Record public traction velocity only after a real market check:
 
    ```bash
-   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3 --record-snapshot
+   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3 --record-snapshot
    ```
 
    Snapshot history is opt-in and append-only. Each JSONL snapshot records current public repository signals, public PR author proof, IssueOps proof counts, remote IssueOps readiness, release trigger readiness, PyPI package readiness, local ledger counts, and Target contributor progress, then reports velocity deltas against the previous real snapshot. It must not record or invent downloads, retention, repost counts, referrals, rewards, private analytics, or fake contributors.
@@ -327,13 +327,13 @@ Codex marketplace copy:
 6. Generate the launch scroll:
 
    ```bash
-   cyberhuatuo launch --username <maintainer-github> --framework langchain --release-tag v0.2.3
+   cyberhuatuo launch --username <maintainer-github> --framework langchain --release-tag v0.2.4
    ```
 
 7. Generate the Soul Ring Bounty Board before public posts so external users see real claimable coverage gaps:
 
    ```bash
-   cyberhuatuo bounty --username <maintainer-github> --framework auto --top-n 8 --release-tag v0.2.3 --target-contributors 3
+   cyberhuatuo bounty --username <maintainer-github> --framework auto --top-n 8 --release-tag v0.2.4 --target-contributors 3
    ```
 
    GitHub New issue path: `.github/ISSUE_TEMPLATE/soul-ring-bounty-board.yml`; comment workflow: `.github/workflows/soul-ring-bounty-board.yml`.
@@ -345,7 +345,7 @@ Codex marketplace copy:
 8. Generate the launch campaign with a target first-ring contributor count:
 
    ```bash
-   cyberhuatuo launch-campaign --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
+   cyberhuatuo launch-campaign --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
    ```
 
    Use the generated **Campaign Recap And Next Sprint** to state reached vs shortfall, observed real contributors, the disclosed next-target rule, copy-ready recap text, the next `growth_campaign` command, and the proof-recording command before posting another launch wave.
@@ -353,7 +353,7 @@ Codex marketplace copy:
 9. Check public traction proof before claiming breakout:
 
    ```bash
-   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3
+   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3
    ```
 
    The report must use GitHub REST API, GitHub Pull Requests API, GitHub Contents API, GitHub Releases API, PyPI JSON API, and local ledger events. It must block on missing default-branch IssueOps files and older PyPI latest versions before diagnosing local conversion. Missing/draft/prerelease release tags remain public provenance warnings when PyPI latest-version proof is already current through the protected manual `workflow_dispatch` `release_tag` fallback; they remain launch blockers when the registry is stale. **Target contributor progress** must come from real public issue authors, public PR authors, and local return/share-attribution actors only. PR authors may count as contributor identities, but PRs must remain a separate proof surface and must not be mixed into Growth/Share IssueOps issue counts. stars, forks, watchers, subscribers, downloads, reposts, retention, referral conversions, and rewards are not contributor progress; downloads are not used.
@@ -361,7 +361,7 @@ Codex marketplace copy:
 10. Record a real traction snapshot after each public launch pulse:
 
    ```bash
-   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.3 --target-contributors 3 --record-snapshot
+   cyberhuatuo traction-proof --username <maintainer-github> --framework langchain --release-tag v0.2.4 --target-contributors 3 --record-snapshot
    ```
 
    The snapshot ledger is append-only and compares velocity deltas against prior real snapshots instead of static vanity metrics. It records remote IssueOps readiness, release trigger readiness, and PyPI package readiness alongside public proof counts so campaign recaps can distinguish closed-loop growth from blocked install/submission routes. Do not record or invent downloads, retention, repost counts, referrals, rewards, private analytics, or fake contributors.

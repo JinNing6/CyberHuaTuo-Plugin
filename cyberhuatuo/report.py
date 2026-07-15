@@ -67,8 +67,8 @@ def calculate_confidence(results: list[SearchResult]) -> ConfidenceScore:
 
     top_relevance = max(r.relevance for r in results)
     case_count = len(results)
-    has_permanent = any(r.source == "permanent" for r in results)
-    has_ephemeral = any(r.source == "ephemeral" for r in results)
+    has_permanent = any(_source_badge(r.source) == "Permanent" for r in results)
+    has_ephemeral = any(_source_badge(r.source) == "Ephemeral" for r in results)
 
     score = 0
 
@@ -172,8 +172,16 @@ def _format_knowledge_base_cure(result: SearchResult) -> str:
     prescription = _extract_prescription_section(result.content or "")
     source = _source_badge(result.source)
     lines = [
-        f"**Source Case**: {result.title} ({result.relevance:.0f}% relevance, {source})",
+        (
+            f"**Source Case**: {result.title} ({result.relevance:.0f}% relevance, "
+            f"{result.quality_status.title()}, {source})"
+        ),
+        f"**Trust Boundary**: {_quality_notice(result.quality_status)}",
     ]
+    if result.source_url:
+        lines.append(f"**Evidence Source**: {result.source_url}")
+    if result.verified_at:
+        lines.append(f"**Verified At**: {result.verified_at}")
     if result.filepath:
         lines.append(f"**Case File**: `{result.filepath}`")
     if prescription:
@@ -181,6 +189,15 @@ def _format_knowledge_base_cure(result: SearchResult) -> str:
     else:
         lines.append("\nThe matched case did not include a dedicated prescription section.")
     return "\n".join(lines)
+
+
+def _quality_notice(status: str) -> str:
+    notices = {
+        "gold": "Gold verified cure.",
+        "reviewed": "Reviewed candidate; verify before applying.",
+        "draft": "Unverified Draft reference; do not treat as a prescription.",
+    }
+    return notices.get(str(status).strip().lower(), "Unverified reference; do not treat as a prescription.")
 
 
 def format_standard_report(
@@ -269,12 +286,30 @@ def format_standard_report(
         parts.append(f"{diagnosis_text}\n")
         if _is_llm_unavailable(diagnosis_text) and results:
             top_result = max(results, key=lambda r: r.relevance)
-            parts.append("## [PRESCRIBE] Knowledge-Base Cure\n")
-            parts.append(
-                "LLM diagnosis is unavailable, but the local prescription library "
-                "already matched a concrete cure:\n"
-            )
-            parts.append(_format_knowledge_base_cure(top_result) + "\n")
+            if top_result.quality_status == "gold":
+                parts.append("## [PRESCRIBE] Knowledge-Base Cure\n")
+                parts.append(
+                    "LLM diagnosis is unavailable, but the local prescription library "
+                    "matched a verified Gold cure:\n"
+                )
+                parts.append(_format_knowledge_base_cure(top_result) + "\n")
+            elif top_result.quality_status == "reviewed":
+                parts.append("## [REVIEW] Knowledge-Base Candidate\n")
+                parts.append(
+                    "LLM diagnosis is unavailable. The best local result is a Reviewed candidate; "
+                    "verify it in the current environment before applying:\n"
+                )
+                parts.append(_format_knowledge_base_cure(top_result) + "\n")
+            else:
+                parts.append("## [REFERENCE] Unverified Draft\n")
+                parts.append(
+                    "LLM diagnosis is unavailable. The best local result is an unverified Draft reference; "
+                    "its prescription is intentionally not promoted as a cure.\n"
+                )
+                parts.append(
+                    f"**Source Case**: {top_result.title} ({top_result.relevance:.0f}% relevance)\n"
+                    f"**Trust Boundary**: {_quality_notice(top_result.quality_status)}\n"
+                )
     elif results:
         # Use top result's content as diagnosis basis
         top_result = max(results, key=lambda r: r.relevance)
@@ -283,7 +318,7 @@ def format_standard_report(
             f"the most relevant case is:\n\n"
             f"**{top_result.title}** (Relevance: {top_result.relevance:.0f}%)\n"
         )
-        if top_result.content:
+        if top_result.content and top_result.quality_status in {"gold", "reviewed"}:
             # Extract a reasonable preview
             content_preview = top_result.content[:1500]
             parts.append(f"\n{content_preview}\n")
@@ -311,14 +346,14 @@ def format_standard_report(
     # ---- Matched Cases Summary ----
     if results:
         parts.append("## Matched Cases\n")
-        parts.append("| # | Case | Framework | Relevance | Severity | Source |")
-        parts.append("|:-:|:-----|:---------:|:---------:|:--------:|:------:|")
+        parts.append("| # | Case | Framework | Relevance | Severity | Quality | Source |")
+        parts.append("|:-:|:-----|:---------:|:---------:|:--------:|:-------:|:------:|")
         for i, r in enumerate(results[:5], 1):
             source_badge = _source_badge(r.source)
             title_short = r.title[:40] + ("..." if len(r.title) > 40 else "")
             parts.append(
                 f"| {i} | {title_short} | {r.framework} | "
-                f"{r.relevance:.0f}% | {r.severity} | {source_badge} |"
+                f"{r.relevance:.0f}% | {r.severity} | {r.quality_status.title()} | {source_badge} |"
             )
         parts.append("")
 

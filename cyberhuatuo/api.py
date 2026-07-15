@@ -6,7 +6,7 @@ CyberHuaTuo FastAPI 路由
 from contextlib import asynccontextmanager
 
 import chromadb
-from fastapi import FastAPI, Form, Query, Request
+from fastapi import FastAPI, Form, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -49,6 +49,19 @@ from .nourishing import (
 )
 from .searcher import search_cases
 
+
+def _quality_payload(result) -> dict:
+    from .cure import trust_notice
+
+    return {
+        "quality_status": result.quality_status,
+        "source_url": result.source_url,
+        "verified_at": result.verified_at,
+        "disease_category": result.disease_category,
+        "disease_category_label": result.disease_category_label,
+        "trust_notice": trust_notice(result.quality_status),
+    }
+
 # 全局 ChromaDB 客户端
 _chroma_client: chromadb.ClientAPI | None = None
 _case_count: int = 0
@@ -86,7 +99,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CyberHuaTuo 赛博华佗",
     description="开源的 AI 问题诊断知识库",
-    version="0.2.3",
+    version="0.2.4",
     lifespan=lifespan,
 )
 
@@ -173,9 +186,35 @@ async def api_search(
                 "filepath": r.filepath,
                 "relevance": r.relevance,
                 "content": r.content,
+                **_quality_payload(r),
             }
             for r in results
         ],
+    }
+
+
+@app.get("/api/cure")
+async def api_cure(
+    q: str = Query(..., description="完整报错、traceback 或具体故障描述"),
+    framework: str | None = Query(None, description="框架过滤"),
+    disease_category: str | None = Query(None, description="药方科室过滤"),
+    gold_only: bool = Query(False, description="严格只返回 Gold 药方"),
+    top_k: int = Query(1, ge=1, le=5),
+):
+    """Fast offline-first cure lookup with explicit trust labels."""
+    from .cure import find_cures
+
+    matches = find_cures(
+        q,
+        framework=framework,
+        disease_category=disease_category,
+        gold_only=gold_only,
+        top_k=top_k,
+    )
+    return {
+        "query": q,
+        "policy": "gold-first; one reviewed fallback unless gold_only=true; never executes fixes",
+        "matches": [match.as_dict() for match in matches],
     }
 
 
@@ -225,6 +264,7 @@ async def api_diagnose(
                 "framework": r.framework,
                 "relevance": r.relevance,
                 "filepath": r.filepath,
+                **_quality_payload(r),
             }
             for r in results
         ],
@@ -313,6 +353,10 @@ async def api_contribute(
     framework_version: str = Form(""),
     contributor_github: str = Form("anonymous"),
     source_url: str = Form(""),
+    verification: str = Form(""),
+    verification_method: str = Form(""),
+    evidence_urls: str = Form(""),
+    safety: str = Form(""),
     action: str = Form("preview"),
 ):
     """
@@ -321,6 +365,7 @@ async def api_contribute(
     """
     # 解析标签
     tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
+    evidence_url_list = [url.strip() for url in evidence_urls.split(",") if url.strip()] if evidence_urls else []
 
     submission = CaseSubmission(
         framework=framework,
@@ -336,40 +381,74 @@ async def api_contribute(
         framework_version=framework_version,
         contributor_github=contributor_github,
         source_url=source_url,
+        verification=verification,
+        verification_method=verification_method,
+        evidence_urls=evidence_url_list,
+        safety=safety,
     )
 
-    if action == "preview":
-        # 预览模式：返回生成的 Markdown 内容
-        content = generate_case_markdown(submission)
-        return {
-            "action": "preview",
-            "content": content,
-        }
-    elif action == "save":
-        # 保存模式：写入 cases/ 目录
-        result = save_case_file(submission)
+    try:
+        if action == "preview":
+            content = generate_case_markdown(submission)
+            return {
+                "action": "preview",
+                "content": content,
+            }
+        if action == "save":
+            result = save_case_file(submission)
 
-        # 重建索引
-        global _chroma_client, _case_count
-        _chroma_client, _case_count = build_index(force_rebuild=True)
+            global _chroma_client, _case_count
+            _chroma_client, _case_count = build_index(force_rebuild=True)
 
-        return {
-            "action": "saved",
-            "case_id": result["case_id"],
-            "filepath": result["filepath"],
-            "message": f"✅ 病例已保存到 {result['filepath']}",
-            "next_steps": [
-                f"git add {result['filepath']}",
-                f'git commit -m "feat: add case {result["case_id"]}"',
-                "git push origin main",
-                "在 GitHub 上创建 Pull Request",
-            ],
-        }
+            return {
+                "action": "saved",
+                "case_id": result["case_id"],
+                "filepath": result["filepath"],
+                "message": f"✅ 病例已保存到 {result['filepath']}",
+                "quality_status": "draft",
+                "next_steps": [
+                    f"git add {result['filepath']}",
+                    f'git commit -m "feat: add case {result["case_id"]}"',
+                    "git push origin main",
+                    "在 GitHub 上创建 Pull Request",
+                ],
+            }
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return JSONResponse(
         status_code=400,
         content={"error": f"未知操作: {action}"}
     )
+
+
+@app.post("/api/cure-feedback")
+async def api_cure_feedback(
+    case_id: str = Form(...),
+    outcome: str = Form(...),
+    verification: str = Form(""),
+    verification_method: str = Form(""),
+    evidence_url: str = Form(""),
+    contributor: str = Form(""),
+):
+    """Record local case-bound feedback without retaining the original query."""
+    from .cure_feedback import record_cure_feedback
+
+    try:
+        event = record_cure_feedback(
+            case_id,
+            outcome,
+            verification=verification,
+            verification_method=verification_method,
+            evidence_url=evidence_url,
+            contributor=contributor,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {
+        "event": event,
+        "privacy": "local-only; original query and traceback are not stored",
+    }
 
 
 @app.post("/api/rebuild-index")

@@ -10,13 +10,12 @@ body:
     attributes:
       value: |
         Use this form for a real AI-agent, LLM, MCP, or framework problem you personally investigated.
-        CyberHuaTuo soul rings are based on real prescriptions only: no invented bugs, no invented users, no simulated fixes.
+        CyberHuaTuo soul rings are based on accepted prescriptions only: no invented bugs, no invented users, no simulated fixes. Submission creates a draft; reviewed or Gold acceptance awards the Soul Ring.
 
-        After this issue is accepted, publish the prescription with:
+        After this issue is accepted and its promotion PR is merged, inspect the credited contribution with:
 
         ```bash
         cyberhuatuo ladder <your-github-username> --framework <framework>
-        cyberhuatuo upload --title "<real issue title>" --prescription "<root cause and fix>" --framework <framework> --contributor <your-github-username>
         cyberhuatuo ranking <your-github-username>
         cyberhuatuo card <your-github-username>
         ```
@@ -93,6 +92,27 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: evidence_url
+    attributes:
+      label: Reviewable source or evidence URL
+      description: Link official documentation, an upstream issue/PR, a public CI run, or another source a reviewer can inspect. Use private vulnerability reporting for sensitive security evidence.
+      placeholder: https://...
+    validations:
+      required: true
+
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety and rollback
+      description: State the impact boundary, failure signal, and exact rollback path. If no change is made, say why the fix is read-only.
+      placeholder: |
+        Impact boundary:
+        Stop condition:
+        Rollback:
+    validations:
+      required: true
+
   - type: checkboxes
     id: real_data_ack
     attributes:
@@ -104,6 +124,8 @@ body:
         - label: The fix and verification are not invented, simulated, or copied without context.
           required: true
         - label: I understand that accepted prescriptions may appear in public soul-ring ranking and sharing surfaces.
+          required: true
+        - label: I understand this submission is a draft until review and does not immediately award a Soul Ring.
           required: true
     validations:
       required: true

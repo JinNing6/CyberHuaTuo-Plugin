@@ -56,15 +56,40 @@ jobs:
               rootCause: parseIssueForm(issue.body || "", "Root cause"),
               prescription: parseIssueForm(issue.body || "", "Prescription / fix"),
               verification: parseIssueForm(issue.body || "", "Verification evidence"),
+              safety: parseIssueForm(issue.body || "", "Safety and rollback"),
+              evidenceUrl: parseIssueForm(issue.body || "", "Reviewable source or evidence URL"),
             };
 
             const framework = parsed.framework.toLowerCase().replace(/[^a-z0-9-]/g, "") || "other";
             const title = issue.title.replace(/^\[Soul Ring Prescription\]\s*/i, "").trim() || `Soul Ring Prescription ${issue.number}`;
             const titleSlug = slugify(title);
-            const caseId = `${framework}-soul-ring-issue-${issue.number}`;
+            const issueSequence = String(issue.number).padStart(3, "0");
+            const caseId = `${framework}-soul-ring-issue-${issueSequence}`;
             const path = `cases/${framework}/community/${caseId}.md`;
             const created = new Date().toISOString().slice(0, 10);
             const sourceUrl = issue.html_url;
+            const required = ["symptom", "rootCause", "prescription", "verification", "safety", "evidenceUrl"];
+            const missing = required.filter((field) => !parsed[field]);
+            if (missing.length) {
+              core.setFailed(`Accepted prescription is missing required fields: ${missing.join(", ")}`);
+              return;
+            }
+            let evidence;
+            try {
+              evidence = new URL(parsed.evidenceUrl);
+            } catch {
+              core.setFailed("Reviewable source or evidence URL must be a valid URL.");
+              return;
+            }
+            if (!["http:", "https:"].includes(evidence.protocol)) {
+              core.setFailed("Reviewable source or evidence URL must use HTTP(S).");
+              return;
+            }
+            const signature = parsed.symptom
+              .split("\n")
+              .map((line) => line.trim())
+              .find((line) => line.length >= 8 && /(error|exception|failed|failure|traceback|winerror|cannot|invalid)/i.test(line))
+              || title;
 
             const content = [
               "---",
@@ -79,6 +104,16 @@ jobs:
               '  - "first-soul-ring"',
               'severity: "medium"',
               'complexity: "moderate"',
+              'quality_status: "reviewed"',
+              'disease_category: "other"',
+              'case_origin: "community-submission"',
+              `reviewed_at: ${yamlQuote(created)}`,
+              `reviewed_by: ${yamlQuote(context.actor)}`,
+              "match_signatures:",
+              `  - ${yamlQuote(signature.slice(0, 240))}`,
+              'verification_method: "maintainer-reviewed-issue-evidence"',
+              "evidence_urls:",
+              `  - ${yamlQuote(evidence.toString())}`,
               "environment:",
               '  python_version: ">=3.9"',
               '  os: "any"',
@@ -106,11 +141,16 @@ jobs:
               "",
               "## Verification Evidence",
               "",
-              parsed.verification || "_Maintainer note: fill in the verification evidence before merge._",
+              parsed.verification,
+              "",
+              "## Safety and Rollback",
+              "",
+              parsed.safety,
               "",
               "## References",
               "",
               `- ${sourceUrl}`,
+              `- ${evidence.toString()}`,
               "",
             ].join("\n");
 

@@ -17,7 +17,7 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^[a-z0-9]+-[a-z0-9-]+-[0-9]{3}$",
+      "pattern": "^[a-z0-9]+-[a-z0-9-]+-[0-9]{3,}$",
       "description": "Unique case identifier, format: <framework>-<category>-<name>-<number>"
     },
     "title": {
@@ -32,29 +32,7 @@
     },
     "framework": {
       "type": "string",
-      "enum": [
-        "langchain",
-        "llamaindex",
-        "crewai",
-        "autogen",
-        "openai-sdk",
-        "mcp",
-        "dspy",
-        "haystack",
-        "semantic-kernel",
-        "pydantic-ai",
-        "langgraph",
-        "pytorch",
-        "transformers",
-        "tensorflow",
-        "nextjs",
-        "custom-agent",
-        "platform-agent",
-        "ml-ops",
-        "general-ai",
-        "_nourishing",
-        "other"
-      ]
+      "pattern": "^[a-z0-9_][a-z0-9_-]{0,63}$"
     },
     "framework_version": {
       "type": "string",
@@ -79,6 +57,70 @@
     "complexity": {
       "type": "string",
       "enum": ["simple", "moderate", "complex", "extreme"]
+    },
+    "quality_status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "gold"],
+      "description": "Explicit review state. Missing legacy values are treated as draft by runtime retrieval."
+    },
+    "disease_category": {
+      "type": "string",
+      "enum": [
+        "dependency-and-version",
+        "runtime-and-lifecycle",
+        "data-and-serialization",
+        "api-and-schema",
+        "storage-and-filesystem",
+        "database-and-migration",
+        "security-and-credentials",
+        "agent-and-tooling",
+        "network-and-integration",
+        "performance-and-resource",
+        "ui-and-interaction",
+        "system-configuration",
+        "other"
+      ],
+      "description": "Stable disease department key used by CLI, MCP, and indexes."
+    },
+    "case_origin": {
+      "type": "string",
+      "enum": [
+        "maintainer-incident",
+        "community-submission",
+        "upstream-documentation",
+        "automated-regression"
+      ]
+    },
+    "origin_skill": {
+      "type": "string",
+      "minLength": 3
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "match_signatures": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 8 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "verification_method": {
+      "type": "string",
+      "minLength": 3
+    },
+    "evidence_urls": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" },
+      "uniqueItems": true
     },
     "environment": {
       "type": "object",
@@ -115,5 +157,36 @@
       "items": { "type": "string" }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "quality_status": { "enum": ["reviewed", "gold"] } },
+        "required": ["quality_status"]
+      },
+      "then": {
+        "required": ["source_url", "reviewed_at", "reviewed_by", "match_signatures"],
+        "properties": { "source_url": { "type": "string", "format": "uri", "minLength": 8 } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "quality_status": { "const": "gold" } },
+        "required": ["quality_status"]
+      },
+      "then": {
+        "required": ["verified_at", "verification_method", "evidence_urls"],
+        "properties": { "evidence_urls": { "minItems": 1 } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "case_origin": { "const": "maintainer-incident" } },
+        "required": ["case_origin"]
+      },
+      "then": {
+        "required": ["origin_skill", "reviewed_at"]
+      }
+    }
+  ],
   "additionalProperties": true
 }

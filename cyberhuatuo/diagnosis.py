@@ -33,6 +33,7 @@ SYSTEM_PROMPT = """你是赛博华佗（CyberHuaTuo），一个专精于 AI 技�
 - 如果知识库中有精确匹配的病例，直接引用其药方
 - 如果没有精确匹配，基于最接近的病例推理给出建议
 - 始终标注信息来源（来自知识库、官方文档还是 AI 推理）
+- 必须保留病例质量边界：Gold 可作为已验证药方；Reviewed 只能作为需用户验证的候选；Draft 只能作为未验证线索，不能包装成正式药方
 - 当官方文档与病例药方冲突时，以最新官方文档为准
 - 引用官方文档时标注出处链接"""
 
@@ -75,6 +76,9 @@ def build_diagnosis_prompt(
             f"- 框架: {r.framework}\n"
             f"- 复杂度: {r.complexity}\n"
             f"- 严重性: {r.severity}\n"
+            f"- 质量状态: {r.quality_status}\n"
+            f"- 证据来源: {r.source_url or '未提供'}\n"
+            f"- 验证日期: {r.verified_at or '未验证'}\n"
             f"- 文件: {r.filepath}\n"
             f"{attribution}\n"
             f"{content_preview}\n"
@@ -108,6 +112,7 @@ def build_diagnosis_prompt(
 
     user_content += "请根据以上信息，使用望闻问切的方式进行诊断，并给出具体的药方。如有引用官方文档，请标注出处。\n\n"
     user_content += "特别注意：\n"
+    user_content += "0. Gold 可作为已验证药方；Reviewed 必须标成待验证候选；Draft 只能作为未验证线索，不得直接处方或声称已治愈。\n"
     user_content += "1. 如果你的核心解法来自于有具体署名的贡献者病例，请在回答的末尾真诚地致谢他，并提及他的修仙称号/等级与徽章（例如：最后，特别感谢 丹王 zhangjinqian 💊 提供的绝妙灵丹）。\n"
     user_content += "2. 如果参考的全是匿名病例或没有任何署名的官方文档，请在最后附上一句：\"悬壶济世，普渡苍生。\" 或类似体现赛博修仙医者仁心的文案。"
 

@@ -19,7 +19,7 @@
       "interface": {
         "displayName": "CyberHuaTuo Plugin",
         "shortDescription": "When your agent gets sick, let it ask HuaTuo and keep the cure as a prescription.",
-        "longDescription": "CyberHuaTuo bundles Codex skills and MCP tools for the moment a coding agent gets sick: diagnose the traceback, apply the cure, then save or upload the solved case as a reusable prescription. A reviewed PreToolUse guard also checks destructive shell actions before execution; it is a deterministic guardrail, not a sandbox or complete enforcement boundary.",
+        "longDescription": "CyberHuaTuo bundles Codex skills and MCP tools for the moment a coding agent gets sick: request an offline Gold cure first, receive at most one clearly labeled Reviewed candidate when Gold does not match, fall back to broader diagnosis, then save or upload the solved case as a reusable prescription in reviewable draft state. A reviewed PreToolUse guard also checks destructive shell actions before execution; it is a deterministic guardrail, not a sandbox or complete enforcement boundary.",
         "developerName": "CyberHuaTuo Contributors",
         "capabilities": [
           "MCP",

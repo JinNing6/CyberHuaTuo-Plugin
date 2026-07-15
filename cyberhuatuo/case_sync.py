@@ -1,16 +1,16 @@
 """
 CyberHuaTuo 药方库自动同步模块（高性能版）
-Case Sync — Near-realtime prescription sync from GitHub repository
+Case Sync — Append-only prescription intake from the GitHub repository
 
 三层优化架构：
   1. 树 SHA 快速检测 — 一次轻量 API 调用判断 cases/ 是否有变化
   2. ETag 条件请求 — 304 响应不消耗请求配额，高频检查零开销
-  3. 后台守护线程 — 主动轮询，用户搜索时数据已是最新
+  3. 后台守护线程 — 只接收本地不存在的新病例，不覆盖本地审校内容
 
 Three-layer optimization:
   1. Tree SHA quick-check — one lightweight API call to detect changes
   2. ETag conditional requests — 304 responses are free (no rate limit cost)
-  3. Background daemon thread — proactive polling, data ready when user searches
+  3. Background daemon thread — intake new paths without overwriting local review
 """
 
 import hashlib
@@ -269,11 +269,14 @@ class CaseSyncer:
 
         local_shas = self._compute_local_shas()
 
-        files_to_download = []
-        for remote_path, remote_sha in remote_files.items():
-            local_sha = local_shas.get(remote_path)
-            if local_sha != remote_sha:
-                files_to_download.append(remote_path)
+        # Runtime sync is intentionally append-only. Existing files may contain
+        # local review, Gold verification, or user edits. Packaged releases use
+        # the managed bundle updater for safe, hash-aware revisions.
+        files_to_download = [
+            remote_path
+            for remote_path in remote_files
+            if remote_path not in local_shas
+        ]
 
         if not files_to_download:
             return 0
@@ -345,7 +348,7 @@ class CaseSyncer:
         return result
 
     def _download_files(self, file_paths: list[str]) -> int:
-        """从 GitHub raw 下载指定文件到本地 cases/ 目录。"""
+        """Download new remote files without replacing any existing local path."""
         downloaded = 0
 
         headers = {}
@@ -358,15 +361,26 @@ class CaseSyncer:
                 f"/{self.branch}/{file_path}"
             )
 
-            local_path = self.root_dir / file_path
+            local_path = (self.root_dir / file_path).resolve()
+            cases_root = self.cases_dir.resolve()
+            if cases_root != local_path.parent and cases_root not in local_path.parents:
+                logger.warning(f"跳过越界病例路径: {file_path}")
+                continue
+            if local_path.exists():
+                logger.debug(f"  ⏭️ 保留本地已有病例: {file_path}")
+                continue
             local_path.parent.mkdir(parents=True, exist_ok=True)
 
             try:
                 req = urllib.request.Request(raw_url, headers=headers)
                 with urllib.request.urlopen(req, timeout=10) as resp:
-                    local_path.write_bytes(resp.read())
+                    content = resp.read()
+                with local_path.open("xb") as output:
+                    output.write(content)
                 downloaded += 1
                 logger.debug(f"  📥 下载: {file_path}")
+            except FileExistsError:
+                logger.debug(f"  ⏭️ 并发同步时病例已存在，保留本地文件: {file_path}")
             except Exception as e:
                 logger.debug(f"  ⚠️ 下载失败 {file_path}: {e}")
 

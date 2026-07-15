@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "cyberhuatuo",
   "display_name": "CyberHuaTuo",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "An MCP clinic for diagnosing AI-agent failures and turning real fixes into ranked soul-ring prescriptions.",
   "long_description": "CyberHuaTuo packages a Python MCP server for Claude Desktop. It can diagnose AI-agent and framework failures, search a public prescription knowledge base, fetch official framework documentation, and generate shareable soul-ring contribution artifacts from real repository data.",
   "author": {

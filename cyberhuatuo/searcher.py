@@ -15,6 +15,7 @@ from dataclasses import dataclass
 import chromadb
 import httpx
 
+from .case_taxonomy import DISEASE_CATEGORIES, disease_category_label, normalize_disease_category
 from .config import config
 from .indexer import get_case_content
 
@@ -37,6 +38,11 @@ class SearchResult:
     content: str | None    # 病例完整内容（可选加载）
     source: str = "常驻"    # 来源标识 / Source: "常驻" (permanent) or "瞬时" (ephemeral)
     contributor: str = ""  # 贡献者 Github / Contributor Github
+    quality_status: str = "draft"
+    source_url: str = ""
+    verified_at: str = ""
+    disease_category: str = "other"
+    disease_category_label: str = "综合科"
 
 
 def search_cases(
@@ -47,6 +53,7 @@ def search_cases(
     complexity: str | None = None,
     top_k: int | None = None,
     include_content: bool = True,
+    disease_category: str | None = None,
 ) -> list[SearchResult]:
     """
     在常驻知识库中搜索匹配的病例
@@ -60,11 +67,15 @@ def search_cases(
         complexity: 按复杂度过滤
         top_k: 返回结果数量
         include_content: 是否加载完整文件内容
+        disease_category: 按稳定药方科室键过滤
 
     Returns:
         排序后的搜索结果列表（source="常驻"）
     """
     top_k = top_k or config.TOP_K
+    requested_category = str(disease_category or "").strip().lower()
+    if requested_category and requested_category not in DISEASE_CATEGORIES:
+        return []
 
     # 获取集合
     try:
@@ -83,6 +94,8 @@ def search_cases(
         where_filter["severity"] = severity
     if complexity:
         where_filter["complexity"] = complexity
+    if requested_category:
+        where_filter["disease_category"] = requested_category
 
     # 执行向量搜索
     query_params = {
@@ -130,6 +143,14 @@ def search_cases(
             content=content,
             source="常驻",
             contributor=metadata.get("contributor", ""),
+            quality_status=metadata.get("quality_status", "draft"),
+            source_url=metadata.get("source_url", ""),
+            verified_at=metadata.get("verified_at", ""),
+            disease_category=normalize_disease_category(metadata.get("disease_category")),
+            disease_category_label=metadata.get(
+                "disease_category_label",
+                disease_category_label(metadata.get("disease_category")),
+            ),
         ))
 
     return search_results
@@ -278,6 +299,14 @@ def _parse_issue_to_result(issue: dict) -> SearchResult | None:
         content=content,
         source="瞬时",
         contributor=issue.get("user", {}).get("login", ""),
+        quality_status="draft",
+        source_url=issue.get("html_url", ""),
+        disease_category=normalize_disease_category(
+            structured_data.get("disease_category") if structured_data else None
+        ),
+        disease_category_label=disease_category_label(
+            structured_data.get("disease_category") if structured_data else None
+        ),
     )
 
 

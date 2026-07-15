@@ -10,6 +10,7 @@ CyberHuaTuo GitHub 同步模块
 import base64
 import logging
 import re
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -18,6 +19,21 @@ import yaml
 from .config import config
 
 logger = logging.getLogger("cyberhuatuo.github_sync")
+
+
+_LEGACY_QUALITY_CUTOFF = date(2026, 7, 14)
+
+
+def _counts_for_cultivation(metadata: dict) -> bool:
+    """Count accepted cases and only grandfather statusless cases predating the quality contract."""
+    status = metadata.get("quality_status")
+    if status is not None:
+        return str(status).strip().lower() in {"reviewed", "gold"}
+    try:
+        created_at = date.fromisoformat(str(metadata.get("created_at", "")))
+    except ValueError:
+        return False
+    return created_at <= _LEGACY_QUALITY_CUTOFF
 
 # ============================================================
 # 🏅 炼丹师称号体系（16 级）— 代理到 achievements 模块
@@ -83,6 +99,8 @@ def count_contributor_cases(
             meta = yaml.safe_load(match.group(1))
             if not isinstance(meta, dict):
                 continue
+            if not _counts_for_cultivation(meta):
+                continue
             contributors = meta.get("contributors", [])
             if isinstance(contributors, list):
                 for c in contributors:
@@ -129,6 +147,8 @@ def count_contributor_cases_by_framework(
                 continue
             meta = yaml.safe_load(match.group(1))
             if not isinstance(meta, dict):
+                continue
+            if not _counts_for_cultivation(meta):
                 continue
 
             contributors = meta.get("contributors", [])
@@ -402,6 +422,11 @@ class GitHubSyncer:
         tags: list[str] | None = None,
         title_en: str = "",
         contributor_github: str = "anonymous",
+        source_url: str = "",
+        verification: str = "",
+        verification_method: str = "",
+        evidence_urls: list[str] | None = None,
+        safety: str = "",
     ) -> dict:
         """
         创建药方 Issue（瞬时药方层）
@@ -428,6 +453,11 @@ class GitHubSyncer:
             "complexity": complexity,
             "tags": tags or [],
             "contributor_github": contributor_github,
+            "source_url": source_url,
+            "verification": verification,
+            "verification_method": verification_method,
+            "evidence_urls": evidence_urls or [],
+            "safety": safety,
         }
 
         # Issue body = 人类可读摘要 + 隐藏 JSON 块（供 CI 解析）
@@ -447,6 +477,17 @@ class GitHubSyncer:
             body_parts.append(f"### 🔬 根因分析 Root Cause\n\n{root_cause}\n")
         if prescription:
             body_parts.append(f"### 💊 药方 Prescription\n\n{prescription}\n")
+        if verification:
+            body_parts.append(f"### ✅ 验证 Verification\n\n{verification}\n")
+        if safety:
+            body_parts.append(f"### ⚠️ 风险与回退 Safety and Rollback\n\n{safety}\n")
+        references = list(dict.fromkeys([source_url, *(evidence_urls or [])]))
+        if any(references):
+            body_parts.append(
+                "### 🔗 证据 Evidence\n\n"
+                + "\n".join(f"- {url}" for url in references if url)
+                + "\n"
+            )
 
         # 添加结构化 JSON（供 CI 自动晋升使用）
         body_parts.append(
@@ -554,6 +595,11 @@ class GitHubSyncer:
                 tags=prescription_meta.get("tags"),
                 title_en=prescription_meta.get("title_en", ""),
                 contributor_github=contributor_github,
+                source_url=prescription_meta.get("source_url", ""),
+                verification=prescription_meta.get("verification", ""),
+                verification_method=prescription_meta.get("verification_method", ""),
+                evidence_urls=prescription_meta.get("evidence_urls"),
+                safety=prescription_meta.get("safety", ""),
             )
 
         # 无 prescription_meta 时回退到 Fork+PR（兼容老调用）
@@ -592,6 +638,8 @@ def get_global_ranking_stats(cases_dir: Path | None = None) -> dict[str, int]:
                 continue
             meta = yaml.safe_load(match.group(1))
             if not isinstance(meta, dict):
+                continue
+            if not _counts_for_cultivation(meta):
                 continue
             contributors = meta.get("contributors", [])
             if isinstance(contributors, list):

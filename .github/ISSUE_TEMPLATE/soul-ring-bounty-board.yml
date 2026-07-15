@@ -13,9 +13,9 @@ body:
         It turns public attention into a **Soul Ring Bounty Board**:
 
         ```bash
-        cyberhuatuo bounty --username <github-username> --framework auto --top-n 8 --release-tag v0.2.0 --target-contributors 3
+        cyberhuatuo bounty --username <github-username> --framework auto --top-n 8 --release-tag v0.2.4 --target-contributors 3
         cyberhuatuo challenge --username <github-username> --framework <first-framework-from-bounty-board>
-        cyberhuatuo first-invite --username <github-username> --invitee <external-contributor-github-username> --framework <first-framework-from-bounty-board> --release-tag v0.2.0 --target-contributors 3 --source-url <created Growth Issue URL after submission>
+        cyberhuatuo first-invite --username <github-username> --invitee <external-contributor-github-username> --framework <first-framework-from-bounty-board> --release-tag v0.2.4 --target-contributors 3 --source-url <created Growth Issue URL after submission>
         ```
 
         The board ranks real local case coverage gaps and links contributors toward a First Soul Ring Prescription Issue. It is not a monetary reward board and it does not invent adoption.
@@ -60,8 +60,8 @@ body:
     attributes:
       label: Release tag
       description: Release tag used in the generated proof and invite commands.
-      placeholder: v0.2.0
-      value: v0.2.0
+      placeholder: v0.2.4
+      value: v0.2.4
     validations:
       required: true
   - type: input

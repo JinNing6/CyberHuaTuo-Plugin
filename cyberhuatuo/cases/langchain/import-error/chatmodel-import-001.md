@@ -1,9 +1,9 @@
 ---
 id: "langchain-import-chatmodel-001"
-title: "LangChain 0.3 升级后 ChatOpenAI 导入失败"
-title_en: "ChatOpenAI import error after upgrading to LangChain 0.3"
+title: "LangChain 中 ChatOpenAI 导入失败"
+title_en: "ChatOpenAI import error in current LangChain packages"
 framework: "langchain"
-framework_version: ">=0.3.0"
+framework_version: ">=1.0.0"
 language: "python"
 tags:
   - "import-error"
@@ -11,21 +11,32 @@ tags:
   - "migration"
 severity: "medium"
 complexity: "simple"
+quality_status: "gold"
 environment:
   python_version: ">=3.9"
   os: "any"
 created_at: "2026-03-10"
-updated_at: "2026-03-10"
+updated_at: "2026-07-14"
+verified_at: "2026-07-14"
+verification_method: "isolated-import-test"
+reviewed_at: "2026-07-14"
+reviewed_by: "JinNing6"
+match_signatures:
+  - "ImportError: cannot import name ChatOpenAI from langchain"
+  - "from langchain import ChatOpenAI"
 contributors:
   - github: "CyberHuaTuo"
-source_url: "https://github.com/langchain-ai/langchain/discussions/xxxxx"
+source_url: "https://docs.langchain.com/oss/python/integrations/chat/openai"
+evidence_urls:
+  - "https://docs.langchain.com/oss/python/integrations/chat/openai"
+  - "https://pypi.org/project/langchain-openai/"
 related_cases: []
 ---
 
 ## 🏥 症状描述
 Symptom Description
 
-从 LangChain 0.2.x 升级到 0.3.x 后，原有的 `from langchain import ChatOpenAI` 导入语句报错，无法正常运行已有项目。
+当前 LangChain 环境中继续使用 `from langchain import ChatOpenAI` 时，导入语句报错，应用无法启动。
 
 ## 🔍 错误信息
 Error Message
@@ -46,30 +57,28 @@ ImportError: cannot import name 'ChatOpenAI' from 'langchain' (/usr/local/lib/py
 ## 🔬 根因分析
 Root Cause Analysis
 
-LangChain 0.3 进行了重大包结构重组：
-- 所有模型集成类（`ChatOpenAI`, `OpenAIEmbeddings` 等）已从主包 `langchain` 迁移到独立集成包 `langchain-openai`
-- 这是一个 **Breaking Change**，官方迁移指南中有详细说明
+LangChain 的 OpenAI 集成由独立包 `langchain-openai` 提供。当前官方安装与导入方式是安装该集成包，并从 `langchain_openai` 导入 `ChatOpenAI`；主包 `langchain` 不再导出这个类。
 
 ## 💊 药方
 Prescriptions
 
 ### 药方 1：更新导入路径 ✅ 推荐
 
-**适用版本**: `langchain >= 0.3.0`
+**适用版本**: 当前拆分集成包的 LangChain 版本；本药方已在 `langchain==1.3.13` 与 `langchain-openai==1.3.5` 验证。
 
 1. 安装独立的 OpenAI 集成包：
 
 ```bash
-pip install langchain-openai
+python -m pip install -U langchain-openai
 ```
 
 2. 更新导入语句：
 
 ```python
-# ❌ 旧写法（0.2.x 及更早）
+# ❌ 主包不再导出 ChatOpenAI
 from langchain import ChatOpenAI
 
-# ✅ 新写法（0.3.x）
+# ✅ 当前官方集成包
 from langchain_openai import ChatOpenAI
 ```
 
@@ -83,26 +92,37 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_openai import OpenAI
 ```
 
-### 药方 2：使用 langchain-community 兼容层（临时过渡）
+## ✅ 验证记录
+Verification
 
-**适用版本**: `langchain >= 0.3.0, < 0.4.0`
+2026-07-14 在一次性 Python 虚拟环境中执行：
 
-```python
-pip install langchain-community
+```bash
+python -m pip install "langchain==1.3.13" "langchain-openai==1.3.5"
+python -c "from langchain_openai import ChatOpenAI; print(ChatOpenAI.__name__)"
 ```
 
-```python
-from langchain_community.chat_models import ChatOpenAI
+预期且实测输出：
+
+```text
+ChatOpenAI
 ```
 
-> ⚠️ 此方案为临时过渡，`langchain-community` 中的包装器将在未来版本中被移除。建议尽早迁移到药方 1。
+同一环境执行旧导入 `from langchain import ChatOpenAI`，实测得到 `ImportError`。
+
+## ⚠️ 风险与回退
+Safety and Rollback
+
+- 该药方只安装独立集成包并修改 Python 导入路径，不执行系统级配置变更。
+- 如果项目使用锁文件，应同步更新并提交锁文件；验证失败时恢复原分支或锁文件。
+- 不要在源码中写入 API Key；通过环境变量提供 `OPENAI_API_KEY`。
 
 ## 🔗 参考资料
 References
 
-- [LangChain 0.3 迁移指南](https://python.langchain.com/docs/versions/v0_3/)
-- [LangChain Integration Packages](https://python.langchain.com/docs/integrations/platforms/)
+- [LangChain ChatOpenAI 官方集成文档](https://docs.langchain.com/oss/python/integrations/chat/openai)
+- [langchain-openai PyPI 发布页](https://pypi.org/project/langchain-openai/)
 
 ---
 
-> 📝 本药方由 [@CyberHuaTuo](https://github.com/CyberHuaTuo) 贡献 · 如有更好方案欢迎 [提交 PR](https://github.com/CyberHuaTuo/CyberHuaTuo/pulls)
+> 本药方由 [@CyberHuaTuo](https://github.com/JinNing6/CyberHuaTuo-Plugin) 维护 · 如有新的版本证据，欢迎 [提交 PR](https://github.com/JinNing6/CyberHuaTuo-Plugin/pulls)

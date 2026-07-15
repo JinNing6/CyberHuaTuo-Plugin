@@ -3,12 +3,20 @@ CyberHuaTuo 配置管理
 从 .env 文件和环境变量中加载配置
 """
 
+import hashlib
+import json
 import os
 import shutil
 import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+BUNDLE_STATE_FILENAME = ".bundle-state.json"
+_KNOWN_LEGACY_BUNDLE_HASHES = {
+    "cases/langchain/import-error/chatmodel-import-001.md": "77b132f21440356613b3a71142c07ecef2ec587015b86542d17fbbf338cfc08b",
+    "schema/case.schema.json": "37c30877be571212413fa1ae390b44b19ff5f1e7a38bd4404d9f851cb9fcc79d",
+}
 
 
 def _discover_root_dir() -> Path:
@@ -26,11 +34,6 @@ def _discover_root_dir() -> Path:
         return dev_root
 
     fallback_dir = Path.home() / ".cyberhuatuo"
-    cases_dir = fallback_dir / "cases"
-    schema_dir = fallback_dir / "schema"
-    if cases_dir.exists() and schema_dir.exists():
-        return fallback_dir
-
     # 方式 2：wheel / site-packages 模式。包内资源只读，复制到用户缓存后使用。
     package_root = Path(__file__).parent.resolve()
     package_cases = package_root / "cases"
@@ -41,6 +44,11 @@ def _discover_root_dir() -> Path:
             source_schema=package_schema,
             target_dir=fallback_dir,
         )
+        return fallback_dir
+
+    cases_dir = fallback_dir / "cases"
+    schema_dir = fallback_dir / "schema"
+    if cases_dir.exists() and schema_dir.exists():
         return fallback_dir
 
     # 方式 3：回退 — 从 GitHub 拉取公开知识库
@@ -56,15 +64,65 @@ def _discover_root_dir() -> Path:
 
 
 def _copy_bundled_knowledge_base(source_cases: Path, source_schema: Path, target_dir: Path) -> None:
-    """Copy packaged cases/schema into the writable user cache on first run."""
-    target_cases = target_dir / "cases"
-    target_schema = target_dir / "schema"
+    """Incrementally sync bundled files while preserving user modifications."""
     target_dir.mkdir(parents=True, exist_ok=True)
+    state_path = target_dir / BUNDLE_STATE_FILENAME
 
-    if not target_cases.exists():
-        shutil.copytree(source_cases, target_cases)
-    if not target_schema.exists():
-        shutil.copytree(source_schema, target_schema)
+    try:
+        state = json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else {}
+    except (json.JSONDecodeError, OSError):
+        state = {}
+    previous_hashes = state.get("managed_files", {})
+    if not isinstance(previous_hashes, dict):
+        previous_hashes = {}
+
+    current_hashes: dict[str, str] = {}
+    source_files: dict[str, Path] = {}
+    for prefix, source_root in (("cases", source_cases), ("schema", source_schema)):
+        for source_file in sorted(path for path in source_root.rglob("*") if path.is_file()):
+            relative = f"{prefix}/{source_file.relative_to(source_root).as_posix()}"
+            source_files[relative] = source_file
+
+    for relative, source_file in source_files.items():
+        target_file = target_dir / Path(relative)
+        source_hash = _sha256_file(source_file)
+        target_file.parent.mkdir(parents=True, exist_ok=True)
+
+        if not target_file.exists():
+            shutil.copy2(source_file, target_file)
+            current_hashes[relative] = source_hash
+            continue
+
+        target_hash = _sha256_file(target_file)
+        prior_hash = str(previous_hashes.get(relative, "")) or _KNOWN_LEGACY_BUNDLE_HASHES.get(relative, "")
+        if target_hash == source_hash:
+            current_hashes[relative] = source_hash
+        elif prior_hash and target_hash == prior_hash:
+            shutil.copy2(source_file, target_file)
+            current_hashes[relative] = source_hash
+        # A different hash without a known managed ancestor is user-owned and preserved.
+
+    # Remove only files that the previous bundle managed and the user did not edit.
+    for relative, previous_hash in previous_hashes.items():
+        if relative in source_files or not isinstance(relative, str):
+            continue
+        target_file = (target_dir / Path(relative)).resolve()
+        if target_dir.resolve() not in target_file.parents or not target_file.is_file():
+            continue
+        if _sha256_file(target_file) == previous_hash:
+            target_file.unlink()
+
+    new_state = {
+        "schema_version": 1,
+        "managed_files": current_hashes,
+    }
+    temporary_state = state_path.with_suffix(".json.tmp")
+    temporary_state.write_text(json.dumps(new_state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary_state.replace(state_path)
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _fetch_cases_from_github(target_dir: Path) -> None:

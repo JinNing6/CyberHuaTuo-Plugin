@@ -3,14 +3,19 @@ CyberHuaTuo 药方贡献生成器
 帮助开发者快速生成规范格式的病例文件
 """
 
+import hashlib
 import json
 import re
-from dataclasses import dataclass, field
+import unicodedata
+from dataclasses import dataclass, field, replace
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 import litellm
+import yaml
 
+from .case_taxonomy import infer_disease_category, normalize_disease_category
 from .config import config
 from .doc_sources import get_agent_framework_keys
 
@@ -49,6 +54,11 @@ class CaseSubmission:
     language: str = "python"
     contributor_github: str = "anonymous"
     source_url: str = ""
+    verification: str = ""
+    verification_method: str = ""
+    evidence_urls: list[str] = field(default_factory=list)
+    disease_category: str = ""
+    safety: str = ""
 
 
 async def smart_extract_contribution(
@@ -133,14 +143,36 @@ async def smart_extract_contribution(
             "complexity": "moderate",
             "tags": ["needs-review"]
         }
-def generate_case_id(framework: str, title: str) -> str:
+
+
+_FRAMEWORK_PATTERN = re.compile(r"^[a-z0-9_][a-z0-9_-]{0,63}$")
+
+
+def normalize_framework(framework: str) -> str:
+    """Normalize and validate a framework key before it reaches a filesystem path."""
+    normalized = str(framework or "").strip().casefold()
+    if not _FRAMEWORK_PATTERN.fullmatch(normalized) or normalized in {".", ".."}:
+        raise ValueError(
+            "framework must be a safe lowercase identifier containing only letters, digits, '-' or '_'"
+        )
+    return normalized
+
+
+def _ascii_slug(*values: str) -> str:
+    for value in values:
+        normalized = unicodedata.normalize("NFKD", str(value or ""))
+        ascii_value = normalized.encode("ascii", "ignore").decode("ascii").casefold()
+        words = re.findall(r"[a-z0-9]+", ascii_value)
+        if words:
+            return "-".join(words[:6])[:64].strip("-")
+    digest_source = "\x1f".join(str(value or "") for value in values)
+    return f"case-{hashlib.sha256(digest_source.encode('utf-8')).hexdigest()[:12]}"
+
+
+def generate_case_id(framework: str, title: str, title_en: str = "") -> str:
     """基于框架和标题生成唯一病例 ID"""
-    # 从标题中提取关键词
-    keywords = re.sub(r"[^\w\s-]", "", title.lower())
-    keywords = re.sub(r"\s+", "-", keywords.strip())
-    # 最多取前 4 个词
-    parts = keywords.split("-")[:4]
-    keyword_slug = "-".join(parts)
+    framework = normalize_framework(framework)
+    keyword_slug = _ascii_slug(title_en, title)
 
     # 获取同框架下的下一个序号
     framework_dir = config.CASES_DIR / framework
@@ -149,6 +181,7 @@ def generate_case_id(framework: str, title: str) -> str:
         for f in framework_dir.rglob("*.md"):
             if not f.name.startswith("_"):
                 existing_ids.add(f.stem)
+                existing_ids.add(f"{framework}-{f.stem}")
 
     # 寻找可用序号
     for seq in range(1, 1000):
@@ -156,7 +189,7 @@ def generate_case_id(framework: str, title: str) -> str:
         if case_id not in existing_ids:
             return case_id
 
-    return f"{framework}-{keyword_slug}-999"
+    raise RuntimeError(f"No available case sequence for {framework}-{keyword_slug}")
 
 
 def determine_category(tags: list[str], error_message: str) -> str:
@@ -182,40 +215,54 @@ def determine_category(tags: list[str], error_message: str) -> str:
     return "general"
 
 
-def generate_case_markdown(submission: CaseSubmission) -> str:
+def generate_case_markdown(submission: CaseSubmission, case_id: str | None = None) -> str:
     """
     从用户提交数据生成规范的 YAML + Markdown 病例文件
 
     Returns:
         完整的 .md 文件内容
     """
-    case_id = generate_case_id(submission.framework, submission.title)
+    framework = normalize_framework(submission.framework)
+    case_id = case_id or generate_case_id(framework, submission.title, submission.title_en)
     today = date.today().isoformat()
+    disease_category = normalize_disease_category(submission.disease_category) if submission.disease_category else (
+        infer_disease_category(
+            submission.tags,
+            submission.title,
+            submission.title_en,
+            submission.error_message,
+            submission.symptom,
+            submission.root_cause,
+        )
+    )
 
-    # 构建 YAML Front Matter
-    tags_yaml = "\n".join(f'  - "{tag}"' for tag in submission.tags) if submission.tags else '  - "general"'
-
-    yaml_section = f"""---
-id: "{case_id}"
-title: "{submission.title}"
-title_en: "{submission.title_en}"
-framework: "{submission.framework}"
-framework_version: "{submission.framework_version}"
-language: "{submission.language}"
-tags:
-{tags_yaml}
-severity: "{submission.severity}"
-complexity: "{submission.complexity}"
-environment:
-  python_version: ">=3.9"
-  os: "any"
-created_at: "{today}"
-updated_at: "{today}"
-contributors:
-  - github: "{submission.contributor_github}"
-source_url: "{submission.source_url}"
-related_cases: []
----"""
+    metadata = {
+        "id": case_id,
+        "title": submission.title,
+        "title_en": submission.title_en,
+        "framework": framework,
+        "framework_version": submission.framework_version,
+        "language": submission.language,
+        "tags": submission.tags or ["general"],
+        "severity": submission.severity,
+        "complexity": submission.complexity,
+        "quality_status": "draft",
+        "disease_category": disease_category,
+        "environment": {"python_version": ">=3.9", "os": "any"},
+        "created_at": today,
+        "updated_at": today,
+        "contributors": [{"github": submission.contributor_github}],
+        "source_url": submission.source_url,
+        "verification_method": submission.verification_method,
+        "evidence_urls": submission.evidence_urls,
+        "related_cases": [],
+    }
+    yaml_section = "---\n" + yaml.safe_dump(
+        metadata,
+        allow_unicode=True,
+        sort_keys=False,
+        default_flow_style=False,
+    ).rstrip() + "\n---"
 
     # 构建 Markdown 正文
     sections = []
@@ -233,7 +280,25 @@ related_cases: []
     else:
         sections.append("## 💊 药方\nPrescriptions\n\n### 药方 1\n\n（请补充解决方案）")
 
-    sections.append("## 🔗 参考资料\nReferences\n\n- （请补充参考链接）")
+    if submission.verification:
+        sections.append(f"## ✅ 验证记录\nVerification\n\n{submission.verification}")
+    else:
+        sections.append("## ✅ 验证记录\nVerification\n\n（待复现验证，当前仅为草稿药方）")
+
+    if submission.safety:
+        sections.append(f"## ⚠️ 风险与回退\nSafety and Rollback\n\n{submission.safety}")
+    else:
+        sections.append(
+            "## ⚠️ 风险与回退\nSafety and Rollback\n\n"
+            "（待补充影响范围、验证失败信号和回退步骤；补全前不要自动执行。）"
+        )
+
+    references = list(dict.fromkeys([
+        submission.source_url,
+        *submission.evidence_urls,
+    ]))
+    reference_body = "\n".join(f"- {url}" for url in references if url) or "- （请补充参考链接）"
+    sections.append(f"## 🔗 参考资料\nReferences\n\n{reference_body}")
 
     body = "\n\n".join(sections)
 
@@ -247,25 +312,46 @@ def save_case_file(submission: CaseSubmission) -> dict:
     Returns:
         dict 包含文件路径和 case_id
     """
-    # 确定目标目录
+    framework = normalize_framework(submission.framework)
+    normalized_submission = replace(submission, framework=framework)
+    cases_root = Path(config.CASES_DIR).resolve(strict=False)
+    cases_root.mkdir(parents=True, exist_ok=True)
+
     category = determine_category(submission.tags, submission.error_message)
-    target_dir = config.CASES_DIR / submission.framework / category
+    target_dir = (cases_root / framework / category).resolve(strict=False)
+    try:
+        target_dir.relative_to(cases_root)
+    except ValueError as exc:
+        raise ValueError("framework resolved outside the configured cases directory") from exc
     target_dir.mkdir(parents=True, exist_ok=True)
 
-    # 生成文件内容
-    content = generate_case_markdown(submission)
-    case_id = generate_case_id(submission.framework, submission.title)
+    for _attempt in range(1000):
+        case_id = generate_case_id(framework, submission.title, submission.title_en)
+        content = generate_case_markdown(normalized_submission, case_id=case_id)
+        filename = f"{case_id.removeprefix(f'{framework}-')}.md"
+        filepath = (target_dir / filename).resolve(strict=False)
+        try:
+            filepath.relative_to(cases_root)
+        except ValueError as exc:
+            raise ValueError("generated case path resolved outside the configured cases directory") from exc
+        try:
+            with filepath.open("x", encoding="utf-8", newline="\n") as handle:
+                handle.write(content)
+            break
+        except FileExistsError:
+            continue
+    else:
+        raise RuntimeError("Could not allocate a unique case ID after 1000 attempts")
 
-    # 写入文件
-    filename = f"{case_id.split(f'{submission.framework}-', 1)[-1]}.md"
-    filepath = target_dir / filename
-    filepath.write_text(content, encoding="utf-8")
-
-    relative_path = str(filepath.relative_to(config.ROOT_DIR))
+    try:
+        relative_path = str(filepath.relative_to(Path(config.ROOT_DIR).resolve(strict=False)))
+    except ValueError:
+        relative_path = str(filepath.relative_to(cases_root.parent))
 
     return {
         "case_id": case_id,
         "filepath": relative_path,
         "absolute_path": str(filepath),
         "content_preview": content[:500],
+        "quality_status": "draft",
     }

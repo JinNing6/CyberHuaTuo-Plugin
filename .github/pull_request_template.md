@@ -2,6 +2,7 @@
 
 Use this PR template when a real AI-agent, LLM, MCP, or framework fix is ready for review.
 Accepted prescriptions should be reproducible, verifiable, and suitable for public CyberHuaTuo soul-ring surfaces.
+New submissions remain `draft` until a maintainer reproduces and promotes them under the [Prescription Quality Contract](../docs/prescription-quality-contract.md).
 
 ## Contributor
 
@@ -19,6 +20,8 @@ Accepted prescriptions should be reproducible, verifiable, and suitable for publ
   - `<describe the concrete code, docs, case, or configuration fix>`
 - Verification evidence:
   - `<paste the test command, manual verification, log, screenshot, or reviewer evidence>`
+- Reviewable source/evidence URL:
+  - `<official documentation, upstream issue/PR, CI run, or other public evidence URL>`
 
 ## Soul Ring Settlement Commands
 
@@ -40,3 +43,4 @@ cyberhuatuo campaign <github-username> --framework <framework>
 - [ ] The root cause, fix, and verification evidence are real and not invented.
 - [ ] The prescription can be reviewed by another developer from the information above.
 - [ ] I understand accepted prescriptions may appear in public soul-ring ranking and sharing surfaces.
+- [ ] I understand submission alone does not award a Soul Ring; reviewed or Gold acceptance does.
