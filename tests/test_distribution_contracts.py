@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PREVIOUS_PYPI_VERSION = "0.1.0"
 CURRENT_VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
 CURRENT_TAG = f"v{CURRENT_VERSION}"
+MCP_SERVER_NAME = "io.github.JinNing6/cyberhuatuo"
 LAUNCH_CLOSURE_ROWS = [
     "1. Remote acquisition routes",
     "2. PyPI Trusted Publisher",
@@ -152,6 +153,53 @@ def test_mcp_config_uses_uvx_console_script_entrypoint():
 
     assert server["command"] == "uvx"
     assert server["args"] == ["--from", "cyberhuatuo", "cyberhuatuo-mcp"]
+
+
+def test_mcp_registry_manifest_matches_pypi_package_and_readme():
+    manifest = json.loads((ROOT / "server.json").read_text(encoding="utf-8"))
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    assert manifest["$schema"] == "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+    assert manifest["name"] == MCP_SERVER_NAME
+    assert manifest["title"] == "CyberHuaTuo"
+    assert 1 <= len(manifest["description"]) <= 100
+    assert manifest["version"] == project["version"]
+    assert manifest["repository"] == {
+        "url": project["urls"]["Repository"],
+        "source": "github",
+        "id": "1256814099",
+    }
+
+    packages = manifest["packages"]
+    assert len(packages) == 1
+    package = packages[0]
+    assert package["registryType"] == "pypi"
+    assert package["identifier"] == project["name"] == "cyberhuatuo"
+    assert package["version"] == project["version"]
+    assert package["runtimeHint"] == "uvx"
+    assert package["packageArguments"] == [{"type": "positional", "value": "mcp"}]
+    assert package["transport"] == {"type": "stdio"}
+    assert f"mcp-name: {MCP_SERVER_NAME}" in readme
+
+
+def test_cli_mcp_subcommand_delegates_to_stdio_server(monkeypatch):
+    from types import ModuleType
+
+    from cyberhuatuo import cli
+
+    fake_server = ModuleType("cyberhuatuo.mcp_server")
+    calls = []
+
+    def fake_main():
+        calls.append("stdio")
+        return 23
+
+    fake_server.main = fake_main
+    monkeypatch.setitem(sys.modules, "cyberhuatuo.mcp_server", fake_server)
+
+    assert cli.cmd_mcp(None) == 23
+    assert calls == ["stdio"]
 
 
 def test_mcp_tools_have_directory_review_annotations():
@@ -705,8 +753,8 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     assert "without `PYPI_TOKEN`" in doc
     assert "uvx --from cyberhuatuo cyberhuatuo-mcp" in doc
     assert "Claude Connectors Directory" in doc
-    assert "claude-community" in doc
-    assert "claude.ai/settings/plugins/submit" in doc
+    assert "claude-plugins-official" in doc
+    assert "claude.ai/admin-settings/directory/submissions/plugins/new" in doc
     assert "platform.claude.com/plugins/submit" in doc
     assert "MCPB" in doc
     assert "claude-desktop/manifest.json" in doc
@@ -721,6 +769,11 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     assert ".agents/plugins/marketplace.json" in doc
     assert "codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin" in doc
     assert "codex mcp list" in doc
+    assert "## MCP Registry" in doc
+    assert "io.github.JinNing6/cyberhuatuo" in doc
+    assert "mcp-publisher validate" in doc
+    assert "mcp-publisher publish" in doc
+    assert "registry.modelcontextprotocol.io/v0.1/servers" in doc
     assert "cyberhuatuo record-return" in doc
     assert "cyberhuatuo activation" in doc
     assert "cyberhuatuo record-share" in doc
@@ -771,7 +824,7 @@ def test_marketplace_release_doc_covers_pypi_claude_and_codex_paths():
     assert "Marketplace Submission Copy Pack" in doc
     assert "Submission Portals And Evidence URLs" in doc
     assert "PyPI Trusted Publisher settings: https://pypi.org/manage/project/cyberhuatuo/settings/publishing/" in doc
-    assert "Claude Code plugin submit: https://claude.ai/settings/plugins/submit" in doc
+    assert "Claude plugin submit (Console): https://platform.claude.com/plugins/submit" in doc
     assert "Claude Connectors Directory submission guide: https://claude.com/docs/connectors/building/submission" in doc
     assert "Codex plugin evidence: `codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin`" in doc
     assert "PyPI listing copy" in doc
@@ -1344,8 +1397,11 @@ def test_marketplace_submission_copy_pack_is_channel_specific_and_non_fabricatin
     assert "## Submission Portals And Evidence URLs" in text
     assert "PyPI Trusted Publisher settings: https://pypi.org/manage/project/cyberhuatuo/settings/publishing/" in text
     assert "PyPI project page: https://pypi.org/project/cyberhuatuo/" in text
-    assert "Claude Code plugin submit: https://claude.ai/settings/plugins/submit" in text
-    assert "Claude Code plugin submit fallback: https://platform.claude.com/plugins/submit" in text
+    assert "Claude plugin submit (Console): https://platform.claude.com/plugins/submit" in text
+    assert (
+        "Claude.ai directory submit (Team/Enterprise): "
+        "https://claude.ai/admin-settings/directory/submissions/plugins/new"
+    ) in text
     assert "Claude Connectors Directory submission guide: https://claude.com/docs/connectors/building/submission" in text
     assert "Claude Connectors Directory: https://www.claude.com/connectors" in text
     assert "Codex plugin evidence: `codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin`" in text
@@ -1871,12 +1927,12 @@ def test_readmes_document_codex_and_claude_plugin_install_paths():
     assert "Protected Fallback Readiness" in readme
     assert "IssueOps forms/workflows" in readme
     assert "additional Trusted Publisher" in readme
-    assert "claude-community" in readme
+    assert "Anthropic's official directory" in readme
     assert "Claude markets" in readme
     assert "Codex plugin directory" in readme
     assert "additional Trusted Publisher" in readme_cn
     assert "install-loop launch blocker" in readme_cn
-    assert "claude-community" in readme_cn
+    assert "Anthropic 官方插件目录" in readme_cn
     assert "remote IssueOps readiness" in readme_mcp
     assert "PyPI package readiness" in readme_mcp
     assert "GitHub Releases API" in readme_mcp
@@ -1896,6 +1952,7 @@ def test_source_distribution_includes_agent_plugin_manifests():
     assert "recursive-include docs *.md" in manifest
     assert "recursive-include claude-desktop *.json *.toml *.py *.md" in manifest
     assert "include claude-desktop/.mcpbignore" in manifest
+    assert "include server.json" in manifest
 
 
 def test_github_issue_form_guides_first_soul_ring_real_prescription():
@@ -2661,7 +2718,7 @@ def test_readmes_surface_marketplace_submission_ledger():
     for text in (readme, readme_mcp, release_plan):
         assert "Marketplace Submission Ledger" in text
         assert "Submission Portals And Evidence URLs" in text
-        assert "Claude Code plugin submit: https://claude.ai/settings/plugins/submit" in text
+        assert "Claude plugin submit (Console): https://platform.claude.com/plugins/submit" in text
         assert "Codex plugin evidence: `codex plugin marketplace add JinNing6/CyberHuaTuo-Plugin`" in text
         assert "cyberhuatuo record-market" in text
         assert "cyberhuatuo market-status" in text

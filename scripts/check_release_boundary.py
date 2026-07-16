@@ -137,6 +137,7 @@ REQUIRED_SDIST_MEMBERS = (
     ".github/workflows/soul-ring-share-proof.yml",
     ".github/workflows/soul-ring-tournament.yml",
     ".mcp.json",
+    "server.json",
     "README.md",
     "README_MCP.md",
     "SECURITY.md",
@@ -171,6 +172,7 @@ REQUIRED_SDIST_MEMBERS = (
 
 REQUIRED_SDIST_TEXT_SNIPPETS = {
     "README.md": (
+        "mcp-name: io.github.JinNing6/cyberhuatuo",
         "Local Launch Asset Audit",
         "Full Public Growth Release Bundle",
         "Public Release Operator Runbook",
@@ -226,6 +228,14 @@ REQUIRED_SDIST_TEXT_SNIPPETS = {
         "--expected BLOCK --report reports/guard-report.md",
         "guard-false-positive.yml",
         "security/advisories/new",
+    ),
+    "server.json": (
+        '"name": "io.github.JinNing6/cyberhuatuo"',
+        '"registryType": "pypi"',
+        '"identifier": "cyberhuatuo"',
+        '"runtimeHint": "uvx"',
+        '"value": "mcp"',
+        '"type": "stdio"',
     ),
     "README_MCP.md": (
         "marketplace_readiness_gate",
@@ -393,6 +403,9 @@ REQUIRED_SDIST_TEXT_SNIPPETS = {
         "Soul Ring Evidence Card",
         "claude plugin validate",
         "codex plugin marketplace add",
+        "io.github.JinNing6/cyberhuatuo",
+        "mcp-publisher validate",
+        "mcp-publisher publish",
     ),
     "docs/agent-guard-quickstart.md": (
         "cyberhuatuo guard --self-test",

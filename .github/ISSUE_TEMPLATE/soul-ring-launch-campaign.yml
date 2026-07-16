@@ -67,7 +67,7 @@ body:
     attributes:
       label: Release tag
       description: Public release tag for the campaign.
-      placeholder: v0.2.4
+      placeholder: v0.2.5
     validations:
       required: true
   - type: input

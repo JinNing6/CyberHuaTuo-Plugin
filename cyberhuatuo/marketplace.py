@@ -2306,8 +2306,8 @@ def build_marketplace_submission_copy_pack(
         },
         {
             "channel": "claude-code",
-            "label": "Claude Code plugin submit",
-            "url": "https://claude.ai/settings/plugins/submit",
+            "label": "Claude plugin submit (Console)",
+            "url": "https://platform.claude.com/plugins/submit",
             "evidence": (
                 "Record the reviewable plugin submission URL, status page, issue, or public listing after submission."
             ),
@@ -2319,9 +2319,9 @@ def build_marketplace_submission_copy_pack(
         },
         {
             "channel": "claude-code",
-            "label": "Claude Code plugin submit fallback",
-            "url": "https://platform.claude.com/plugins/submit",
-            "evidence": "Use this fallback submission surface when the Claude app route is unavailable.",
+            "label": "Claude.ai directory submit (Team/Enterprise)",
+            "url": "https://claude.ai/admin-settings/directory/submissions/plugins/new",
+            "evidence": "Use this route only with directory-management access in a Team or Enterprise organization.",
             "record_command": "",
         },
         {

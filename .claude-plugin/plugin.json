@@ -1,6 +1,6 @@
 {
   "name": "cyberhuatuo-plugin",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "When a coding agent gets sick, let it ask CyberHuaTuo, fix the error, and keep the cure through MCP tools and agent skills.",
   "author": {
     "name": "CyberHuaTuo"

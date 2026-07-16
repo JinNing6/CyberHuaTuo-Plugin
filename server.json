@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.JinNing6/cyberhuatuo",
+  "title": "CyberHuaTuo",
+  "description": "Gold-first AI-agent traceback diagnosis, exact fixes, verification, and reusable prescriptions.",
+  "repository": {
+    "url": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+    "source": "github",
+    "id": "1256814099"
+  },
+  "websiteUrl": "https://github.com/JinNing6/CyberHuaTuo-Plugin",
+  "version": "0.2.5",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "cyberhuatuo",
+      "version": "0.2.5",
+      "runtimeHint": "uvx",
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "mcp"
+        }
+      ],
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
